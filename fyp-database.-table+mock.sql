@@ -230,14 +230,14 @@ DROP TABLE
 
 CREATE TABLE
     a_upgrade_type(
-        a_UT_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        a_UT_name VARCHAR(25) NOT NULL,
-        a_UT_min SMALLINT,
-        a_UT_max SMALLINT,
-        a_UT_limit_per_army SMALLINT
+        a_ut_id SMALLSERIAL PRIMARY KEY NOT NULL,
+        a_ut_name VARCHAR(25) NOT NULL,
+        a_ut_min SMALLINT,
+        a_ut_max SMALLINT,
+        a_ut_limit_per_army SMALLINT
     );
 
-INSERT INTO a_upgrade_type(a_UT_name, a_UT_min, a_UT_max) VALUES
+INSERT INTO a_upgrade_type(a_ut_name, a_ut_min, a_ut_max) VALUES
 ('Upgrade', NULL, NULL),
 ('Monstrosity Type', 1, 1);
 
@@ -247,12 +247,12 @@ DROP TABLE
 CREATE TABLE
     a_upgrade(
         a_upgrade_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        a_UT_id SMALLINT NOT NULL REFERENCES a_upgrade_type(a_UT_id),
+        a_ut_id SMALLINT NOT NULL REFERENCES a_upgrade_type(a_ut_id),
         a_upgrade_PC SMALLINT NOT NULL,
         a_upgrade_name VARCHAR(25) NOT NULL
     );
 
-INSERT INTO a_upgrade(a_UT_id, a_upgrade_PC, a_upgrade_name) VALUES
+INSERT INTO a_upgrade(a_ut_id, a_upgrade_PC, a_upgrade_name) VALUES
 (1, 10, 'Wounds 2'),
 (1, 10, 'Tough 2'),
 (1, 14, 'Wounds 2'),
@@ -312,10 +312,10 @@ INSERT INTO a_unit_a_statline(a_unit_id, a_statline_id, a_statline_min, a_statli
 (4, 2, 4, 9, 10),
 (5, 7, 1, 1, NULL),
 (5, 8, 4, 9, 13),
-(6, 8, 3, 5, 47),
-(7, 9, 3, 5, 26),
-(8, 10, 1, 1, NULL),
-(9, 11, 5, 5, NULL);
+(6, 9, 3, 5, 47),
+(7, 10, 3, 5, 26),
+(8, 11, 1, 1, NULL),
+(9, 12, 5, 5, NULL);
 
 DROP TABLE
     IF EXISTS a_unit_a_upgrade_type;
@@ -323,11 +323,11 @@ DROP TABLE
 CREATE TABLE
     a_unit_a_upgrade_type(
         a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id),
-        a_UT_id SMALLINT NOT NULL REFERENCEs a_upgrade_type(a_UT_id),
-        PRIMARY KEY (a_unit_id, a_UT_id)
+        a_ut_id SMALLINT NOT NULL REFERENCEs a_upgrade_type(a_ut_id),
+        PRIMARY KEY (a_unit_id, a_ut_id)
     );
 
-INSERT INTO a_unit_a_upgrade_type(a_unit_id, a_UT_id) VALUES
+INSERT INTO a_unit_a_upgrade_type(a_unit_id, a_ut_id) VALUES
 (1, 1),
 (2, 1),
 (3, 1),
@@ -543,5 +543,5 @@ CREATE TABLE
         al_chose_upgrade SMALLSERIAL PRIMARY KEY NOT NULL,
         al_unit_id SMALLINT NOT NULL REFERENCEs al_unit(al_unit_id), 
         a_upgrade_id SMALLINT NOT NULL REFERENCEs a_upgrade(a_upgrade_id),
-        a_UT_id SMALLINT NOT NULL REFERENCEs  a_upgrade_type(a_UT_id)
+        a_ut_id SMALLINT NOT NULL REFERENCEs  a_upgrade_type(a_ut_id)
     );
