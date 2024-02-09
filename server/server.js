@@ -4,16 +4,20 @@ const pool = new Pool({
     user: "postgres",
     password: "meggymoo",
     host: "localhost",
-    port: 5432
+    port: 5432,
+    // database: "fyp_db_1"
 })
 
 
-const dbQuery = `'
+const dbQuery = `
+
+
+
 `;
-// dbQuery becomes wharever PSQL code needs to be executed
+
 
 pool.query(dbQuery).then((response) => {
-    console.log("Database Created");
+    console.log("Database Code executed: ");
     console.log(response);
 }).catch((err) => {
     console.log(err);
@@ -21,3 +25,4 @@ pool.query(dbQuery).then((response) => {
 // fyp_db_1
 
 module.exports = pool;
+
