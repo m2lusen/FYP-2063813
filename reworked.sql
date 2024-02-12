@@ -68,16 +68,16 @@ INSERT INTO gs_stat(gs_us_id, gs_stat_name, gs_stat_acronyme) VALUES
 
 
 DROP TABLE
-    IF EXISTS gs_keyword;
+    IF EXISTS keyword;
 
 CREATE TABLE
-    gs_keyword(
-        gs_keyword_id SMALLSERIAL PRIMARY KEY NOT NULL,
+    keyword(
+        keyword_id SMALLSERIAL PRIMARY KEY NOT NULL,
         gs_us_id SMALLINT NOT NULL REFERENCEs gs_unit_structure(gs_us_id),
-        gs_keyword_name VARCHAR(25) NOT NULL
+        keyword_name VARCHAR(25) NOT NULL
     );
 
-INSERT INTO gs_keyword(gs_us_id, gs_keyword_name) VALUES
+INSERT INTO keyword(gs_us_id, keyword_name) VALUES
 (1, 'Tough'),
 (1, 'Command'),
 (1, 'Wound'),
@@ -98,20 +98,50 @@ INSERT INTO gs_keyword(gs_us_id, gs_keyword_name) VALUES
 (1, 'MoD2'),
 (1, '2xHtH SV3'),
 (1, 'Throw Corpse'),
-(1, 'Stuck In');
+(1, 'Stuck In'),
+(1, '3x HtH'),
+(1, 'Woodsmen'),
+(1, 'Hero'),
+(1, 'Fast 10'),
+(1, '2x HtH SV2'),
+(1, 'Regrowth of the Woodsmen'),
+(1, 'Frenzied Charge'),
+(1, 'Drop 1 SV 1'),
+(1, '4xHtH'),
+(1, 'SV2'),
+(1, 'MoD2');
 
 DROP TABLE
-    IF EXISTS gs_rule;
+    IF EXISTS army;
 
 CREATE TABLE
-    gs_rule(
-        gs_rule_id SMALLSERIAL PRIMARY KEY NOT NULL,
+    army(
+        army_id SMALLSERIAL PRIMARY KEY NOT NULL,
         game_system_id SMALLINT NOT NULL REFERENCEs game_system(game_system_id),
-        gs_rule_name VARCHAR(25) NOT NULL,
-        gs_rule_description VARCHAR(250) NOT NULL
+        army_name VARCHAR(25) NOT NULL,
+        army_edition VARCHAR(25) NOT NULL,
+        army_version SMALLINT NOT NULL
     );
 
-INSERT INTO gs_rule(game_system_id, gs_rule_name, gs_rule_description) VALUES
+INSERT INTO army(game_system_id, army_name, army_edition, army_version) VALUES
+(1, 'The Tribal Nations', '1st edition', 1),
+(1, 'The Aztecs', '1st edition', 1),
+(1, 'The Incas', '1st edition', 1),
+(1, 'The Maya', '1st edition', 1);
+
+DROP TABLE
+    IF EXISTS rule;
+
+CREATE TABLE
+    rule(
+        rule_id SMALLSERIAL PRIMARY KEY NOT NULL,
+        game_system_id SMALLINT REFERENCEs game_system(game_system_id),
+        army_id SMALLINT REFERENCES army(army_id),
+        rule_name VARCHAR(25) NOT NULL,
+        rule_description VARCHAR(250) NOT NULL
+    );
+
+INSERT INTO rule(game_system_id, rule_name, rule_description) VALUES
 (1, 'though', 'Ecetera Ecetera'),
 (1, 'Command', 'Ecetera Ecetera'),
 (1, 'Wound', 'Ecetera Ecetera'),
@@ -132,20 +162,31 @@ INSERT INTO gs_rule(game_system_id, gs_rule_name, gs_rule_description) VALUES
 (1, 'MoD2', 'Ecetera Ecetera'),
 (1, '2xHtH SV3', 'Ecetera Ecetera'),
 (1, 'Throw Corpse', 'Ecetera Ecetera'),
-(1, 'Stuck In', 'Ecetera Ecetera');
+(1, 'Stuck In', 'Ecetera Ecetera'),
+(1, '3x HtH', 'Ecetera Ecetera'),
+(1, 'Woodsmen', 'Ecetera Ecetera'),
+(1, 'Hero', 'Ecetera Ecetera'),
+(1, 'Fast 10', 'Ecetera Ecetera'),
+(1, '2x HtH SV2', 'Ecetera Ecetera'),
+(1, 'Regrowth of the Woodsmen', 'Ecetera Ecetera'),
+(1, 'Frenzied Charge', 'Ecetera Ecetera'),
+(1, 'Drop 1 SV 1', 'Ecetera Ecetera'),
+(1, '4xHtH', 'Ecetera Ecetera'),
+(1, 'SV2', 'Ecetera Ecetera'),
+(1, 'MoD2', 'Ecetera Ecetera');
 
 
 DROP TABLE
-    IF EXISTS gs_keyword_gs_rule;
+    IF EXISTS keyword_rule;
 
 CREATE TABLE
-    gs_keyword_gs_rule(
-        gs_rule_id SMALLINT NOT NULL REFERENCEs gs_rule(gs_rule_id),
-        gs_keyword_id SMALLINT NOT NULL REFERENCEs gs_keyword(gs_keyword_id),
-        PRIMARY KEY (gs_rule_id, gs_keyword_id)
+    keyword_rule(
+        rule_id SMALLINT NOT NULL REFERENCEs rule(rule_id),
+        keyword_id SMALLINT NOT NULL REFERENCEs keyword(keyword_id),
+        PRIMARY KEY (rule_id, keyword_id)
     );
 
-INSERT INTO gs_keyword_gs_rule(gs_rule_id, gs_keyword_id) VALUES
+INSERT INTO keyword_rule(rule_id, keyword_id) VALUES
 (1, 1),
 (2, 2),
 (3, 3),
@@ -165,7 +206,19 @@ INSERT INTO gs_keyword_gs_rule(gs_rule_id, gs_keyword_id) VALUES
 (17, 17),
 (18, 18),
 (19, 19),
-(20, 20);
+(20, 20),
+(21, 21),
+(22, 22),
+(23, 23),
+(24, 24),
+(25, 25),
+(26, 26),
+(27, 27),
+(28, 28),
+(29, 29),
+(30, 30),
+(31, 31),
+(32, 32);
 
 DROP TABLE
     IF EXISTS gs_game_mode;
@@ -181,25 +234,6 @@ CREATE TABLE
 
 INSERT INTO gs_game_mode(game_system_id, gs_gM_name) VALUES
 (1, 'Open');
-
-
-DROP TABLE
-    IF EXISTS army;
-
-CREATE TABLE
-    army(
-        army_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        game_system_id SMALLINT NOT NULL REFERENCEs game_system(game_system_id),
-        army_name VARCHAR(25) NOT NULL,
-        army_edition VARCHAR(25) NOT NULL,
-        army_version SMALLINT NOT NULL
-    );
-
-INSERT INTO army(game_system_id, army_name, army_edition, army_version) VALUES
-(1, 'The Tribal Nations', '1st edition', 1),
-(1, 'The Aztecs', '1st edition', 1),
-(1, 'The Incas', '1st edition', 1),
-(1, 'The Maya', '1st edition', 1);
 
 DROP TABLE
     IF EXISTS a_unit;
@@ -304,7 +338,7 @@ CREATE TABLE
 INSERT INTO a_statline(a_statline_name) VALUES
 ('Sachem with Tomahawks'),
 ('Mohawk Warrior'),
-('Sachem with a_special_rule'),
+('Sachem with spear'),
 ('War Eagle'),
 ('Medicine Man'),
 ('Mohawk Warriors Leader'),
@@ -367,63 +401,131 @@ INSERT INTO a_unit_a_upgrade_type(a_unit_id, a_ut_id) VALUES
 (9, 1);
 
 DROP TABLE
-    IF EXISTS a_keyword;
+    IF EXISTS keyword_a_unit;
 
 CREATE TABLE
-    a_keyword(
-        a_keyword_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        a_keyword_name VARCHAR(25) NOT NULL
-    );
-
-
-
-DROP TABLE
-    IF EXISTS a_keyword_a_upgrade;
-
-CREATE TABLE
-    a_keyword_a_upgrade(
-        a_keyword_id SMALLINT NOT NULL REFERENCEs a_keyword(a_keyword_id),
-        a_upgrade_id SMALLINT NOT NULL REFERENCEs a_upgrade(a_upgrade_id),
-        PRIMARY KEY (a_keyword_id, a_upgrade_id)
-    );
-
-
-
-DROP TABLE
-    IF EXISTS a_keyword_a_unit;
-
-CREATE TABLE
-    a_keyword_a_unit(
-        a_keyword_id SMALLINT NOT NULL REFERENCEs a_keyword(a_keyword_id),
+    keyword_a_unit(
+        keyword_id SMALLINT NOT NULL REFERENCEs keyword(keyword_id),
         a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id),
-        PRIMARY KEY (a_keyword_id, a_unit_id)
+        PRIMARY KEY (keyword_id, a_unit_id)
     );
 
+INSERT INTO keyword_a_unit(keyword_id, a_unit_id) VALUES
+(1, 1),
+(2, 1),
+(22, 1),
+(3, 1),
+(23, 1),
+(1, 2),
+(2, 2),
+(22, 2),
+(24, 2),
+(3, 2),
+(16, 2),
+(25, 2),
+(13, 2),
+(1, 3),
+(3, 3),
+(23, 3),
+(26, 3),
+(5, 3),
+(1, 4),
+(23, 4),
+(1, 5),
+(23, 5),
+(27, 6),
+(22, 6),
+(4, 6),
+(30, 6),
+(23, 6),
+(11, 7),
+(16, 7),
+(12, 7),
+(26, 7),
+(23, 7),
+(28, 8),
+(30, 8),
+(31, 8),
+(32, 8),
+(1, 8),
+(14, 8),
+(23, 8),
+(11, 9),
+(12, 9),
+(23, 9);
+
+DROP TABLE
+    IF EXISTS rule_a_upgrade;
+
+CREATE TABLE
+    rule_a_upgrade(
+        rule_id SMALLINT NOT NULL REFERENCEs rule(rule_id),
+        a_upgrade_id SMALLINT NOT NULL REFERENCEs a_upgrade(a_upgrade_id),
+        PRIMARY KEY (rule_id, a_upgrade_id)
+    );
+
+INSERT INTO rule_a_upgrade(rule_id, a_upgrade_id) VALUES
+(1, 3),
+(2, 1),
+(3, 3),
+(4, 3),
+(5, 6),
+(6, 7);
 
 
 DROP TABLE
-    IF EXISTS a_special_rule;
+    IF EXISTS rule_a_unit;
 
 CREATE TABLE
-    a_special_rule(
-        a_sr_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        army_id SMALLINT NOT NULL REFERENCEs army(army_id),
-        a_sr_name VARCHAR(25) NOT NULL,
-        a_sr_description VARCHAR(250) NOT NULL
+    rule_a_unit(
+        rule_id SMALLINT NOT NULL REFERENCEs rule(rule_id),
+        a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id),
+        PRIMARY KEY (rule_id, a_unit_id)
     );
 
-
-
-DROP TABLE
-    IF EXISTS a_keyword_a_special_rule;
-
-CREATE TABLE
-    a_keyword_a_special_rule(
-        a_keyword_id SMALLINT NOT NULL REFERENCEs a_keyword(a_keyword_id),
-        a_sr_id SMALLINT NOT NULL REFERENCEs a_special_rule(a_sr_id),
-        PRIMARY KEY (a_keyword_id, a_sr_id)
-    );
-
+INSERT INTO rule_a_unit(rule_id, a_unit_id) VALUES
+(1, 1),
+(2, 1),
+(22, 1),
+(3, 1),
+(23, 1),
+(1, 2),
+(2, 2),
+(22, 2),
+(24, 2),
+(3, 2),
+(16, 2),
+(25, 2),
+(13, 2),
+(1, 3),
+(3, 3),
+(23, 3),
+(26, 3),
+(5, 3),
+(1, 4),
+(23, 4),
+(1, 5),
+(23, 5),
+(27, 6),
+(22, 6),
+(4, 6),
+(30, 6),
+(23, 6),
+(11, 7),
+(16, 7),
+(12, 7),
+(26, 7),
+(23, 7),
+(28, 8),
+(30, 8),
+(31, 8),
+(32, 8),
+(1, 8),
+(14, 8),
+(23, 8),
+(11, 9),
+(12, 9),
+(23, 9);
 
 
 DROP TABLE
@@ -512,16 +614,16 @@ INSERT INTO a_statline_gs_stat(a_statline_id, gs_stat_id, stat_value) VALUES
 (12, 6, 7);
 
 DROP TABLE
-    IF EXISTS gs_keyword_a_upgrade;
+    IF EXISTS keyword_a_upgrade;
 
 CREATE TABLE
-    gs_keyword_a_upgrade(
-        gs_keyword_id SMALLINT NOT NULL REFERENCEs gs_keyword(gs_keyword_id),
+    keyword_a_upgrade(
+        keyword_id SMALLINT NOT NULL REFERENCEs keyword(keyword_id),
         a_upgrade_id SMALLINT NOT NULL REFERENCEs a_upgrade(a_upgrade_id),
-        PRIMARY KEY (gs_keyword_id, a_upgrade_id)
+        PRIMARY KEY (keyword_id, a_upgrade_id)
     );
 
-INSERT INTO gs_keyword_a_upgrade(gs_keyword_id, a_upgrade_id) VALUES
+INSERT INTO keyword_a_upgrade(keyword_id, a_upgrade_id) VALUES
 (1, 3),
 (2, 1),
 (3, 3),

@@ -156,7 +156,15 @@ CREATE TABLE
         a_upgrade_name VARCHAR(25) NOT NULL
     );
 
+DROP TABLE
+    IF EXISTS a_unit_a_upgrade;
 
+CREATE TABLE
+    a_unit_a_upgrade(
+        a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id),
+        a_upgrade_id SMALLINT NOT NULL REFERENCEs a_upgrade(a_upgrade_id),
+        PRIMARY KEY (a_unit_id, a_upgrade_id)
+    );
 
 DROP TABLE
     IF EXISTS a_statline;

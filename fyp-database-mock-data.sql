@@ -129,6 +129,24 @@ INSERT INTO a_upgrade(a_UT_id, a_upgrade_PC, a_upgrade_name) VALUES
 (2, 20, 'Bound'),
 (2, 40, 'Allied');
 
+
+INSERT INTO a_unit_a_upgrade(a_unit_id, a_upgrade_id) VALUES
+(1, 1),
+(1, 2),
+(2, 3),
+(2, 4),
+(2, 2),
+(3, 2),
+(3, 5),
+(3, 6),
+(3, 7),
+(4, 7),
+(5, 8),
+(8, 9),
+(8, 10),
+(8, 11);
+
+
 -- update DB
 INSERT INTO a_statline(a_statline_name) VALUES
 ('Sachem with Tomahawks'),
