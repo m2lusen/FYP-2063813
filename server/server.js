@@ -1,121 +1,193 @@
-const {Pool} = require("pg");
+const express = require("express");
+const cors = require("cors");
+const pool = require("./database");
 
-const pool = new Pool({
-    user: "postgres",
-    password: "meggymoo",
-    host: "localhost",
-    port: 5432,
-    database: "fyp_db_1"
-})
+const app = express();
 
+app.use(express.json());
+app.use(cors());
 
+// Unit
 
-const dbQuery = `
+// Get all units
+app.get("/unit", async (req, res) => {
+    try {
+        const dbQuery = await pool.query(
+            `SELECT
+            *
+            FROM a_unit
+            JOIN a_unit_a_statline ON a_unit.a_unit_id = a_unit_a_statline.a_unit_id
+            JOIN a_statline ON a_unit_a_statline.a_statline_id = a_statline.a_statline_id
+            JOIN a_statline_gs_stat ON a_statline.a_statline_id = a_statline_gs_stat.a_statline_id
+            JOIN gs_stat ON a_statline_gs_stat.gs_stat_id = gs_stat.gs_stat_id
+            
+            JOIN gs_supertype ON a_unit.gs_supertype_id = gs_supertype.gs_supertype_id
+            
+            JOIN a_unit_a_upgrade ON a_unit.a_unit_id = a_unit_a_upgrade.a_unit_id
+            JOIN a_upgrade ON a_unit_a_upgrade.a_upgrade_id = a_upgrade.a_upgrade_id
+            JOIN a_upgrade_type ON a_upgrade.a_ut_id = a_upgrade_type.a_ut_id 
+            
+            LEFT JOIN keyword_a_unit ON a_unit.a_unit_id = keyword_a_unit.a_unit_id
+            LEFT JOIN keyword ON keyword_a_unit.keyword_id = keyword.keyword_id
+            
+            LEFT JOIN rule_a_unit ON a_unit.a_unit_id = rule_a_unit.a_unit_id
+            LEFT JOIN rule ON rule_a_unit.rule_id = rule.rule_id
+            ;`
+        )
 
-SELECT
-*
-FROM a_unit
-JOIN a_unit_a_statline ON a_unit.a_unit_id = a_unit_a_statline.a_unit_id
-JOIN a_statline ON a_unit_a_statline.a_statline_id = a_statline.a_statline_id
-JOIN a_statline_gs_stat ON a_statline.a_statline_id = a_statline_gs_stat.a_statline_id
-JOIN gs_stat ON a_statline_gs_stat.gs_stat_id = gs_stat.gs_stat_id
-
-JOIN gs_supertype ON a_unit.gs_supertype_id = gs_supertype.gs_supertype_id
-
-JOIN a_unit_a_upgrade ON a_unit.a_unit_id = a_unit_a_upgrade.a_unit_id
-JOIN a_upgrade ON a_unit_a_upgrade.a_upgrade_id = a_upgrade.a_upgrade_id
-JOIN a_upgrade_type ON a_upgrade.a_ut_id = a_upgrade_type.a_ut_id 
-
-LEFT JOIN keyword_a_unit ON a_unit.a_unit_id = keyword_a_unit.a_unit_id
-LEFT JOIN keyword ON keyword_a_unit.keyword_id = keyword.keyword_id
-
-LEFT JOIN rule_a_unit ON a_unit.a_unit_id = rule_a_unit.a_unit_id
-LEFT JOIN rule ON rule_a_unit.rule_id = rule.rule_id
-
-WHERE
-a_unit.a_unit_name = 'Wendigo'
-;
-
-;
-`;
-
-function createArrayFromDB(rawData, dataArray) {
-    let statblock = [];
-    for (let i = 0; i < rawData.length; i++) {
-        let entry = [];
-        let isValid = true; // Flag to track if all values are valid
-        for (let j = 0; j < dataArray.length; j++) {
-            let value = rawData[i][dataArray[j]];
-            if (value === null) {
-                isValid = false; // Mark entry as invalid if any value is null
-                break; // Exit loop if null value found
-            }
-            entry.push(value);
-        }
-        if (isValid && !checkIfStatUsed(statblock, entry[0])) {
-            statblock.push(entry);
-        }
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
     }
-    return statblock;
-}
+});
 
 
-function createObjFromDB(rawData, dataArray) {
-    let Obj = {};
-    let processedData = createArrayFromDB(rawData, dataArray);
 
-    for (let i = 0; i < processedData.length; i++) {
-        let ObjName = processedData[i][2];
-        let el1 = processedData[i][0];
-        let el2 = processedData[i][1];
+// Get a single unit
+app.get("/unit/:name", async (req, res) => {
+    try {
+        const {name} = req.params;
 
-        if (!Obj[ObjName]) {
-            Obj[ObjName] = [];
-        }
+        const dbQuery = await pool.query(
+            `SELECT
+            *
+            FROM a_unit
+            JOIN a_unit_a_statline ON a_unit.a_unit_id = a_unit_a_statline.a_unit_id
+            JOIN a_statline ON a_unit_a_statline.a_statline_id = a_statline.a_statline_id
+            JOIN a_statline_gs_stat ON a_statline.a_statline_id = a_statline_gs_stat.a_statline_id
+            JOIN gs_stat ON a_statline_gs_stat.gs_stat_id = gs_stat.gs_stat_id
+            
+            JOIN gs_supertype ON a_unit.gs_supertype_id = gs_supertype.gs_supertype_id
+            
+            JOIN a_unit_a_upgrade ON a_unit.a_unit_id = a_unit_a_upgrade.a_unit_id
+            JOIN a_upgrade ON a_unit_a_upgrade.a_upgrade_id = a_upgrade.a_upgrade_id
+            JOIN a_upgrade_type ON a_upgrade.a_ut_id = a_upgrade_type.a_ut_id 
+            
+            LEFT JOIN keyword_a_unit ON a_unit.a_unit_id = keyword_a_unit.a_unit_id
+            LEFT JOIN keyword ON keyword_a_unit.keyword_id = keyword.keyword_id
+            
+            LEFT JOIN rule_a_unit ON a_unit.a_unit_id = rule_a_unit.a_unit_id
+            LEFT JOIN rule ON rule_a_unit.rule_id = rule.rule_id
+            
+            WHERE
+            a_unit.a_unit_name = '${name}'
+            ;`
+        )
 
-        Obj[ObjName].push([el1, el2]);
+        console.log(dbQuery.rows);
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
     }
+});
 
-    return Obj;
-}
+// Upgrade
 
-function checkIfStatUsed(statblock, acronyme) {
-    for (let i = 0; i < statblock.length; i++) {
-        if (statblock[i][0] === acronyme) {
-            return true; 
-        }
+// Get all upgrades
+app.get("/upgrade", async (req, res) => {
+    try {
+        const dbQuery = await pool.query(
+            `SELECT
+            *
+            FROM a_upgrade
+            JOIN a_upgrade_type ON a_upgrade.a_ut_id = a_upgrade_type.a_ut_id 
+        
+            LEFT JOIN keyword_a_upgrade ON a_upgrade.a_upgrade_id = keyword_a_upgrade.a_upgrade_id
+            LEFT JOIN keyword ON keyword_a_upgrade.keyword_id = keyword.keyword_id
+        
+            LEFT JOIN rule_a_upgrade ON a_upgrade.a_upgrade_id = rule_a_upgrade.a_upgrade_id
+            LEFT JOIN rule ON rule_a_upgrade.rule_id = rule.rule_id
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
     }
-    return false;
-}
-
-function createUnitObj(rawData, Obj) {
-    let unitName = rawData[0].a_unit_name;
-    let pointCost = rawData[0].a_unit_pc;
-    let supertype = rawData[0].gs_supertype_name;
-
-    let keywords = createArrayFromDB(rawData, ['keyword_name']);
-    let rules = createArrayFromDB(rawData, ['rule_name', 'rule_description']);
-
-    let statblock = createObjFromDB(rawData, ['gs_stat_acronyme', 'stat_value', 'a_statline_name']);
-    let upgrades = createObjFromDB(rawData, ['a_upgrade_name', 'a_upgrade_pc', 'a_ut_name']);
-
-    Obj[unitName] = [unitName, pointCost, supertype, statblock, keywords, upgrades, rules];
-
-    return Obj;
-}
+});
 
 
+// Get a single upgrade
+app.get("/upgrade/:id", async (req, res) => {
+    try {
+        const upgradeID = req.body["upgradeID"];
 
-pool.query(dbQuery).then((response) => {
-    // console.log(response);
-    console.log(response.rows);
-    console.log(createUnitObj(response.rows, {}));
-}).catch((err) => {
-    console.log(err);
-})
-// fyp_db_1
+        const dbQuery = await pool.query(
+            `SELECT
+            *
+            FROM a_upgrade
+            JOIN a_upgrade_type ON a_upgrade.a_ut_id = a_upgrade_type.a_ut_id 
+        
+            LEFT JOIN keyword_a_upgrade ON a_upgrade.a_upgrade_id = keyword_a_upgrade.a_upgrade_id
+            LEFT JOIN keyword ON keyword_a_upgrade.keyword_id = keyword.keyword_id
+        
+            LEFT JOIN rule_a_upgrade ON a_upgrade.a_upgrade_id = rule_a_upgrade.a_upgrade_id
+            LEFT JOIN rule ON rule_a_upgrade.rule_id = rule.rule_id
+        
+            WHERE
+            a_upgrade.a_upgrade_id = '${upgradeID}'
+            ;`
+        );
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
 
-module.exports = pool;
+app.listen(4000, () => console.log("server on localhost 4000"));
 
 
+// examples for each of select all, select wheere, insert, delete and update
 
+// // insert
+// app.post("/insertExample", async (req, res) => {
+//     try {
+//         const dbQuery = await pool.query(
+//         )
+
+//         res.json(dbQuery.rows);
+//     } catch (err) {
+//         console.error(err.message);
+//     }
+// });
+
+// // select
+// app.get("/selectExample", async (req, res) => {
+//     try {
+//         const dbQuery = await pool.query(
+//         )
+
+//         res.json(dbQuery.rows);
+//     } catch (err) {
+//         console.error(err.message);
+//     }
+// });
+
+// // for select specific should be /something/:id, when calling the actuall call should include whatever ID you want to find http://localhost:4000/something/actualID
+
+// // delete
+// app.delete("/deleteExamples/:id", async (req, res) => {
+//     try {
+//         const {params} = req.params;
+//         const dbQuery = await pool.query(
+//         )
+
+//         res.json(dbQuery.rows);
+//     } catch (err) {
+//         console.error(err.message);
+//     }
+// });
+
+// update
+// app.put("/updateExample/:id", async (req, res) => {
+//     try {
+//         const {params} = req.params;
+//         const {description} = req.body;
+//         const dbQuery = await pool.query(
+//         )
+
+//         res.json(dbQuery.rows);
+//     } catch (err) {
+//         console.error(err.message);
+//     }
+// });
