@@ -19,6 +19,7 @@ function unpackObjArray(obj){
     return valueRows;
 }
 
+// move somewhere with general functions
 /**
  * Creates a string representation of an array suitable for database insert values.
  * @param {Array} Arr - The array to convert.

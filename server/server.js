@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const pool = require("./database");
 const objArrToDbInsertValues = require("./functionsforInsertRoute");
+const objArrToDbUpdateSet = require("./functionsForUpdate");
 
 const app = express();
 
@@ -410,7 +411,110 @@ app.post("/al_upgrade", async (req, res) => {
         console.error(err.message);
     }
 });
+
+
 // SELECT
+
+// army list
+
+// Get all army lists // to be tested
+app.get("/army_list", async (req, res) => {
+    try {
+        const dbQuery = await pool.query(
+            `SELECT
+            *
+            FROM army_list
+            JOIN gs_game_mode ON army_list.gs_gM_id = gs_game_mode.gs_gM_id
+            JOIN game_system ON army_list.game_system_id = game_system.game_system_id
+            
+            JOIN al_force ON army_list.army_list_id = al_force.army_list_id
+            JOIN army ON al_force.army_id = army.army_id
+            
+            LEFT JOIN al_unit ON al_force.al_force_id = al_unit.al_force_id
+            LEFT JOIN a_unit ON al_unit.a_unit_id = a_unit.a_unit_id
+            
+            LEFT JOIN al_upgrade ON  al_unit.al_unit_id = al_upgrade.al_unit_id
+            LEFT JOIN a_upgrade ON al_upgrade.a_upgrade_id = a_upgrade.a_upgrade_id
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+// Get a single unit // to be tested
+app.get("/army_list/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `SELECT
+            *
+            FROM army_list
+            JOIN gs_game_mode ON army_list.gs_gM_id = gs_game_mode.gs_gM_id
+            JOIN game_system ON army_list.game_system_id = game_system.game_system_id
+            
+            JOIN al_force ON army_list.army_list_id = al_force.army_list_id
+            JOIN army ON al_force.army_id = army.army_id
+            
+            LEFT JOIN al_unit ON al_force.al_force_id = al_unit.al_force_id
+            LEFT JOIN a_unit ON al_unit.a_unit_id = a_unit.a_unit_id
+            
+            LEFT JOIN al_upgrade ON  al_unit.al_unit_id = al_upgrade.al_unit_id
+            LEFT JOIN a_upgrade ON al_upgrade.a_upgrade_id = a_upgrade.a_upgrade_id
+            
+            WHERE
+            army_list.army_list_id = '${id}}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+// army
+
+// Get all armies // to be tested
+app.get("/army", async (req, res) => {
+    try {
+        const dbQuery = await pool.query(
+            `SELECT 
+            *
+            FROM army
+            JOIN game_system ON army.game_system_id = game_system.game_system_id
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+// Get a single army // to be tested
+app.get("/army/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `SELECT 
+            *
+            FROM army
+            JOIN game_system ON army.game_system_id = game_system.game_system_id
+            army.army_id = '${id}}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
 // Unit
 
 // Get all units
@@ -445,8 +549,6 @@ app.get("/unit", async (req, res) => {
     }
 });
 
-
-
 // Get a single unit
 app.get("/unit/:name", async (req, res) => {
     try {
@@ -478,7 +580,6 @@ app.get("/unit/:name", async (req, res) => {
             ;`
         )
 
-        console.log(dbQuery.rows);
         res.json(dbQuery.rows);
     } catch (err) {
         console.error(err.message);
@@ -514,7 +615,7 @@ app.get("/upgrade", async (req, res) => {
 // Get a single upgrade
 app.get("/upgrade/:id", async (req, res) => {
     try {
-        const upgradeID = req.body["upgradeID"];
+        const upgradeID = req.params;
 
         const dbQuery = await pool.query(
             `SELECT
@@ -538,61 +639,988 @@ app.get("/upgrade/:id", async (req, res) => {
     }
 });
 
+// game system
+
+// Get all game systems // to be tested
+app.get("/army", async (req, res) => {
+    try {
+        const dbQuery = await pool.query(
+            `SELECT
+            *
+            FROM game_system
+            JOIN gs_unit_structure ON gs_unit_structure.game_system_id = game_system.game_system_id
+            JOIN gs_stat ON gs_unit_structure.gs_us_id = gs_stat.gs_us_id
+            
+            LEFT JOIN rule ON game_system.game_system_id = rule.game_system_id
+            LEFT JOIN keyword_rule ON rule.rule_id = keyword_rule.rule_id
+            LEFT JOIN keyword ON keyword_rule.keyword_id = keyword.keyword_id
+            ;
+            `
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+// Get a single game system // to be tested
+app.get("/army/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `*
+            FROM game_system
+            JOIN gs_unit_structure ON gs_unit_structure.game_system_id = game_system.game_system_id
+            JOIN gs_stat ON gs_unit_structure.gs_us_id = gs_stat.gs_us_id
+            
+            LEFT JOIN rule ON game_system.game_system_id = rule.game_system_id
+            LEFT JOIN keyword_rule ON rule.rule_id = keyword_rule.rule_id
+            LEFT JOIN keyword ON keyword_rule.keyword_id = keyword.keyword_id
+            WHERE
+            game_system.game_system_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+
+app.post("/game_system", async (req, res) => {
+    try {
+        const rows = objArrToDbInsertValues(req.body);
+        const dbQuery = await pool.query(
+            `
+            INSERT INTO game_system(game_system_name, game_system_edition, game_system_version) VALUES
+            ${rows}
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+// UPDATE
+app.put("/game_system/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE game_system SET
+            ${set}
+            WHERE
+            game_system.game_system_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+// untested -- auto generated
+app.put("/gs_supertype/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE gs_supertype SET
+            ${set}
+            WHERE
+            gs_supertype.gs_supertype_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/gs_unit_structure/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE gs_unit_structure SET
+            ${set}
+            WHERE
+            gs_unit_structure.gs_unit_structure_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/gs_stat/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE gs_stat SET
+            ${set}
+            WHERE
+            gs_stat.gs_stat_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/keyword/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE keyword SET
+            ${set}
+            WHERE
+            keyword.keyword_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/army/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE army SET
+            ${set}
+            WHERE
+            army.army_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/rule/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE rule SET
+            ${set}
+            WHERE
+            rule.rule_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/keyword_rule/:keywordId/:ruleId", async (req, res) => {
+    try {
+        const { keywordId, ruleId } = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE keyword_rule SET
+            ${set}
+            WHERE
+            keyword_id = '${keywordId}' AND rule_id = '${ruleId}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/gs_game_mode/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE gs_game_mode SET
+            ${set}
+            WHERE
+            gs_game_mode.gs_gm_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/a_unit/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE a_unit SET
+            ${set}
+            WHERE
+            a_unit.a_unit_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/a_upgrade_type/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE a_upgrade_type SET
+            ${set}
+            WHERE
+            a_upgrade_type.a_ut_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/a_upgrade/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE a_upgrade SET
+            ${set}
+            WHERE
+            a_upgrade.a_upgrade_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/a_unit_a_upgrade/:a_unit_id/:a_upgrade_id", async (req, res) => {
+    try {
+        const {a_unit_id, a_upgrade_id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE a_unit_a_upgrade SET
+            ${set}
+            WHERE
+            a_unit_id = '${a_unit_id}' AND a_upgrade_id = '${a_upgrade_id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/a_statline/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE a_statline SET
+            ${set}
+            WHERE
+            a_statline.a_statline_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/a_unit_a_statline/:a_unit_id/:a_statline_id", async (req, res) => {
+    try {
+        const {a_unit_id, a_statline_id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE a_unit_a_statline SET
+            ${set}
+            WHERE
+            a_unit_id = '${a_unit_id}' AND a_statline_id = '${a_statline_id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/a_unit_a_upgrade_type/:a_unit_id/:a_ut_id", async (req, res) => {
+    try {
+        const {a_unit_id, a_ut_id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE a_unit_a_upgrade_type SET
+            ${set}
+            WHERE
+            a_unit_id = '${a_unit_id}' AND a_ut_id = '${a_ut_id}'
+            a_unit_a_upgrade_type.a_unit_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/keyword_a_unit/:keyword_id/:a_unit_id", async (req, res) => {
+    try {
+        const {keyword_id, a_unit_id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE keyword_a_unit SET
+            ${set}
+            WHERE
+            keyword_id = '${keyword_id}' AND a_unit_id = '${a_unit_id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/rule_a_upgrade/:rule_id/:a_upgrade_id", async (req, res) => {
+    try {
+        const {rule_id, a_upgrade_id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE rule_a_upgrade SET
+            ${set}
+            WHERE
+            rule_id = '${rule_id}' AND a_upgrade_id = '${a_upgrade_id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/rule_a_unit/:rule_id/:a_unit_id", async (req, res) => {
+    try {
+        const {rule_id, a_unit_id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE rule_a_unit SET
+            ${set}
+            WHERE
+            rule_id = '${rule_id}' AND a_unit = '${a_unit_id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/a_statline_gs_stat/:a_statline_id/:gs_stat_id", async (req, res) => {
+    try {
+        const {a_statline_id, gs_stat_id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE a_statline_gs_stat SET
+            ${set}
+            WHERE
+            a_statline_id = '${a_statline_id}' AND gs_stat_id = '${gs_stat_id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/keyword_a_upgrade/:keyword_id/:a_upgrade_id", async (req, res) => {
+    try {
+        const {keyword_id, a_upgrade_id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE keyword_a_upgrade SET
+            ${set}
+            WHERE
+            keyword_id = '${keyword_id}' AND a_upgrade_id = '${a_upgrade_id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/army_list/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE army_list SET
+            ${set}
+            WHERE
+            army_list.army_list_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/al_force/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE al_force SET
+            ${set}
+            WHERE
+            al_force.al_force_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/al_unit/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE al_unit SET
+            ${set}
+            WHERE
+            al_unit.al_unit_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.put("/al_upgrade/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE al_upgrade SET
+            ${set}
+            WHERE
+            al_upgrade.al_upgrade_id = '${id}'
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+//DELETE
+app.delete("/game_system/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE game_system
+            WHERE game_system_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+// untested
+app.delete("/gs_supertype/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE gs_supertype
+            WHERE gs_supertype_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/gs_unit_structure/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE gs_unit_structure
+            WHERE gs_us_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/gs_stat/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE gs_stat
+            WHERE gs_stat_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/keyword/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE keyword
+            WHERE keyword_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/army/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE army
+            WHERE army_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/rule/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE rule
+            WHERE rule_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/keyword_rule/:keyword_id/:rule_id", async (req, res) => {
+    try {
+        const {keyword_id, rule_id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE keyword_rule
+            WHERE 
+            keyword_id = '${keyword_id}' AND rule_id = '${rule_id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/gs_game_mode/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE gs_game_mode
+            WHERE gs_gm_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/a_unit/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE a_unit
+            WHERE a_unit_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/a_upgrade_type/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE a_upgrade_type
+            WHERE a_ut_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/a_upgrade/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE a_upgrade
+            WHERE a_upgrade_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/a_unit_a_upgrade/:a_unit_id/:a_upgrade_id", async (req, res) => {
+    try {
+        const {a_unit_id, a_upgrade_id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE a_unit_a_upgrade
+            WHERE 
+            a_unit_id = '${a_unit_id}' AND a_upgrade_id = '${a_upgrade_id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/a_statline/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE a_statline
+            WHERE a_statline_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/a_unit_a_statline/:a_unit_id/:a_statline_id", async (req, res) => {
+    try {
+        const {a_unit_id, a_statline_id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE a_unit_a_statline
+            WHERE 
+            a_unit_id = '${a_unit_id}' AND a_statline_id = '${a_statline_id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/a_unit_a_upgrade_type/:a_unit_id/:a_ut_id", async (req, res) => {
+    try {
+        const {a_unit_id, a_ut_id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE a_unit_a_upgrade_type
+            WHERE 
+            a_unit_id = '${a_unit_id}' AND a_ut_id = '${a_ut_id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/keyword_a_unit/:keyword_id/:a_unit_id", async (req, res) => {
+    try {
+        const {keyword_id, a_unit_id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE keyword_a_unit
+            WHERE 
+            keyword_id = '${keyword_id}' AND a_unit_id = '${a_unit_id}' 
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/rule_a_upgrade/:rule_id/:a_upgrade_id", async (req, res) => {
+    try {
+        const {rule_id, a_upgrade_id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE rule_a_upgrade
+            WHERE 
+            rule_id = '${rule_id}' AND a_upgrade_id = '${a_upgrade_id}' 
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/rule_a_unit/:rule_id/:a_unit_id", async (req, res) => {
+    try {
+        const {rule_id, a_unit_id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE rule_a_unit
+            WHERE 
+            rule_id = '${rule_id}' AND a_unit_id = '${a_unit_id}' 
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/a_statline_gs_stat/:a_statline_id/:gs_stat_id", async (req, res) => {
+    try {
+        const {a_statline_id, gs_stat_id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE a_statline_gs_stat
+            WHERE 
+            a_statline_id = '${a_statline_id}' AND gs_stat_id = '${gs_stat_id}' 
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/keyword_a_upgrade/:keyword_id/:a_upgrade_id", async (req, res) => {
+    try {
+        const {keyword_id, a_upgrade_id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE keyword_a_upgrade
+            WHERE 
+            keyword_id = '${keyword_id}' AND a_upgrade_id = '${a_upgrade_id}' 
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/army_list/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE army_list
+            WHERE army_list_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/al_force/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE al_force
+            WHERE al_force_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/al_unit/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE al_unit
+            WHERE al_unit_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+app.delete("/al_upgrade/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const dbQuery = await pool.query(
+            `
+            DELETE al_upgrade
+            WHERE al_upgrade_id = '${id}'
+            ;`
+        )
+
+        res.json(dbQuery.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+
+
+
 app.listen(4000, () => console.log("server on localhost 4000"));
 
-
-// examples for each of select all, select wheere, insert, delete and update
-
-// // insert
-// app.post("/insertExample", async (req, res) => {
-//     try {
-    //     const {description} = req.body;
-//         const dbQuery = await pool.query(
-//         )
-
-//         res.json(dbQuery.rows);
-//     } catch (err) {
-//         console.error(err.message);
-//     }
-// });
-
-// // select
-// app.get("/selectExample", async (req, res) => {
-//     try {
-//         const dbQuery = await pool.query(
-//         )
-
-//         res.json(dbQuery.rows);
-//     } catch (err) {
-//         console.error(err.message);
-//     }
-// });
-
 // // for select specific should be /something/:id, when calling the actuall call should include whatever ID you want to find http://localhost:4000/something/actualID
-
-// // delete
-// app.delete("/deleteExamples/:id", async (req, res) => {
-//     try {
-//         const {params} = req.params;
-//         const dbQuery = await pool.query(
-//         )
-
-//         res.json(dbQuery.rows);
-//     } catch (err) {
-//         console.error(err.message);
-//     }
-// });
-
-// update
-// app.put("/updateExample/:id", async (req, res) => {
-//     try {
-//         const {params} = req.params;
-//         const {description} = req.body;
-//         const dbQuery = await pool.query(
-//         )
-
-//         res.json(dbQuery.rows);
-//     } catch (err) {
-//         console.error(err.message);
-//     }
-// });
