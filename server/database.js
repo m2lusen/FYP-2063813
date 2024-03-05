@@ -6,9 +6,6 @@ const pool = new Pool({
     host: "localhost",
     port: 5432,
     database: "fyp_db_1"
-})
+});
 
 module.exports = pool;
-
-
-

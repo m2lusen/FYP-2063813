@@ -6,6 +6,7 @@
 -- ---- delete queries are per table and collection
 
 -- INSERT
+-- -- Possibly add returning to the following
 INSERT INTO game_system(game_system_name, game_system_edition, game_system_version) VALUES
 ();
 
@@ -30,7 +31,7 @@ INSERT INTO rule(game_system_id, rule_name, rule_description) VALUES
 INSERT INTO keyword_rule(rule_id, keyword_id) VALUES
 ();
 
-INSERT INTO gs_game_mode(game_system_id, gs_gM_name) VALUES
+INSERT INTO gs_game_mode(game_system_id, gs_gm_name) VALUES
 ();
 
 INSERT INTO a_unit(army_id, gs_supertype_id, a_unit_name, a_unit_PC, a_unit_limit_per_army) VALUES
@@ -61,14 +62,14 @@ INSERT INTO rule_a_upgrade(rule_id, a_upgrade_id) VALUES
 
 INSERT INTO rule_a_unit(rule_id, a_unit_id) VALUES
 ();
-
+--
 INSERT INTO a_statline_gs_stat(a_statline_id, gs_stat_id, stat_value) VALUES
 ();
 
 INSERT INTO keyword_a_upgrade(keyword_id, a_upgrade_id) VALUES
 ();
 
-INSERT INTO army_list(game_system_id, gs_gM_id, army_list_name) VALUES
+INSERT INTO army_list(game_system_id, gs_gm_id, army_list_name) VALUES
 ();
 
 INSERT INTO al_force(army_list_id, army_id) VALUES
@@ -89,7 +90,7 @@ INSERT INTO al_upgrade(al_unit_id, a_upgrade_id, a_ut_id) VALUES
 SELECT
 *
 FROM army_list
-JOIN gs_game_mode ON army_list.gs_gM_id = gs_game_mode.gs_gM_id
+JOIN gs_game_mode ON army_list.gs_gm_id = gs_game_mode.gs_gm_id
 JOIN game_system ON army_list.game_system_id = game_system.game_system_id
 
 JOIN al_force ON army_list.army_list_id = al_force.army_list_id
@@ -145,3 +146,25 @@ LEFT JOIN rule ON rule_a_upgrade.rule_id = rule.rule_id
 ;
 
 -- game system
+-- -- game system, gs_unit_strucutre, gs_stat, rule, keyword_rule, keyword, 
+SELECT
+*
+FROM game_system
+JOIN gs_unit_structure ON gs_unit_structure.game_system_id = game_system.game_system_id
+JOIN gs_stat ON gs_unit_structure.gs_us_id = gs_stat.gs_us_id
+
+LEFT JOIN rule ON game_system.game_system_id = rule.game_system_id
+LEFT JOIN keyword_rule ON rule.rule_id = keyword_rule.rule_id
+LEFT JOIN keyword ON keyword_rule.keyword_id = keyword.keyword_id
+;
+
+-- update
+
+UPDATE 
+game_system
+SET
+game_system_name = ,
+game_system_edition = ,
+game_system_version = 
+WHERE
+();

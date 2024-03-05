@@ -11,7 +11,10 @@ function unpackObjArray(obj){
     for (let i = 0; i < maxLength; i++) {
         let row = [];
         keys.forEach(key => {
-            const element = obj[key][i];
+            let element = obj[key][i];
+            if (element == null) {
+                element = "NULL" 
+            }
             row.push(element);
         });
         valueRows.push(row);
@@ -26,7 +29,14 @@ function unpackObjArray(obj){
  * @returns {string} - The string representation of the array.
  */
 function createDbInsertValuesRow(Arr){
-    return '(' + Arr.map(item => typeof item === 'string' ? `'${item}'` : item).join(', ') + ')';
+    // return '(' + Arr.map(item => typeof item === 'string' ? `'${item}'` : item).join(', ') + ')';
+    return '(' + Arr.map(item => {
+        if (typeof item === 'string' && item !== 'NULL') {
+            return `'${item}'`;
+        } else {
+            return item;
+        }
+    }).join(', ') + ')';
 }
 
 /**
@@ -45,5 +55,12 @@ function objArrToDbInsertValues(obj) {
     }
     return res;
 }
+
+
+// console.log(objArrToDbInsertValues({
+//     "game_system_name": ["Wrath of Kings"],
+//     "game_system_edition":["1st edition"], 
+//     "game_system_version": [null]
+// }))
 
 module.exports = objArrToDbInsertValues;

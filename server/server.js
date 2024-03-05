@@ -1,8 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const pool = require("./database");
+
 const objArrToDbInsertValues = require("./functionsforInsertRoute");
 const objArrToDbUpdateSet = require("./functionsForUpdate");
+const createPdf = require("./pdf");
+const { error } = require("pdf-lib");
 
 const app = express();
 
@@ -16,17 +19,17 @@ app.post("/game_system", async (req, res) => {
         const rows = objArrToDbInsertValues(req.body);
         const dbQuery = await pool.query(
             `
-            INSERT INTO game_system(game_system_name, game_system_edition, game_system_version) VALUES
-            ${rows}
+            INSERT INTO game_system(game_system_name, game_system_edition, game_system_version) 
+            VALUES ${rows}
             RETURNING *;
             `
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
-// bellow inserts are untested
+
 app.post("/gs_supertype", async (req, res) => {
     try {
         const rows = objArrToDbInsertValues(req.body);
@@ -39,7 +42,7 @@ app.post("/gs_supertype", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -55,7 +58,7 @@ app.post("/gs_unit_structure", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -71,11 +74,11 @@ app.post("/gs_stat", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
-app.post("/keywords", async (req, res) => {
+app.post("/keyword", async (req, res) => {
     try {
         const rows = objArrToDbInsertValues(req.body);
         const dbQuery = await pool.query(
@@ -87,7 +90,7 @@ app.post("/keywords", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -103,7 +106,7 @@ app.post("/army", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -119,7 +122,7 @@ app.post("/rule", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -135,7 +138,7 @@ app.post("/keyword_rule", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -144,14 +147,14 @@ app.post("/gs_game_mode", async (req, res) => {
         const rows = objArrToDbInsertValues(req.body);
         const dbQuery = await pool.query(
             `
-            INSERT INTO gs_game_mode(game_system_id, gs_gM_name) VALUES
+            INSERT INTO gs_game_mode(game_system_id, gs_gm_name) VALUES
             ${rows}
             RETURNING *;
             `
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -167,7 +170,7 @@ app.post("/a_unit", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -184,7 +187,7 @@ app.post("/a_upgrade_type", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -200,7 +203,7 @@ app.post("/a_upgrade", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -216,7 +219,7 @@ app.post("/a_unit_a_upgrade", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -232,7 +235,7 @@ app.post("/a_statline", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -248,7 +251,7 @@ app.post("/a_unit_a_statline", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -264,7 +267,7 @@ app.post("/a_unit_a_upgrade_type", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -280,7 +283,7 @@ app.post("/keyword_a_unit", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -296,7 +299,7 @@ app.post("/rule_a_upgrade", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -312,7 +315,7 @@ app.post("/rule_a_unit", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -328,7 +331,7 @@ app.post("/a_statline_gs_stat", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -344,7 +347,7 @@ app.post("/keyword_a_upgrade", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -353,14 +356,14 @@ app.post("/army_list", async (req, res) => {
         const rows = objArrToDbInsertValues(req.body);
         const dbQuery = await pool.query(
             `
-            INSERT INTO army_list(game_system_id, gs_gM_id, army_list_name) VALUES
+            INSERT INTO army_list(game_system_id, gs_gm_id, army_list_name) VALUES
             ${rows}
             RETURNING *;
             `
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -376,7 +379,7 @@ app.post("/al_force", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -392,7 +395,7 @@ app.post("/al_unit", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -408,7 +411,23 @@ app.post("/al_upgrade", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post("/al_unit_a_unit_a_statline_quantity", async (req, res) => {
+    try {
+        const rows = objArrToDbInsertValues(req.body);
+        const dbQuery = await pool.query(
+            `
+            INSERT INTO al_unit_a_unit_a_statline_quantity(al_unit_id, a_unit_id, a_statline_id, quantity) VALUES
+            ${rows}
+            RETURNING *;
+            `
+        )
+        res.json(dbQuery.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -424,7 +443,7 @@ app.get("/army_list", async (req, res) => {
             `SELECT
             *
             FROM army_list
-            JOIN gs_game_mode ON army_list.gs_gM_id = gs_game_mode.gs_gM_id
+            JOIN gs_game_mode ON army_list.gs_gm_id = gs_game_mode.gs_gm_id
             JOIN game_system ON army_list.game_system_id = game_system.game_system_id
             
             JOIN al_force ON army_list.army_list_id = al_force.army_list_id
@@ -435,12 +454,16 @@ app.get("/army_list", async (req, res) => {
             
             LEFT JOIN al_upgrade ON  al_unit.al_unit_id = al_upgrade.al_unit_id
             LEFT JOIN a_upgrade ON al_upgrade.a_upgrade_id = a_upgrade.a_upgrade_id
+
+            JOIN al_unit_a_unit_a_statline_quantity ON al_unit.al_unit_id = al_unit_a_unit_a_statline_quantity.al_unit_id
+            LEFT JOIN a_unit_a_statline ON al_unit_a_unit_a_statline_quantity.a_statline_id = a_unit_a_statline.a_statline_id AND al_unit_a_unit_a_statline_quantity.a_unit_id = a_unit_a_statline.a_unit_id
+            LEFT JOIN a_statline ON al_unit_a_unit_a_statline_quantity.a_statline_id = a_statline.a_statline_id
             ;`
         )
 
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -453,7 +476,7 @@ app.get("/army_list/:id", async (req, res) => {
             `SELECT
             *
             FROM army_list
-            JOIN gs_game_mode ON army_list.gs_gM_id = gs_game_mode.gs_gM_id
+            JOIN gs_game_mode ON army_list.gs_gm_id = gs_game_mode.gs_gm_id
             JOIN game_system ON army_list.game_system_id = game_system.game_system_id
             
             JOIN al_force ON army_list.army_list_id = al_force.army_list_id
@@ -464,15 +487,19 @@ app.get("/army_list/:id", async (req, res) => {
             
             LEFT JOIN al_upgrade ON  al_unit.al_unit_id = al_upgrade.al_unit_id
             LEFT JOIN a_upgrade ON al_upgrade.a_upgrade_id = a_upgrade.a_upgrade_id
+
+            JOIN al_unit_a_unit_a_statline_quantity ON al_unit.al_unit_id = al_unit_a_unit_a_statline_quantity.al_unit_id
+            JOIN a_unit_a_statline ON al_unit_a_unit_a_statline_quantity.a_statline_id = a_unit_a_statline.a_statline_id
+            JOIN a_statline ON al_unit_a_unit_a_statline_quantity.a_statline_id = a_statline.a_statline_id
             
             WHERE
-            army_list.army_list_id = '${id}}'
+            army_list.army_list_id = '${id}'
             ;`
         )
 
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -491,11 +518,11 @@ app.get("/army", async (req, res) => {
 
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
-// Get a single army // to be tested
+// Get a single army // to be tested syntax error at or near "army"
 app.get("/army/:id", async (req, res) => {
     try {
         const {id} = req.params;
@@ -505,13 +532,14 @@ app.get("/army/:id", async (req, res) => {
             *
             FROM army
             JOIN game_system ON army.game_system_id = game_system.game_system_id
-            army.army_id = '${id}}'
+            WHERE
+            army.army_id = '${id}'
             ;`
         )
 
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -545,7 +573,7 @@ app.get("/unit", async (req, res) => {
 
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -582,7 +610,7 @@ app.get("/unit/:name", async (req, res) => {
 
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -607,7 +635,7 @@ app.get("/upgrade", async (req, res) => {
 
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -615,7 +643,7 @@ app.get("/upgrade", async (req, res) => {
 // Get a single upgrade
 app.get("/upgrade/:id", async (req, res) => {
     try {
-        const upgradeID = req.params;
+        const {id} = req.params;
 
         const dbQuery = await pool.query(
             `SELECT
@@ -630,19 +658,19 @@ app.get("/upgrade/:id", async (req, res) => {
             LEFT JOIN rule ON rule_a_upgrade.rule_id = rule.rule_id
         
             WHERE
-            a_upgrade.a_upgrade_id = '${upgradeID}'
+            a_upgrade.a_upgrade_id = '${id}'
             ;`
         );
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
 // game system
 
 // Get all game systems // to be tested
-app.get("/army", async (req, res) => {
+app.get("/game_system", async (req, res) => {
     try {
         const dbQuery = await pool.query(
             `SELECT
@@ -660,17 +688,18 @@ app.get("/army", async (req, res) => {
 
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
 // Get a single game system // to be tested
-app.get("/army/:id", async (req, res) => {
+app.get("/game_system/:id", async (req, res) => {
     try {
         const {id} = req.params;
 
         const dbQuery = await pool.query(
-            `*
+            `
+            SELECT *
             FROM game_system
             JOIN gs_unit_structure ON gs_unit_structure.game_system_id = game_system.game_system_id
             JOIN gs_stat ON gs_unit_structure.gs_us_id = gs_stat.gs_us_id
@@ -685,158 +714,186 @@ app.get("/army/:id", async (req, res) => {
 
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err.message);
-    }
-});
-
-
-app.post("/game_system", async (req, res) => {
-    try {
-        const rows = objArrToDbInsertValues(req.body);
-        const dbQuery = await pool.query(
-            `
-            INSERT INTO game_system(game_system_name, game_system_edition, game_system_version) VALUES
-            ${rows}
-            RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
-    } catch (err) {
-        console.error(err.message);
+        console.error(err)
+        res.status(500).json({ error: err.message });
     }
 });
 
 // UPDATE
+
 app.put("/game_system/:id", async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const set = objArrToDbUpdateSet(req.body);
         const dbQuery = await pool.query(
             `
-            UPDATE game_system SET
-            ${set}
-            WHERE
-            game_system.game_system_id = '${id}'
+            UPDATE game_system
+            SET ${set}
+            WHERE game_system_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'Game system not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
-// untested -- auto generated
+
 app.put("/gs_supertype/:id", async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const set = objArrToDbUpdateSet(req.body);
         const dbQuery = await pool.query(
             `
             UPDATE gs_supertype SET
             ${set}
             WHERE
-            gs_supertype.gs_supertype_id = '${id}'
+            gs_supertype.gs_supertype_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'GS_supertype not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.put("/gs_unit_structure/:id", async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const set = objArrToDbUpdateSet(req.body);
         const dbQuery = await pool.query(
             `
             UPDATE gs_unit_structure SET
             ${set}
             WHERE
-            gs_unit_structure.gs_unit_structure_id = '${id}'
+            gs_unit_structure.gs_us_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'gs_unit_structure not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.put("/gs_stat/:id", async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const set = objArrToDbUpdateSet(req.body);
         const dbQuery = await pool.query(
             `
             UPDATE gs_stat SET
             ${set}
             WHERE
-            gs_stat.gs_stat_id = '${id}'
+            gs_stat.gs_stat_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'gs_stat not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.put("/keyword/:id", async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const set = objArrToDbUpdateSet(req.body);
         const dbQuery = await pool.query(
             `
             UPDATE keyword SET
             ${set}
             WHERE
-            keyword.keyword_id = '${id}'
+            keyword.keyword_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'keyword not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.put("/army/:id", async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const set = objArrToDbUpdateSet(req.body);
         const dbQuery = await pool.query(
             `
             UPDATE army SET
             ${set}
             WHERE
-            army.army_id = '${id}'
+            army.army_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'army not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
+
 app.put("/rule/:id", async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const set = objArrToDbUpdateSet(req.body);
         const dbQuery = await pool.query(
             `
             UPDATE rule SET
             ${set}
             WHERE
-            rule.rule_id = '${id}'
+            rule.rule_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'rule not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -849,110 +906,148 @@ app.put("/keyword_rule/:keywordId/:ruleId", async (req, res) => {
             UPDATE keyword_rule SET
             ${set}
             WHERE
-            keyword_id = '${keywordId}' AND rule_id = '${ruleId}'
+            keyword_id = $1 AND rule_id = $2
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [keywordId, ruleId]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'keyword_rule not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.put("/gs_game_mode/:id", async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const set = objArrToDbUpdateSet(req.body);
         const dbQuery = await pool.query(
             `
             UPDATE gs_game_mode SET
             ${set}
             WHERE
-            gs_game_mode.gs_gm_id = '${id}'
+            gs_gm_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'gs_game_mode not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.put("/a_unit/:id", async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const set = objArrToDbUpdateSet(req.body);
         const dbQuery = await pool.query(
             `
             UPDATE a_unit SET
             ${set}
             WHERE
-            a_unit.a_unit_id = '${id}'
+            a_unit_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_unit not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
+
 app.put("/a_upgrade_type/:id", async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const set = objArrToDbUpdateSet(req.body);
         const dbQuery = await pool.query(
             `
             UPDATE a_upgrade_type SET
             ${set}
             WHERE
-            a_upgrade_type.a_ut_id = '${id}'
+            a_ut_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_upgrade_type not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.put("/a_upgrade/:id", async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const set = objArrToDbUpdateSet(req.body);
         const dbQuery = await pool.query(
             `
             UPDATE a_upgrade SET
             ${set}
             WHERE
-            a_upgrade.a_upgrade_id = '${id}'
+            a_upgrade_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_upgrade not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.put("/a_unit_a_upgrade/:a_unit_id/:a_upgrade_id", async (req, res) => {
     try {
-        const {a_unit_id, a_upgrade_id} = req.params;
+        const { a_unit_id, a_upgrade_id} = req.params;
         const set = objArrToDbUpdateSet(req.body);
         const dbQuery = await pool.query(
             `
             UPDATE a_unit_a_upgrade SET
             ${set}
             WHERE
-            a_unit_id = '${a_unit_id}' AND a_upgrade_id = '${a_upgrade_id}'
+            a_unit_id = $1 AND a_upgrade_id = $2
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [a_unit_id, a_upgrade_id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_unit_a_upgrade not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 app.put("/a_statline/:id", async (req, res) => {
     try {
@@ -963,15 +1058,23 @@ app.put("/a_statline/:id", async (req, res) => {
             UPDATE a_statline SET
             ${set}
             WHERE
-            a_statline.a_statline_id = '${id}'
+            a_statline_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_statline not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+
 
 app.put("/a_unit_a_statline/:a_unit_id/:a_statline_id", async (req, res) => {
     try {
@@ -982,13 +1085,19 @@ app.put("/a_unit_a_statline/:a_unit_id/:a_statline_id", async (req, res) => {
             UPDATE a_unit_a_statline SET
             ${set}
             WHERE
-            a_unit_id = '${a_unit_id}' AND a_statline_id = '${a_statline_id}'
+            a_unit_id = $1 AND a_statline_id = $2
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [a_unit_id, a_statline_id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_unit_a_statline not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -1001,14 +1110,19 @@ app.put("/a_unit_a_upgrade_type/:a_unit_id/:a_ut_id", async (req, res) => {
             UPDATE a_unit_a_upgrade_type SET
             ${set}
             WHERE
-            a_unit_id = '${a_unit_id}' AND a_ut_id = '${a_ut_id}'
-            a_unit_a_upgrade_type.a_unit_id = '${id}'
+            a_unit_id = $1 AND a_ut_id = $2
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [a_unit_id, a_ut_id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_unit_a_upgrade_type not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -1021,15 +1135,22 @@ app.put("/keyword_a_unit/:keyword_id/:a_unit_id", async (req, res) => {
             UPDATE keyword_a_unit SET
             ${set}
             WHERE
-            keyword_id = '${keyword_id}' AND a_unit_id = '${a_unit_id}'
+            keyword_id = $1 AND a_unit_id = $2
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [keyword_id, a_unit_id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'keyword_a_unit not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 app.put("/rule_a_upgrade/:rule_id/:a_upgrade_id", async (req, res) => {
     try {
@@ -1040,15 +1161,22 @@ app.put("/rule_a_upgrade/:rule_id/:a_upgrade_id", async (req, res) => {
             UPDATE rule_a_upgrade SET
             ${set}
             WHERE
-            rule_id = '${rule_id}' AND a_upgrade_id = '${a_upgrade_id}'
+            rule_id = $1 AND a_upgrade_id = $2
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [rule_id, a_upgrade_id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'rule_a_upgrade not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 app.put("/rule_a_unit/:rule_id/:a_unit_id", async (req, res) => {
     try {
@@ -1059,15 +1187,22 @@ app.put("/rule_a_unit/:rule_id/:a_unit_id", async (req, res) => {
             UPDATE rule_a_unit SET
             ${set}
             WHERE
-            rule_id = '${rule_id}' AND a_unit = '${a_unit_id}'
+            rule_id = $1 AND a_unit_id = $2
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [rule_id, a_unit_id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'rule_a_unit not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 app.put("/a_statline_gs_stat/:a_statline_id/:gs_stat_id", async (req, res) => {
     try {
@@ -1078,15 +1213,22 @@ app.put("/a_statline_gs_stat/:a_statline_id/:gs_stat_id", async (req, res) => {
             UPDATE a_statline_gs_stat SET
             ${set}
             WHERE
-            a_statline_id = '${a_statline_id}' AND gs_stat_id = '${gs_stat_id}'
+            a_statline_id = $1 AND gs_stat_id = $2
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [a_statline_id, gs_stat_id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_statline_gs_stat not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 app.put("/keyword_a_upgrade/:keyword_id/:a_upgrade_id", async (req, res) => {
     try {
@@ -1097,13 +1239,19 @@ app.put("/keyword_a_upgrade/:keyword_id/:a_upgrade_id", async (req, res) => {
             UPDATE keyword_a_upgrade SET
             ${set}
             WHERE
-            keyword_id = '${keyword_id}' AND a_upgrade_id = '${a_upgrade_id}'
+            keyword_id = $1 AND a_upgrade_id = $2
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [keyword_id, a_upgrade_id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'keyword_a_upgrade not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -1116,15 +1264,22 @@ app.put("/army_list/:id", async (req, res) => {
             UPDATE army_list SET
             ${set}
             WHERE
-            army_list.army_list_id = '${id}'
+            army_list_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'army_list not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 app.put("/al_force/:id", async (req, res) => {
     try {
@@ -1135,15 +1290,23 @@ app.put("/al_force/:id", async (req, res) => {
             UPDATE al_force SET
             ${set}
             WHERE
-            al_force.al_force_id = '${id}'
+            al_force_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'al_force not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+
 
 app.put("/al_unit/:id", async (req, res) => {
     try {
@@ -1154,16 +1317,21 @@ app.put("/al_unit/:id", async (req, res) => {
             UPDATE al_unit SET
             ${set}
             WHERE
-            al_unit.al_unit_id = '${id}'
+            al_unit_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'al_unit not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
-
 app.put("/al_upgrade/:id", async (req, res) => {
     try {
         const {id} = req.params;
@@ -1173,454 +1341,678 @@ app.put("/al_upgrade/:id", async (req, res) => {
             UPDATE al_upgrade SET
             ${set}
             WHERE
-            al_upgrade.al_upgrade_id = '${id}'
+            al_upgrade_id = $1
             RETURNING *;
-            `
-        )
-        res.json(dbQuery.rows);
+            `,
+            [id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'al_upgrade not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+
+app.put("/al_unit_a_unit_a_statline_quantity/:al_unit_id/:a_unit_id/:a_statline_id", async (req, res) => {
+    try {
+        const {al_unit_id, a_unit_id, a_statline_id} = req.params;
+        const set = objArrToDbUpdateSet(req.body);
+        const dbQuery = await pool.query(
+            `
+            UPDATE al_unit_a_unit_a_statline_quantity SET
+            ${set}
+            WHERE
+            al_unit_id = $1 AND a_unit_id = $2 AND a_statline_id = $3
+            RETURNING *;
+            `,
+            [al_unit_id, a_unit_id, a_statline_id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'al_unit_a_unit_a_statline_quantity not found' });
+        } else {
+            res.json(dbQuery.rows)
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
 
 //DELETE
 app.delete("/game_system/:id", async (req, res) => {
     try {
-        const {id} = req.params;
-
+        const { id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE game_system
-            WHERE game_system_id = '${id}'
-            ;`
-        )
+            DELETE FROM game_system
+            WHERE game_system_id = $1
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'Game system not found' });
+        } else {
+            res.json({ message: 'Game system deleted successfully', deletedGameSystem: dbQuery.rows[0] });
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
-// untested
+
 app.delete("/gs_supertype/:id", async (req, res) => {
     try {
-        const {id} = req.params;
-
+        const { id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE gs_supertype
-            WHERE gs_supertype_id = '${id}'
-            ;`
-        )
+            DELETE FROM gs_supertype
+            WHERE gs_supertype_id = $1
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'gs_supertype not found' });
+        } else {
+            // res.json({ message: 'gs_supertype deleted successfully', deletedGameSystem: dbQuery.rows[0] });
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/gs_unit_structure/:id", async (req, res) => {
     try {
-        const {id} = req.params;
-
+        const { id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE gs_unit_structure
-            WHERE gs_us_id = '${id}'
-            ;`
-        )
+            DELETE FROM gs_unit_structure
+            WHERE gs_us_id = $1
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'gs_unit_structure not found' });
+        } else {
+            // res.json({ message: 'gs_supertype deleted successfully', deletedGameSystem: dbQuery.rows[0] });
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/gs_stat/:id", async (req, res) => {
     try {
-        const {id} = req.params;
-
+        const { id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE gs_stat
-            WHERE gs_stat_id = '${id}'
-            ;`
-        )
+            DELETE FROM gs_stat
+            WHERE gs_stat_id = $1
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'gs_stat not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
+
 app.delete("/keyword/:id", async (req, res) => {
     try {
-        const {id} = req.params;
-
+        const { id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE keyword
-            WHERE keyword_id = '${id}'
-            ;`
-        )
+            DELETE FROM keyword
+            WHERE keyword_id = $1
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'keyword not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/army/:id", async (req, res) => {
     try {
-        const {id} = req.params;
-
+        const { id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE army
-            WHERE army_id = '${id}'
-            ;`
-        )
+            DELETE FROM army
+            WHERE army_id = $1
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'army not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
+
 app.delete("/rule/:id", async (req, res) => {
     try {
-        const {id} = req.params;
-
+        const { id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE rule
-            WHERE rule_id = '${id}'
-            ;`
-        )
+            DELETE FROM rule
+            WHERE rule_id = $1
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'rule not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/keyword_rule/:keyword_id/:rule_id", async (req, res) => {
     try {
-        const {keyword_id, rule_id} = req.params;
-
+        const { keyword_id, rule_id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE keyword_rule
-            WHERE 
-            keyword_id = '${keyword_id}' AND rule_id = '${rule_id}'
-            ;`
-        )
+            DELETE FROM keyword_rule
+            WHERE
+            keyword_id = $1 AND rule_id = $2
+            RETURNING *;
+            `,
+            [keyword_id, rule_id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'keyword_rule not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/gs_game_mode/:id", async (req, res) => {
     try {
-        const {id} = req.params;
-
+        const { id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE gs_game_mode
-            WHERE gs_gm_id = '${id}'
-            ;`
-        )
+            DELETE FROM gs_game_mode
+            WHERE
+            gs_gm_id = $1 
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'gs_game_mode not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/a_unit/:id", async (req, res) => {
     try {
-        const {id} = req.params;
-
+        const { id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE a_unit
-            WHERE a_unit_id = '${id}'
-            ;`
-        )
+            DELETE FROM a_unit
+            WHERE
+            a_unit_id = $1 
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_unit not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/a_upgrade_type/:id", async (req, res) => {
     try {
-        const {id} = req.params;
-
+        const { id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE a_upgrade_type
-            WHERE a_ut_id = '${id}'
-            ;`
-        )
+            DELETE FROM a_upgrade_type
+            WHERE
+            a_ut_id = $1 
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_upgrade_type not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
+
 app.delete("/a_upgrade/:id", async (req, res) => {
     try {
-        const {id} = req.params;
-
+        const { id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE a_upgrade
-            WHERE a_upgrade_id = '${id}'
-            ;`
-        )
+            DELETE FROM a_upgrade
+            WHERE
+            a_upgrade_id = $1 
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_upgrade not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/a_unit_a_upgrade/:a_unit_id/:a_upgrade_id", async (req, res) => {
     try {
-        const {a_unit_id, a_upgrade_id} = req.params;
-
+        const { a_unit_id, a_upgrade_id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE a_unit_a_upgrade
-            WHERE 
-            a_unit_id = '${a_unit_id}' AND a_upgrade_id = '${a_upgrade_id}'
-            ;`
-        )
+            DELETE FROM a_unit_a_upgrade
+            WHERE
+            a_unit_id = $1 AND a_upgrade_id = $2
+            RETURNING *;
+            `,
+            [a_unit_id, a_upgrade_id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_unit_a_upgrade not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/a_statline/:id", async (req, res) => {
     try {
-        const {id} = req.params;
-
+        const { id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE a_statline
-            WHERE a_statline_id = '${id}'
-            ;`
-        )
+            DELETE FROM a_statline
+            WHERE
+            a_statline_id = $1 
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_statlinenot found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/a_unit_a_statline/:a_unit_id/:a_statline_id", async (req, res) => {
     try {
-        const {a_unit_id, a_statline_id} = req.params;
-
+        const { a_unit_id, a_statline_id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE a_unit_a_statline
-            WHERE 
-            a_unit_id = '${a_unit_id}' AND a_statline_id = '${a_statline_id}'
-            ;`
-        )
+            DELETE FROM a_unit_a_statline
+            WHERE
+            a_unit_id = $1 AND a_statline_id = $2
+            RETURNING *;
+            `,
+            [a_unit_id, a_statline_id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_unit_a_statline not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/a_unit_a_upgrade_type/:a_unit_id/:a_ut_id", async (req, res) => {
     try {
-        const {a_unit_id, a_ut_id} = req.params;
-
+        const { a_unit_id, a_ut_id} = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE a_unit_a_upgrade_type
-            WHERE 
-            a_unit_id = '${a_unit_id}' AND a_ut_id = '${a_ut_id}'
-            ;`
-        )
+            DELETE FROM a_unit_a_upgrade_type
+            WHERE
+            a_unit_id = $1 AND a_ut_id = $2
+            RETURNING *;
+            `,
+            [a_unit_id, a_ut_id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_unit_a_upgrade_type not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/keyword_a_unit/:keyword_id/:a_unit_id", async (req, res) => {
     try {
-        const {keyword_id, a_unit_id} = req.params;
-
+        const { keyword_id, a_unit_id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE keyword_a_unit
-            WHERE 
-            keyword_id = '${keyword_id}' AND a_unit_id = '${a_unit_id}' 
-            ;`
-        )
+            DELETE FROM keyword_a_unit
+            WHERE
+            keyword_id = $1 AND a_unit_id = $2 
+            RETURNING *;
+            `,
+            [keyword_id, a_unit_id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'keyword_a_unit not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/rule_a_upgrade/:rule_id/:a_upgrade_id", async (req, res) => {
     try {
-        const {rule_id, a_upgrade_id} = req.params;
-
+        const { rule_id, a_upgrade_id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE rule_a_upgrade
-            WHERE 
-            rule_id = '${rule_id}' AND a_upgrade_id = '${a_upgrade_id}' 
-            ;`
-        )
+            DELETE FROM rule_a_upgrade
+            WHERE
+            rule_id = $1 AND a_upgrade_id = $2
+            RETURNING *;
+            `,
+            [rule_id, a_upgrade_id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'rule_a_upgrade not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/rule_a_unit/:rule_id/:a_unit_id", async (req, res) => {
     try {
-        const {rule_id, a_unit_id} = req.params;
-
+        const { rule_id, a_unit_id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE rule_a_unit
-            WHERE 
-            rule_id = '${rule_id}' AND a_unit_id = '${a_unit_id}' 
-            ;`
-        )
+            DELETE FROM rule_a_unit
+            WHERE
+            rule_id = $1 AND a_unit_id = $2
+            RETURNING *;
+            `,
+            [rule_id, a_unit_id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'rule_a_unit not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/a_statline_gs_stat/:a_statline_id/:gs_stat_id", async (req, res) => {
     try {
-        const {a_statline_id, gs_stat_id} = req.params;
-
+        const { a_statline_id, gs_stat_id } = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE a_statline_gs_stat
-            WHERE 
-            a_statline_id = '${a_statline_id}' AND gs_stat_id = '${gs_stat_id}' 
-            ;`
-        )
+            DELETE FROM a_statline_gs_stat
+            WHERE
+            a_statline_id = $1 AND gs_stat_id = $2
+            RETURNING *;
+            `,
+            [a_statline_id, gs_stat_id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'a_statline_gs_stat not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/keyword_a_upgrade/:keyword_id/:a_upgrade_id", async (req, res) => {
     try {
-        const {keyword_id, a_upgrade_id} = req.params;
-
+        const { keyword_id, a_upgrade_id} = req.params;
         const dbQuery = await pool.query(
             `
-            DELETE keyword_a_upgrade
-            WHERE 
-            keyword_id = '${keyword_id}' AND a_upgrade_id = '${a_upgrade_id}' 
-            ;`
-        )
+            DELETE FROM keyword_a_upgrade
+            WHERE
+            keyword_id = $1 AND a_upgrade_id = $2
+            RETURNING *;
+            `,
+            [keyword_id, a_upgrade_id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'keyword_a_upgrade not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/army_list/:id", async (req, res) => {
     try {
         const {id} = req.params;
-
         const dbQuery = await pool.query(
             `
-            DELETE army_list
-            WHERE army_list_id = '${id}'
-            ;`
-        )
+            DELETE FROM army_list
+            WHERE
+            army_list_id = $1
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'army_list not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/al_force/:id", async (req, res) => {
     try {
         const {id} = req.params;
-
         const dbQuery = await pool.query(
             `
-            DELETE al_force
-            WHERE al_force_id = '${id}'
-            ;`
-        )
+            DELETE FROM al_force
+            WHERE
+            al_force_id = $1
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'al_force not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/al_unit/:id", async (req, res) => {
     try {
         const {id} = req.params;
-
         const dbQuery = await pool.query(
             `
-            DELETE al_unit
-            WHERE al_unit_id = '${id}'
-            ;`
-        )
+            DELETE FROM al_unit
+            WHERE
+            al_unit_id = $1
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'al_unit not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.delete("/al_upgrade/:id", async (req, res) => {
     try {
         const {id} = req.params;
-
         const dbQuery = await pool.query(
             `
-            DELETE al_upgrade
-            WHERE al_upgrade_id = '${id}'
-            ;`
-        )
+            DELETE FROM al_upgrade
+            WHERE
+            al_upgrade_id = $1
+            RETURNING *;
+            `,
+            [id]
+        );
 
-        res.json(dbQuery.rows);
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'al_upgrade not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
     } catch (err) {
-        console.error(err.message);
+        
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.delete("/al_unit_a_unit_a_statline_quantity/:al_unit_id/:a_unit_id/:a_statline_id", async (req, res) => {
+    try {
+        const {al_unit_id, a_unit_id, a_statline_id} = req.params;
+        const dbQuery = await pool.query(
+            `
+            DELETE FROM al_unit_a_unit_a_statline_quantity
+            WHERE
+            al_unit_id = $1 AND a_unit_id = $2 AND a_statline_id = $3
+            RETURNING *;
+            `,
+            [al_unit_id, a_unit_id, a_statline_id]
+        );
+
+        if (dbQuery.rowCount === 0) {
+            res.status(404).json({ error: 'al_unit_a_unit_a_statline_quantity not found' });
+        } else {
+            res.json(dbQuery.rows);
+        }
+    } catch (err) {
+        
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+// PDF
+
+app.get('/pdf', async (req, res) => {
+    try {
+        const pdfStream = await createPdf();
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="output.pdf"');
+        pdfStream.pipe(res);
+    } catch (error) {
+        console.error('Error creating PDF:', error);
+        res.status(500).send('Internal Server Error');
     }
 });
 
 
+const server = app.listen(4000, () => console.log("server on localhost 4000"));
 
-
-app.listen(4000, () => console.log("server on localhost 4000"));
+module.exports = server;
 
 // // for select specific should be /something/:id, when calling the actuall call should include whatever ID you want to find http://localhost:4000/something/actualID

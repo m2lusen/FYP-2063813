@@ -1,0 +1,8 @@
+insert al_force
+insert al_unit
+insert al_upgrade
+insert AL_unit_statline_quantity
+
+get army list
+get units
+get upgrades

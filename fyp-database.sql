@@ -225,14 +225,14 @@ DROP TABLE
 
 CREATE TABLE
     gs_game_mode(
-        gs_gM_id SMALLSERIAL PRIMARY KEY NOT NULL,
+        gs_gm_id SMALLSERIAL PRIMARY KEY NOT NULL,
         game_system_id SMALLINT NOT NULL REFERENCEs game_system(game_system_id),
-        gs_gM_name VARCHAR(25) NOT NULL,
-        gs_gM_point_upper SMALLINT,
-        gs_gM_point_lower SMALLINT
+        gs_gm_name VARCHAR(25) NOT NULL,
+        gs_gm_point_upper SMALLINT,
+        gs_gm_point_lower SMALLINT
     );
 
-INSERT INTO gs_game_mode(game_system_id, gs_gM_name) VALUES
+INSERT INTO gs_game_mode(game_system_id, gs_gm_name) VALUES
 (1, 'Open');
 
 DROP TABLE
@@ -638,10 +638,12 @@ CREATE TABLE
     army_list(
         army_list_id SMALLSERIAL PRIMARY KEY NOT NULL,
         game_system_id SMALLINT NOT NULL REFERENCEs game_system(game_system_id),
-        gs_gM_id SMALLINT NOT NULL REFERENCEs gs_game_mode(gs_gM_id),
+        gs_gm_id SMALLINT NOT NULL REFERENCEs gs_game_mode(gs_gm_id),
         army_list_name VARCHAR(25) NOT NULL
     );
 
+INSERT INTO army_list(game_system_id, gs_gm_id, army_list_name) VALUES
+(1, 1, 'Mythic-Nations');
 
 
 DROP TABLE
@@ -654,6 +656,8 @@ CREATE TABLE
         army_id SMALLINT NOT NULL REFERENCEs army(army_id)
     );
 
+INSERT INTO al_force(army_list_id, army_id) VALUES
+(1, 1);
 
 
 DROP TABLE
@@ -668,6 +672,10 @@ CREATE TABLE
         al_unit_color VARCHAR(25)
     );
 
+INSERT INTO al_unit(al_force_id,a_unit_id, al_unit_name, al_unit_color) VALUES
+(1, 1, 'Ian', 'ffffff'),
+(1, 4, 'Mohawk', NULL),
+(1, 5, 'Seneca', NULL);
 
 
 DROP TABLE
@@ -675,8 +683,31 @@ DROP TABLE
 
 CREATE TABLE
     al_upgrade(
-        al_chose_upgrade SMALLSERIAL PRIMARY KEY NOT NULL,
+        al_upgrade_id SMALLSERIAL PRIMARY KEY NOT NULL,
         al_unit_id SMALLINT NOT NULL REFERENCEs al_unit(al_unit_id), 
         a_upgrade_id SMALLINT NOT NULL REFERENCEs a_upgrade(a_upgrade_id),
         a_ut_id SMALLINT NOT NULL REFERENCEs  a_upgrade_type(a_ut_id)
     );
+
+INSERT INTO al_upgrade(al_unit_id, a_upgrade_id, a_ut_id) VALUES
+(1, 1, 1);
+
+DROP TABLE 
+    IF EXISTS al_unit_a_unit_a_statline_quantity;
+
+CREATE TABLE
+    al_unit_a_unit_a_statline_quantity(
+        al_unit_id SMALLINT NOT NULL REFERENCES al_unit(al_unit_id),
+        a_unit_id SMALLINT NOT NULL REFERENCES a_unit(a_unit_id),
+        a_statline_id SMALLINT NOT NULL REFERENCES a_statline(a_statline_id),
+        quantity SMALLINT NOT NULL,
+        PRIMARY KEY (al_unit_id, a_unit_id, a_statline_id)
+    );
+
+INSERT INTO al_unit_a_unit_a_statline_quantity(al_unit_id, a_unit_id, a_statline_id, quantity) VALUES
+(1, 1, 1, 1),
+(1, 1, 2, 2),
+(2, 4, 6, 1),
+(2, 4, 2, 4),
+(3, 5, 7, 1),
+(3, 5, 8, 4);

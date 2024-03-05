@@ -1,0 +1,37 @@
+Get game system
+
+INSERT Army
+INSERT GS_supertype
+INSERT A_unit
+INSERT rule
+INSERT A_statline
+INSERT A_upgrade
+INSERT keyword
+INSERT A_upgrade_type
+
+INSERT A_upgrade_rule
+INSERT A_statline_GS_stat
+INSERT A_upgrade_keyword
+INSERT keyword_rule
+INSERT A_unit_A_upgrade
+INSERT a_unit_keyword
+INSERT A_unit_A_statline
+INSERT a_unit_rule	
+
+UPDATE Army
+UPDATE GS_supertype
+UPDATE A_unit
+UPDATE rule
+UPDATE A_statline
+UPDATE A_upgrade
+UPDATE keyword
+UPDATE A_upgrade_type
+
+UPDATE A_upgrade_rule
+UPDATE A_statline_GS_stat
+UPDATE A_upgrade_keyword
+UPDATE keyword_rule
+UPDATE A_unit_A_upgrade
+UPDATE a_unit_keyword
+UPDATE A_unit_A_statline
+UPDATE a_unit_rule	

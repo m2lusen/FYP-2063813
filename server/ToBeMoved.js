@@ -58,7 +58,6 @@ function createObjFromDB(rawData, dataArray) {
         let elements = [];
         for (let j = 0; j < processedData[i].length-1; j++) {
             elements.push(processedData[i][j]);
-            console.log(elements)
         }
 
         if (!Obj[ObjName]) {
@@ -80,7 +79,7 @@ function createUnitObj(rawData, Obj) {
     let keywords = createArrayFromDB(rawData, ['keyword_name']);
     let rules = createArrayFromDB(rawData, ['rule_name', 'rule_description']);
 
-    let statblock = createObjFromDB(rawData, ['gs_stat_acronyme', 'stat_value', 'a_statline_name']);
+    let statblock = createObjFromDB(rawData, ['gs_stat_acronyme', 'stat_value', 'a_statline_name']); 
     let upgrades = createObjFromDB(rawData, ['a_upgrade_name', 'a_upgrade_pc', 'a_ut_name']); // Temporary line, in future post to db query for a_upgrade, and then use createUpgradeObj to process this
 
     Obj[unitName] = [unitName, pointCost, supertype, statblock, keywords, upgrades, rules];
@@ -104,34 +103,172 @@ function createUpgradeObj(rawData, Obj) {
     return Obj;
 }
 
+// Records all points per unit, returns an Obj
+function calculatePoints(rawData) {
+    const uniqueUnits = {};
+
+    rawData.forEach((item) => {
+        const { al_unit_id, al_upgrade_id, a_upgrade_id, a_unit_id, a_statline_id, quantity, a_statline_min, a_statline_point_cost, a_upgrade_pc } = item;
+
+        if (!uniqueUnits[al_unit_id]) {
+            uniqueUnits[al_unit_id] = [al_unit_id, a_unit_id, item.a_unit_pc, [], []];
+        }
+
+        const upgradeKey = `${al_upgrade_id}_${a_upgrade_id}`;
+        if(al_upgrade_id !== null){
+            if (!uniqueUnits[al_unit_id][3][upgradeKey]) {
+                uniqueUnits[al_unit_id][3][upgradeKey] = a_upgrade_pc;
+            }
+        }
+
+        const statlineKey = `${al_unit_id}_${a_unit_id}_${a_statline_id}`;
+        if (!uniqueUnits[al_unit_id][4][statlineKey]) {
+            uniqueUnits[al_unit_id][4][statlineKey] = (quantity - a_statline_min) * a_statline_point_cost;
+        }
+    });
+
+    return uniqueUnits;
+}
+
+function calculateUnitPointCost(points, al_unit_id){
+    const arr = points[al_unit_id];
+
+    let sum = arr[2];
+
+    for (const key in arr[3]) {
+        sum += arr[3][key];
+    }
+    for (const key in arr[4]) {
+        sum += arr[4][key];
+    }
+
+    return sum;
+}
+
+function calculateTotalPointCost(points){
+    let sum = 0;
+
+    for (const al_unit_id in points) {
+        sum = sum + calculateUnitPointCost(points, al_unit_id);
+    }
+
+    return sum;
+}
+
+function createArrayFromDBWithoutCheck(rawData, dataArray) {
+    let proccessedData = [];
+    for (let i = 0; i < rawData.length; i++) {
+        let entry = [];
+        for (let j = 0; j < dataArray.length; j++) {
+            let value = rawData[i][dataArray[j]];
+
+            entry.push(value);
+        }
+        if (!checkIfStatUsed(proccessedData, entry[0])) {
+            proccessedData.push(entry);
+        }
+    }
+    return proccessedData ;
+}
+
+function createObjFromDBWithoutCheck(rawData, dataArray) {
+    let Obj = {};
+    let processedData = createArrayFromDBWithoutCheck(rawData, dataArray);
+
+    for (let i = 0; i < processedData.length; i++) {
+        let ObjName = processedData[i][processedData[i].length-1];
+
+        let elements = [];
+        for (let j = 0; j < processedData[i].length; j++) {
+            elements.push(processedData[i][j]);
+        }
+
+        if (!Obj[ObjName]) {
+            Obj[ObjName] = [];
+        }
+
+        Obj[ObjName].push(elements);
+    }
+
+    return Obj;
+}
+
+
+function createAlUnit(rawData) {
+    let arr = createArrayFromDBWithoutCheck(rawData, ['al_unit_id', 'al_unit_name', 'al_unit_color', 'a_unit_name', 'a_unit_pc', 'a_unit_limit_per_army']);
+
+    const uniqueAlUnitIds = [...new Set(rawData.map(item => item.al_unit_id))];
+    const subsets = uniqueAlUnitIds.map(al_unit_id => rawData.filter(item => item.al_unit_id === al_unit_id));
+    subsets.forEach((item, index) => {
+        arr[index].push(createObjFromDBWithoutCheck(item, ['a_upgrade_id', 'a_ut_id', 'a_upgrade_pc', 'a_upgrade_name']))
+        arr[index].push(createObjFromDBWithoutCheck(item, ['a_statline_id', 'quantity', 'a_statline_min', 'a_statline_max', 'a_statline_point_cost', 'a_statline_name']))
+    })
+    return arr;
+}
+
+function createSupertype(rawData) {
+    let arr = createArrayFromDBWithoutCheck(rawData, ['gs_supertype_id'])// SUPERTYPE
+
+    const uniqueSupertypeIds = [...new Set(rawData.map(item => item.gs_supertype_id))];
+    const subsets = uniqueSupertypeIds.map(gs_supertype_id => rawData.filter(item => item.gs_supertype_id === gs_supertype_id));
+    subsets.forEach((item, index) => {
+        arr[index].push(createAlUnit(item));
+    })
+
+    console.log(arr)
+    return arr;
+}
+
+function createForce(rawData) {
+    let arr = createArrayFromDBWithoutCheck(rawData, ['al_force_id', 'army_id', 'army_name', 'army_edition', 'army_version'])// FORCE
+
+    const uniqueForceIds = [...new Set(rawData.map(item => item.al_force_id))];
+    const subsets = uniqueForceIds.map(al_force_id => rawData.filter(item => item.al_force_id === al_force_id));
+    subsets.forEach((item, index) => {
+        arr[index].push(createSupertype(item));
+    })
+    
+    return arr;
+}
+
 
 const dbQuery = `
 
 SELECT
 *
-FROM a_upgrade
-JOIN a_upgrade_type ON a_upgrade.a_ut_id = a_upgrade_type.a_ut_id 
+FROM army_list
+JOIN gs_game_mode ON army_list.gs_gM_id = gs_game_mode.gs_gM_id
+JOIN game_system ON army_list.game_system_id = game_system.game_system_id
 
-LEFT JOIN keyword_a_upgrade ON a_upgrade.a_upgrade_id = keyword_a_upgrade.a_upgrade_id
-LEFT JOIN keyword ON keyword_a_upgrade.keyword_id = keyword.keyword_id
+JOIN al_force ON army_list.army_list_id = al_force.army_list_id
+JOIN army ON al_force.army_id = army.army_id
 
-LEFT JOIN rule_a_upgrade ON a_upgrade.a_upgrade_id = rule_a_upgrade.a_upgrade_id
-LEFT JOIN rule ON rule_a_upgrade.rule_id = rule.rule_id
+LEFT JOIN al_unit ON al_force.al_force_id = al_unit.al_force_id
+LEFT JOIN a_unit ON al_unit.a_unit_id = a_unit.a_unit_id
 
-WHERE
-a_upgrade.a_upgrade_id = 1
+LEFT JOIN al_upgrade ON  al_unit.al_unit_id = al_upgrade.al_unit_id
+LEFT JOIN a_upgrade ON al_upgrade.a_upgrade_id = a_upgrade.a_upgrade_id
+
+LEFT JOIN al_unit_a_unit_a_statline_quantity ON al_unit.al_unit_id = al_unit_a_unit_a_statline_quantity.al_unit_id
+LEFT JOIN a_unit_a_statline ON al_unit_a_unit_a_statline_quantity.a_statline_id = a_unit_a_statline.a_statline_id AND al_unit_a_unit_a_statline_quantity.a_unit_id = a_unit_a_statline.a_unit_id
+LEFT JOIN a_statline ON al_unit_a_unit_a_statline_quantity.a_statline_id = a_statline.a_statline_id
 ;
-
-
-
 `;
 // dbQuery becomes wharever PSQL code needs to be executed
 
+
 pool.query(dbQuery).then((response) => {
-    console.log(response.rows);
-    console.log(createUpgradeObj(response.rows, {}));
+    // console.log(response.rows);
+    // console.log(calculatePoints(response.rows))
+    // console.log(calculateUnitPointCost(calculatePoints(response.rows), 1))
+    // console.log(calculateTotalPointCost(calculatePoints(response.rows)))
+    console.log(createForce(response.rows));
 }).catch((err) => {
     console.log(err);
 });
 
+
+
 module.exports = pool;
+
+// RETURN TOO - Issue with the query for army list where  mohawk warriors at cost 13 and cost 10  when mohawk warrior picked up
