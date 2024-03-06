@@ -107,7 +107,7 @@ const AllUnits = () => {
 
     return (
         <Fragment>
-        <h1>All Units</h1>
+            <h1>All Units</h1>
         </Fragment>
     );
 };

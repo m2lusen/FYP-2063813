@@ -1,20 +1,17 @@
 import React, { Fragment, useState } from "react";
 
-const PostAStatlineGsStat = () => {
-    const [aStatlineId, setAStatlineId] = useState(null);
-    const [gsStatId, setGsStatId] = useState(null);
-    const [statValue, setStatValue] = useState(null);
-
+const PostKeywordAUnit = () => {
+    const [keywordId, setKeywordId] = useState(null);
+    const [aUnitId, setAUnitId] = useState(null);
 
     const onSubmitForm = async (e) => {
         e.preventDefault(); // stops refreshing
         try {
             const body = {
-                "a_statline_id": [aStatlineId],
-                "gs_stat_id": [gsStatId],
-                "stat_value": [statValue]
+                "keyword_id": [keywordId],
+                "a_unit_id": [aUnitId]
             };
-            const response = await fetch("http://localhost:4000/a_statline_gs_stat",{
+            const response = await fetch("http://localhost:4000/keyword_a_unit",{
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(body)
@@ -32,9 +29,9 @@ const PostAStatlineGsStat = () => {
 
     return (
         <Fragment>
-            <h1>PostAStatlineGsStat</h1>
+            <h1>PostKeywordAUnit</h1>
         </Fragment>
     );
 };
 
-export default PostAStatlineGsStat;
+export default PostKeywordAUnit;

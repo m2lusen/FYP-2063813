@@ -1,12 +1,4 @@
 
-// INSERT A_upgrade_keyword
-// INSERT keyword_rule
-// INSERT A_unit_A_upgrade
-// INSERT a_unit_keyword
-// INSERT A_unit_A_statline
-// INSERT a_unit_rule	
-
-
 // possible is a Auto missing, a_upgrade_rule was noted, however is not a real intersection table
 import React, { Fragment, useState } from "react";
 

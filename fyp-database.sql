@@ -18,7 +18,7 @@ DROP TABLE
 CREATE TABLE
     gs_supertype(
         gs_supertype_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        game_system_id SMALLINT NOT NULL REFERENCES game_system(game_system_id),
+        game_system_id SMALLINT NOT NULL REFERENCES game_system(game_system_id) ON DELETE CASCADE,
         gs_supertype_name VARCHAR(25) NOT NULL,
         gs_supertype_upper SMALLINT,
         gs_supertype_lower SMALLINT
@@ -39,7 +39,7 @@ DROP TABLE
 CREATE TABLE
     gs_unit_structure(
         gs_us_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        game_system_id SMALLINT NOT NULL REFERENCEs game_system(game_system_id)
+        game_system_id SMALLINT NOT NULL REFERENCEs game_system(game_system_id) ON DELETE CASCADE
     );
 
 INSERT INTO gs_unit_structure(game_system_id) VALUES
@@ -51,7 +51,7 @@ DROP TABLE
 CREATE TABLE
     gs_stat(
         gs_stat_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        gs_us_id SMALLINT NOT NULL REFERENCEs gs_unit_structure(gs_us_id),
+        gs_us_id SMALLINT NOT NULL REFERENCEs gs_unit_structure(gs_us_id) ON DELETE CASCADE,
         gs_stat_name VARCHAR(25) NOT NULL,
         gs_stat_acronyme VARCHAR(4) NOT NULL,
         gs_stat_upper SMALLINT,
@@ -73,7 +73,7 @@ DROP TABLE
 CREATE TABLE
     keyword(
         keyword_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        gs_us_id SMALLINT NOT NULL REFERENCEs gs_unit_structure(gs_us_id),
+        gs_us_id SMALLINT NOT NULL REFERENCEs gs_unit_structure(gs_us_id) ON DELETE CASCADE,
         keyword_name VARCHAR(25) NOT NULL
     );
 
@@ -117,7 +117,7 @@ DROP TABLE
 CREATE TABLE
     army(
         army_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        game_system_id SMALLINT NOT NULL REFERENCEs game_system(game_system_id),
+        game_system_id SMALLINT NOT NULL REFERENCEs game_system(game_system_id) ON DELETE CASCADE,
         army_name VARCHAR(25) NOT NULL,
         army_edition VARCHAR(25) NOT NULL,
         army_version SMALLINT NOT NULL
@@ -135,8 +135,8 @@ DROP TABLE
 CREATE TABLE
     rule(
         rule_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        game_system_id SMALLINT REFERENCEs game_system(game_system_id),
-        army_id SMALLINT REFERENCES army(army_id),
+        game_system_id SMALLINT REFERENCEs game_system(game_system_id) ON DELETE CASCADE,
+        army_id SMALLINT REFERENCES army(army_id) ON DELETE CASCADE,
         rule_name VARCHAR(25) NOT NULL,
         rule_description VARCHAR(250) NOT NULL
     );
@@ -181,8 +181,8 @@ DROP TABLE
 
 CREATE TABLE
     keyword_rule(
-        rule_id SMALLINT NOT NULL REFERENCEs rule(rule_id),
-        keyword_id SMALLINT NOT NULL REFERENCEs keyword(keyword_id),
+        rule_id SMALLINT NOT NULL REFERENCEs rule(rule_id) ON DELETE CASCADE,
+        keyword_id SMALLINT NOT NULL REFERENCEs keyword(keyword_id) ON DELETE CASCADE,
         PRIMARY KEY (rule_id, keyword_id)
     );
 
@@ -226,7 +226,7 @@ DROP TABLE
 CREATE TABLE
     gs_game_mode(
         gs_gm_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        game_system_id SMALLINT NOT NULL REFERENCEs game_system(game_system_id),
+        game_system_id SMALLINT NOT NULL REFERENCEs game_system(game_system_id) ON DELETE CASCADE,
         gs_gm_name VARCHAR(25) NOT NULL,
         gs_gm_point_upper SMALLINT,
         gs_gm_point_lower SMALLINT
@@ -241,8 +241,8 @@ DROP TABLE
 CREATE TABLE
     a_unit(
         a_unit_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        army_id SMALLINT NOT NULL REFERENCEs army(army_id),
-        gs_supertype_id SMALLINT NOT NULL REFERENCEs gs_supertype(gs_supertype_id),
+        army_id SMALLINT NOT NULL REFERENCEs army(army_id) ON DELETE CASCADE,
+        gs_supertype_id SMALLINT NOT NULL REFERENCEs gs_supertype(gs_supertype_id) ON DELETE CASCADE,
         a_unit_name VARCHAR(250) NOT NULL,
         a_unit_PC SMALLINT NOT NULL,
         a_unit_limit_per_army SMALLINT
@@ -281,7 +281,7 @@ DROP TABLE
 CREATE TABLE
     a_upgrade(
         a_upgrade_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        a_ut_id SMALLINT NOT NULL REFERENCES a_upgrade_type(a_ut_id),
+        a_ut_id SMALLINT NOT NULL REFERENCES a_upgrade_type(a_ut_id) ON DELETE CASCADE,
         a_upgrade_PC SMALLINT NOT NULL,
         a_upgrade_name VARCHAR(25) NOT NULL
     );
@@ -304,8 +304,8 @@ DROP TABLE
 
 CREATE TABLE
     a_unit_a_upgrade(
-        a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id),
-        a_upgrade_id SMALLINT NOT NULL REFERENCEs a_upgrade(a_upgrade_id),
+        a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id) ON DELETE CASCADE,
+        a_upgrade_id SMALLINT NOT NULL REFERENCEs a_upgrade(a_upgrade_id) ON DELETE CASCADE,
         PRIMARY KEY (a_unit_id, a_upgrade_id)
     );
 
@@ -354,8 +354,8 @@ DROP TABLE
 
 CREATE TABLE
     a_unit_a_statline(
-        a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id),
-        a_statline_id SMALLINT REFERENCEs a_statline(a_statline_id),
+        a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id) ON DELETE CASCADE,
+        a_statline_id SMALLINT REFERENCEs a_statline(a_statline_id) ON DELETE CASCADE,
         a_statline_min SMALLINT NOT NULL,
         a_statline_max SMALLINT NOT NULL,
         a_statline_point_cost SMALLINT,
@@ -383,8 +383,8 @@ DROP TABLE
 
 CREATE TABLE
     a_unit_a_upgrade_type(
-        a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id),
-        a_ut_id SMALLINT NOT NULL REFERENCEs a_upgrade_type(a_ut_id),
+        a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id) ON DELETE CASCADE,
+        a_ut_id SMALLINT NOT NULL REFERENCEs a_upgrade_type(a_ut_id) ON DELETE CASCADE,
         PRIMARY KEY (a_unit_id, a_ut_id)
     );
 
@@ -405,8 +405,8 @@ DROP TABLE
 
 CREATE TABLE
     keyword_a_unit(
-        keyword_id SMALLINT NOT NULL REFERENCEs keyword(keyword_id),
-        a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id),
+        keyword_id SMALLINT NOT NULL REFERENCEs keyword(keyword_id) ON DELETE CASCADE,
+        a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id) ON DELETE CASCADE,
         PRIMARY KEY (keyword_id, a_unit_id)
     );
 
@@ -459,8 +459,8 @@ DROP TABLE
 
 CREATE TABLE
     rule_a_upgrade(
-        rule_id SMALLINT NOT NULL REFERENCEs rule(rule_id),
-        a_upgrade_id SMALLINT NOT NULL REFERENCEs a_upgrade(a_upgrade_id),
+        rule_id SMALLINT NOT NULL REFERENCEs rule(rule_id) ON DELETE CASCADE,
+        a_upgrade_id SMALLINT NOT NULL REFERENCEs a_upgrade(a_upgrade_id) ON DELETE CASCADE,
         PRIMARY KEY (rule_id, a_upgrade_id)
     );
 
@@ -478,8 +478,8 @@ DROP TABLE
 
 CREATE TABLE
     rule_a_unit(
-        rule_id SMALLINT NOT NULL REFERENCEs rule(rule_id),
-        a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id),
+        rule_id SMALLINT NOT NULL REFERENCEs rule(rule_id) ON DELETE CASCADE,
+        a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id) ON DELETE CASCADE,
         PRIMARY KEY (rule_id, a_unit_id)
     );
 
@@ -533,8 +533,8 @@ DROP TABLE
 
 CREATE TABLE
     a_statline_gs_stat(
-        a_statline_id SMALLINT NOT NULL REFERENCEs a_statline(a_statline_id),
-        gs_stat_id SMALLINT NOT NULL REFERENCEs gs_stat(gs_stat_id),
+        a_statline_id SMALLINT NOT NULL REFERENCEs a_statline(a_statline_id) ON DELETE CASCADE,
+        gs_stat_id SMALLINT NOT NULL REFERENCEs gs_stat(gs_stat_id) ON DELETE CASCADE,
         stat_value SMALLINT,
         PRIMARY KEY (a_statline_id, gs_stat_id)
     );
@@ -618,8 +618,8 @@ DROP TABLE
 
 CREATE TABLE
     keyword_a_upgrade(
-        keyword_id SMALLINT NOT NULL REFERENCEs keyword(keyword_id),
-        a_upgrade_id SMALLINT NOT NULL REFERENCEs a_upgrade(a_upgrade_id),
+        keyword_id SMALLINT NOT NULL REFERENCEs keyword(keyword_id) ON DELETE CASCADE,
+        a_upgrade_id SMALLINT NOT NULL REFERENCEs a_upgrade(a_upgrade_id) ON DELETE CASCADE,
         PRIMARY KEY (keyword_id, a_upgrade_id)
     );
 
@@ -637,8 +637,8 @@ DROP TABLE
 CREATE TABLE
     army_list(
         army_list_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        game_system_id SMALLINT NOT NULL REFERENCEs game_system(game_system_id),
-        gs_gm_id SMALLINT NOT NULL REFERENCEs gs_game_mode(gs_gm_id),
+        game_system_id SMALLINT NOT NULL REFERENCEs game_system(game_system_id) ON DELETE CASCADE,
+        gs_gm_id SMALLINT NOT NULL REFERENCEs gs_game_mode(gs_gm_id) ON DELETE CASCADE,
         army_list_name VARCHAR(25) NOT NULL
     );
 
@@ -652,8 +652,8 @@ DROP TABLE
 CREATE TABLE
     al_force(
         al_force_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        army_list_id SMALLINT NOT NULL REFERENCEs army_list(army_list_id),
-        army_id SMALLINT NOT NULL REFERENCEs army(army_id)
+        army_list_id SMALLINT NOT NULL REFERENCEs army_list(army_list_id) ON DELETE CASCADE,
+        army_id SMALLINT NOT NULL REFERENCEs army(army_id) ON DELETE CASCADE
     );
 
 INSERT INTO al_force(army_list_id, army_id) VALUES
@@ -666,8 +666,8 @@ DROP TABLE
 CREATE TABLE
     al_unit(
         al_unit_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        al_force_id SMALLINT NOT NULL REFERENCEs al_force(al_force_id),
-        a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id),
+        al_force_id SMALLINT NOT NULL REFERENCEs al_force(al_force_id) ON DELETE CASCADE,
+        a_unit_id SMALLINT NOT NULL REFERENCEs a_unit(a_unit_id) ON DELETE CASCADE,
         al_unit_name VARCHAR(25),
         al_unit_color VARCHAR(25)
     );
@@ -684,9 +684,9 @@ DROP TABLE
 CREATE TABLE
     al_upgrade(
         al_upgrade_id SMALLSERIAL PRIMARY KEY NOT NULL,
-        al_unit_id SMALLINT NOT NULL REFERENCEs al_unit(al_unit_id), 
-        a_upgrade_id SMALLINT NOT NULL REFERENCEs a_upgrade(a_upgrade_id),
-        a_ut_id SMALLINT NOT NULL REFERENCEs  a_upgrade_type(a_ut_id)
+        al_unit_id SMALLINT NOT NULL REFERENCEs al_unit(al_unit_id) ON DELETE CASCADE, 
+        a_upgrade_id SMALLINT NOT NULL REFERENCEs a_upgrade(a_upgrade_id) ON DELETE CASCADE,
+        a_ut_id SMALLINT NOT NULL REFERENCEs  a_upgrade_type(a_ut_id) ON DELETE CASCADE
     );
 
 INSERT INTO al_upgrade(al_unit_id, a_upgrade_id, a_ut_id) VALUES
@@ -697,9 +697,9 @@ DROP TABLE
 
 CREATE TABLE
     al_unit_a_unit_a_statline_quantity(
-        al_unit_id SMALLINT NOT NULL REFERENCES al_unit(al_unit_id),
-        a_unit_id SMALLINT NOT NULL REFERENCES a_unit(a_unit_id),
-        a_statline_id SMALLINT NOT NULL REFERENCES a_statline(a_statline_id),
+        al_unit_id SMALLINT NOT NULL REFERENCES al_unit(al_unit_id) ON DELETE CASCADE,
+        a_unit_id SMALLINT NOT NULL REFERENCES a_unit(a_unit_id) ON DELETE CASCADE,
+        a_statline_id SMALLINT NOT NULL REFERENCES a_statline(a_statline_id) ON DELETE CASCADE,
         quantity SMALLINT NOT NULL,
         PRIMARY KEY (al_unit_id, a_unit_id, a_statline_id)
     );

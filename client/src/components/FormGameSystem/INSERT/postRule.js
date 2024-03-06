@@ -1,20 +1,20 @@
 import React, { Fragment, useState } from "react";
 
-const PostAStatlineGsStat = () => {
-    const [aStatlineId, setAStatlineId] = useState(null);
-    const [gsStatId, setGsStatId] = useState(null);
-    const [statValue, setStatValue] = useState(null);
+const PostRule = () => {
 
+    const [gameSystemId, setGameSystemId] = useState(null);
+    const [ruleName, setRuleName] = useState('');
+    const [ruleDescription, setRuleDescription] = useState('');
 
     const onSubmitForm = async (e) => {
         e.preventDefault(); // stops refreshing
         try {
             const body = {
-                "a_statline_id": [aStatlineId],
-                "gs_stat_id": [gsStatId],
-                "stat_value": [statValue]
+                "game_system_id": [gameSystemId],
+                "rule_name": [ruleName],
+                "rule_description": [ruleDescription]
             };
-            const response = await fetch("http://localhost:4000/a_statline_gs_stat",{
+            const response = await fetch("http://localhost:4000/rule",{
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(body)
@@ -32,9 +32,9 @@ const PostAStatlineGsStat = () => {
 
     return (
         <Fragment>
-            <h1>PostAStatlineGsStat</h1>
+            <h1>PostRule</h1>
         </Fragment>
     );
 };
 
-export default PostAStatlineGsStat;
+export default PostRule;
