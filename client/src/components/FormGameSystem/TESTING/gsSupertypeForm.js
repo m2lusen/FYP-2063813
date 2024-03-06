@@ -75,7 +75,7 @@ const GsSupertypeForm = ({ gameSystemId }) => {
 
     return (
         <div>
-            <h1>Add New GsSupertype</h1>
+            <h4>Add New GsSupertype</h4>
             <form onSubmit={onSubmitGsSupertypeForm}>
                 <label>Name:</label>
                 <input type="text" value={gsSupertypeName} onChange={(e) => setGsSupertypeName(e.target.value)} required />
