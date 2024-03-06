@@ -113,6 +113,8 @@
 
 import React, { useState, Fragment } from "react";
 import GsSupertypeForm from "./gsSupertypeForm";
+import GsStatForm from "./gsStatForm";
+import RuleForm from "./ruleForm";
 
 const GameSystemForm = () => {
     const [gameSystemId, setGameSystemId] = useState(null);
@@ -199,14 +201,28 @@ const GameSystemForm = () => {
         }
     };
 
-    const [numGsSupertypeForms, setNumGsSupertypeForms] = useState(1); // State to track the number of GsSupertypeForms
-
+    const [numGsSupertypeForms, setNumGsSupertypeForms] = useState(1);
     const addGsSupertypeForm = () => {
-        setNumGsSupertypeForms(prev => prev + 1); // Increment the number of GsSupertypeForms
+        setNumGsSupertypeForms(prev => prev + 1); 
+    };
+    const removeGsSupertypeForm = () => {
+        setNumGsSupertypeForms(prev => prev - 1); 
     };
 
-    const removeGsSupertypeForm = () => {
-        setNumGsSupertypeForms(prev => prev - 1); // Increment the number of GsSupertypeForms
+    const [numGsStatForms, setNumGsStatForms] = useState(1);
+    const addGsStatForm = () => {
+        setNumGsStatForms(prev => prev + 1);
+    };
+    const removeGsStatForm = () => {
+        setNumGsStatForms(prev => prev - 1); 
+    };
+
+    const [numRuleForms, setNumRuleForms] = useState(1);
+    const addRuleForm = () => {
+        setNumRuleForms(prev => prev + 1);
+    };
+    const removeRuleForm = () => {
+        setNumRuleForms(prev => prev - 1); 
     };
 
     return (
@@ -232,6 +248,22 @@ const GameSystemForm = () => {
                         ))}
                         <button onClick={addGsSupertypeForm}>Add New GsSupertype</button>
                         <button onClick={removeGsSupertypeForm}>Remove Newest GsSupertype</button>
+                    </div>
+                    <div>
+                    <h2>Manage GsStat</h2>
+                        {[...Array(numGsStatForms)].map((_, index) => (
+                            <GsStatForm key={index} gsUsId={gsUsId} />
+                        ))}
+                        <button onClick={addGsStatForm}>Add New GsStat</button>
+                        <button onClick={removeGsStatForm}>Remove Newest GsStat</button>
+                    </div>
+                    <div>
+                    <h2>Manage Rule</h2>
+                        {[...Array(numRuleForms)].map((_, index) => (
+                            <RuleForm key={index} gameSystemId={gameSystemId} gsUsId={gsUsId}/>
+                        ))}
+                        <button onClick={addRuleForm}>Add New Rule</button>
+                        <button onClick={removeRuleForm}>Remove Newest Rule</button>
                     </div>
                 </Fragment>
             )}

@@ -1,4 +1,4 @@
-import GameSystemForm from "./TESTING/gameSystemForm";
+import GameSystemForm from "./sub-components/gameSystemForm";
 
 function FormGame() {
     return (
