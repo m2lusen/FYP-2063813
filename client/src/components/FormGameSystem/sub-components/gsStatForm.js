@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const GsStatForm = ({ gsUsId }) => {
+const GsStatForm = ({ gsUsId, template }) => {
     const [gsStatId, setGsStatId] = useState(null);
     const [gsStatName, setGsStatName] = useState('');
     const [gsStatAcronyme, setGsStatAcronyme] = useState('');
+
+    useEffect(() => {
+        if (template) {
+            console.log(template);
+        }
+    }, [template]);
+
 
     const onSubmitGsStatForm = async (e) => {
         e.preventDefault(); // stops refreshing

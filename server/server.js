@@ -1996,6 +1996,18 @@ app.delete("/al_unit_a_unit_a_statline_quantity/:al_unit_id/:a_unit_id/:a_statli
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+// Raw PSQL request
+
+app.post("/rawSQL", async (req, res) => {
+    try {
+        const content = req.body.sql;
+        const dbQuery = await pool.query(content);
+        res.json(dbQuery.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // PDF
 
 app.get('/pdf', async (req, res) => {

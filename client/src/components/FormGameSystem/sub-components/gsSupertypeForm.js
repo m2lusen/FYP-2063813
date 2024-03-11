@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const GsSupertypeForm = ({ gameSystemId }) => {
+const GsSupertypeForm = ({ gameSystemId, template }) => {
     const [gsSupertypeId, setGsSupertypeId] = useState(null);
     const [gsSupertypeName, setGsSupertypeName] = useState('');
     const [gsSupertypeLower, setGsSupertypeLower] = useState(0);
+
+    useEffect(() => {
+        if (template) {
+            console.log(template);
+        }
+    }, [template]);
 
     const onSubmitGsSupertypeForm = async (e) => {
         e.preventDefault(); // stops refreshing
