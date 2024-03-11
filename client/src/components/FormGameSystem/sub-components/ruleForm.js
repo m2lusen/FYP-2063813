@@ -1,10 +1,20 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import KeywordForm from "./keywordForm";
 
-const RuleForm = ({ gameSystemId, gsUsId }) => {
+const RuleForm = ({ gameSystemId, gsUsId, template }) => {
     const [ruleId, setRuleId] = useState(null);
     const [ruleName, setRuleName] = useState('');
     const [ruleDescription, setRuleDescription] = useState('');
+
+    useEffect(() => {
+        if (template) {
+            setRuleId(template[0]);
+            setRuleName(template[1]);
+            setRuleDescription(template[2]);
+
+            // handle keywords
+        }
+    }, [template]);
 
     const onSubmitRuleForm = async (e) => {
         e.preventDefault(); // stops refreshing

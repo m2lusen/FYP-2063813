@@ -3,11 +3,13 @@ import React, { useState, useEffect } from "react";
 const GsSupertypeForm = ({ gameSystemId, template }) => {
     const [gsSupertypeId, setGsSupertypeId] = useState(null);
     const [gsSupertypeName, setGsSupertypeName] = useState('');
-    const [gsSupertypeLower, setGsSupertypeLower] = useState(0);
+    const [gsSupertypeLower, setGsSupertypeLower] = useState(0); // should be null however otherwise error is encountered.
 
     useEffect(() => {
         if (template) {
-            console.log(template);
+            setGsSupertypeId(template[0]);
+            setGsSupertypeName(template[1]);
+            setGsSupertypeLower(template[2]);
         }
     }, [template]);
 

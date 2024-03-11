@@ -1,13 +1,48 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
-const GsStatForm = ({ gsUsId, template }) => {
+const GsStatForm = ({ gsUsId, template, remove, index, totalForms, onDeleteConfirmation, onDeleteConfirmationNullId }) => {
     const [gsStatId, setGsStatId] = useState(null);
     const [gsStatName, setGsStatName] = useState('');
     const [gsStatAcronyme, setGsStatAcronyme] = useState('');
 
+    const onDeleteGsStatClick = useCallback(async () => {
+        try {
+            const response = await fetch(`http://localhost:4000/gs_stat/${gsStatId}`, {
+                method: "DELETE"
+            });
+            if (response.ok) {
+                console.log("Deleted successfully");
+                // Clear gs supertype form fields after deletion
+                setGsStatId(null);
+                setGsStatName('');
+                setGsStatAcronyme('');
+                onDeleteConfirmation(); // Trigger the callback function after successful deletion
+            } else {
+                console.error("Failed to delete");
+            }
+        } catch (err) {
+            console.error(err.message);
+        }
+    }, [gsStatId, onDeleteConfirmation]);
+
+    useEffect(() => { // since a useEffect is being used will run everytime that page loaded, also add a bool, to confirm whether should be added or not
+        if (remove === true){
+            if (index === totalForms - 1) {
+                console.log("REMOVED"); // Log only when the last GsStatForm is removed
+                if (gsStatId !== null){
+                    onDeleteGsStatClick();
+                } else {
+                    onDeleteConfirmationNullId();
+                }
+            }
+        }
+    }, [remove, index, totalForms, gsStatId, onDeleteGsStatClick, onDeleteConfirmationNullId]);
+
     useEffect(() => {
         if (template) {
-            console.log(template);
+            setGsStatId(template[0]);
+            setGsStatName(template[1]);
+            setGsStatAcronyme(template[2]);
         }
     }, [template]);
 
@@ -60,25 +95,33 @@ const GsStatForm = ({ gsUsId, template }) => {
         }
     };
 
-    const onDeleteGsStatClick = async () => {
-        try {
-            const response = await fetch(`http://localhost:4000/gs_stat/${gsStatId}`, {
-                method: "DELETE"
-            });
-            if (response.ok) {
-                console.log("Deleted successfully");
-                // Clear gs supertype form fields after deletion
-                setGsStatId(null);
-                setGsStatName('');
-                setGsStatAcronyme('');
-            } else {
-                console.error("Failed to delete");
-            }
-        } catch (err) {
-            console.error(err.message);
-        }
-    };
-        
+    // const onDeleteGsStatClick = async () => {
+    //     try {
+    //         const response = await fetch(`http://localhost:4000/gs_stat/${gsStatId}`, {
+    //             method: "DELETE"
+    //         });
+    //         if (response.ok) {
+    //             console.log("Deleted successfully");
+    //             // Clear gs supertype form fields after deletion
+    //             setGsStatId(null);
+    //             setGsStatName('');
+    //             setGsStatAcronyme('');
+    //         } else {
+    //             console.error("Failed to delete");
+    //         }
+    //     } catch (err) {
+    //         console.error(err.message);
+    //     }
+    // };
+
+    // useEffect(() => {
+    //     if (index === totalForms - 1) {
+    //         console.log("REMOVED"); // Log only when the last GsStatForm is removed
+    //         if (gsStatId !== null){
+    //             onDeleteGsStatClick();
+    //         }
+    //     }
+    // }, [index, totalForms, gsStatId, onDeleteGsStatClick]);
 
     return (
         <div>

@@ -1,6 +1,6 @@
 // IS GOING TO modified so that after a nested array is added, auto fills out form according to said array
 
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment, useCallback } from "react";
 import GsSupertypeForm from "./gsSupertypeForm";
 import GsStatForm from "./gsStatForm";
 import RuleForm from "./ruleForm";
@@ -21,6 +21,8 @@ const GameSystemForm = ({ template }) => {
     const [numGsStatForms, setNumGsStatForms] = useState(1);
     const [numRuleForms, setNumRuleForms] = useState(1);
 
+    const [removedGsStat, setRemovedGsStat] = useState(false); // TEMPORARY
+
     useEffect(() => {
         if (template) {
             const [id, name, edition, version, usId, gsStatsArr, gsSupertypesArr, rulesArr] = template;
@@ -33,7 +35,7 @@ const GameSystemForm = ({ template }) => {
             setGsStats(gsStatsArr);
             setNumGsStatForms(gsStatsArr.length);
             setGsSupertypes(gsSupertypesArr);
-            setNumGsSupertypeForms(gsSupertypesArr.lengt);
+            setNumGsSupertypeForms(gsSupertypesArr.length);
             setRules(rulesArr);
             setNumRuleForms(rulesArr.length);
         }
@@ -122,6 +124,9 @@ const GameSystemForm = ({ template }) => {
         setNumGsSupertypeForms(prev => prev + 1); 
     };
     const removeGsSupertypeForm = () => {
+        if (gsSupertypes.length !== 0) {
+            setGsSupertypes(gsSupertypes.slice(0, gsSupertypes.length - 1));
+        }
         setNumGsSupertypeForms(prev => prev - 1); 
     };
 
@@ -129,15 +134,34 @@ const GameSystemForm = ({ template }) => {
         setNumGsStatForms(prev => prev + 1);
     };
     const removeGsStatForm = () => {
-        setNumGsStatForms(prev => prev - 1); 
+        if (gsStats.length !== 0) {
+            setGsStats(gsStats.slice(0, gsStats.length - 1));
+        }
+        setRemovedGsStat(true);
+        // setNumGsStatForms(prev => prev - 1); 
     };
 
     const addRuleForm = () => {
         setNumRuleForms(prev => prev + 1);
     };
     const removeRuleForm = () => {
+        if (rules.length !== 0) {
+            setRules(rules.slice(0, rules.length - 1));
+        }
         setNumRuleForms(prev => prev - 1); 
     };
+
+    const handleGsStatRemoveConfirmation = useCallback(() => {
+        console.log('testing');
+        setRemovedGsStat(false);
+        setNumGsStatForms(prev => prev - 1); 
+    }, []);
+
+    const handleGsStatDeletionConfirmation = useCallback(() => {
+        console.log('testing');
+        setRemovedGsStat(false);
+        setNumGsStatForms(prev => prev - 1); 
+    }, []);
 
     return (
         <div>
@@ -158,45 +182,44 @@ const GameSystemForm = ({ template }) => {
                     <div>
                         <h2>Manage GsSupertypes</h2>
                         {[...Array(numGsSupertypeForms)].map((_, index) => (
-                            <GsSupertypeForm key={index} gameSystemId={gameSystemId} />
+                            <GsSupertypeForm 
+                                key={index} 
+                                gameSystemId={gameSystemId} 
+                                template={gsSupertypes[index]} 
+                            />
                         ))}
                         <button onClick={addGsSupertypeForm}>Add New GsSupertype</button>
                         <button onClick={removeGsSupertypeForm}>Remove Newest GsSupertype</button>
                     </div>
-                    {/* <div>
-                    <h2>Manage GsStat</h2>
-                        {[...Array(numGsStatForms)].map((_, index) => (
-                            <GsStatForm key={index} gsUsId={gsUsId} template={gsStats} />
-                        ))}
-                        <button onClick={addGsStatForm}>Add New GsStat</button>
-                        <button onClick={removeGsStatForm}>Remove Newest GsStat</button>
-                    </div> */}
-                    {/* <div>
-                        <h2>Manage GsStat</h2>
-                        {gsStats.map((stat, index) => (
-                            <GsStatForm key={index} gsUsId={gsUsId} template={stat} />
-                        ))}
-                        <button onClick={addGsStatForm}>Add New GsStat</button>
-                        <button onClick={removeGsStatForm}>Remove Newest GsStat</button>
-                    </div> */}
+
+
                     <div>
                         <h2>Manage GsStat</h2>
-                        {gsStats.length >= numGsStatForms ? (
-                            gsStats.map((stat, index) => (
-                                <GsStatForm key={index} gsUsId={gsUsId} template={stat} />
-                            ))
-                        ) : (
-                            [...Array(numGsStatForms)].map((_, index) => (
-                                <GsStatForm key={index} gsUsId={gsUsId} template={null} />
-                            ))
-                        )}
+                        {[...Array(numGsStatForms)].map((_, index) => (
+                            <GsStatForm 
+                                key={index} 
+                                gsUsId={gsUsId} 
+                                template={gsStats[index]} 
+                                remove={removedGsStat}
+                                index={index} 
+                                totalForms={numGsStatForms} 
+                                onDeleteConfirmation={handleGsStatDeletionConfirmation}
+                                onDeleteConfirmationNullId={handleGsStatRemoveConfirmation}
+                            /> 
+                        ))}
                         <button onClick={addGsStatForm}>Add New GsStat</button>
-                        <button onClick={removeGsStatForm}>Remove Newest GsStat</button>
+                        {numGsStatForms > 0 && <button onClick={removeGsStatForm}>Remove Newest GsStat</button>}
                     </div>
+
                     <div>
                         <h2>Manage Rule</h2>
                         {[...Array(numRuleForms)].map((_, index) => (
-                            <RuleForm key={index} gameSystemId={gameSystemId} gsUsId={gsUsId}/>
+                            <RuleForm 
+                                key={index} 
+                                gameSystemId={gameSystemId} 
+                                gsUsId={gsUsId} 
+                                template={rules[index]}
+                            />
                         ))}
                         <button onClick={addRuleForm}>Add New Rule</button>
                         <button onClick={removeRuleForm}>Remove Newest Rule</button>
