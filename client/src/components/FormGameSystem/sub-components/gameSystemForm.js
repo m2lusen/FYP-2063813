@@ -21,7 +21,9 @@ const GameSystemForm = ({ template }) => {
     const [numGsStatForms, setNumGsStatForms] = useState(1);
     const [numRuleForms, setNumRuleForms] = useState(1);
 
-    const [removedGsStat, setRemovedGsStat] = useState(false); // TEMPORARY
+    const [removedGsSupertype, setRemovedGsSupertype] = useState(false);
+    const [removedGsStat, setRemovedGsStat] = useState(false);
+    const [removedRule, setRemovedRule] = useState(false);
 
     useEffect(() => {
         if (template) {
@@ -31,7 +33,6 @@ const GameSystemForm = ({ template }) => {
             setGameSystemEdition(edition);
             setGameSystemVersion(version);
             setGsUsId(usId);
-            // Additional logic to handle gsStats, gsSupertypes, and rules
             setGsStats(gsStatsArr);
             setNumGsStatForms(gsStatsArr.length);
             setGsSupertypes(gsSupertypesArr);
@@ -127,7 +128,7 @@ const GameSystemForm = ({ template }) => {
         if (gsSupertypes.length !== 0) {
             setGsSupertypes(gsSupertypes.slice(0, gsSupertypes.length - 1));
         }
-        setNumGsSupertypeForms(prev => prev - 1); 
+        setRemovedGsSupertype(true);
     };
 
     const addGsStatForm = () => {
@@ -138,7 +139,6 @@ const GameSystemForm = ({ template }) => {
             setGsStats(gsStats.slice(0, gsStats.length - 1));
         }
         setRemovedGsStat(true);
-        // setNumGsStatForms(prev => prev - 1); 
     };
 
     const addRuleForm = () => {
@@ -148,19 +148,35 @@ const GameSystemForm = ({ template }) => {
         if (rules.length !== 0) {
             setRules(rules.slice(0, rules.length - 1));
         }
-        setNumRuleForms(prev => prev - 1); 
+        setRemovedRule(true);
+        // setNumRuleForms(prev => prev - 1); 
     };
 
+    const handleGsSupertypeRemoveConfirmation = useCallback(() => {
+        setRemovedGsSupertype(false);
+        setNumGsSupertypeForms(prev => prev - 1); 
+    }, []);
+    const handleGsSupertypeDeletionConfirmation = useCallback(() => {
+        setRemovedGsSupertype(false);
+        setNumGsSupertypeForms(prev => prev - 1); 
+    }, []);
+
     const handleGsStatRemoveConfirmation = useCallback(() => {
-        console.log('testing');
+        setRemovedGsStat(false);
+        setNumGsStatForms(prev => prev - 1); 
+    }, []);
+    const handleGsStatDeletionConfirmation = useCallback(() => {
         setRemovedGsStat(false);
         setNumGsStatForms(prev => prev - 1); 
     }, []);
 
-    const handleGsStatDeletionConfirmation = useCallback(() => {
-        console.log('testing');
-        setRemovedGsStat(false);
-        setNumGsStatForms(prev => prev - 1); 
+    const handleRuleRemoveConfirmation = useCallback(() => {
+        setRemovedRule(false);
+        setNumRuleForms(prev => prev - 1); 
+    }, []);
+    const handleRuleDeletionConfirmation = useCallback(() => {
+        setRemovedRule(false);
+        setNumRuleForms(prev => prev - 1); 
     }, []);
 
     return (
@@ -179,7 +195,7 @@ const GameSystemForm = ({ template }) => {
 
             {gameSystemId && (
                 <Fragment>
-                    <div>
+                    {/* <div>
                         <h2>Manage GsSupertypes</h2>
                         {[...Array(numGsSupertypeForms)].map((_, index) => (
                             <GsSupertypeForm 
@@ -190,7 +206,25 @@ const GameSystemForm = ({ template }) => {
                         ))}
                         <button onClick={addGsSupertypeForm}>Add New GsSupertype</button>
                         <button onClick={removeGsSupertypeForm}>Remove Newest GsSupertype</button>
+                    </div> */}
+                    <div>
+                        <h2>Manage GsSupertype</h2>
+                        {[...Array(numGsSupertypeForms)].map((_, index) => (
+                            <GsSupertypeForm 
+                                key={index} 
+                                gameSystemId={gameSystemId}
+                                template={gsSupertypes[index]} 
+                                remove={removedGsSupertype}
+                                index={index} 
+                                totalForms={numGsSupertypeForms} 
+                                onDeleteConfirmation={handleGsSupertypeDeletionConfirmation}
+                                onDeleteConfirmationNullId={handleGsSupertypeRemoveConfirmation}
+                            /> 
+                        ))}
+                        <button onClick={addGsSupertypeForm}>Add New GsSupertype</button>
+                        {numGsSupertypeForms > 0 && <button onClick={removeGsSupertypeForm}>Remove Newest GsSupertype</button>}
                     </div>
+
 
 
                     <div>
@@ -219,6 +253,11 @@ const GameSystemForm = ({ template }) => {
                                 gameSystemId={gameSystemId} 
                                 gsUsId={gsUsId} 
                                 template={rules[index]}
+                                remove={removedRule}
+                                ruleFormIndex={index} 
+                                totalForms={numRuleForms} 
+                                onDeleteConfirmation={handleRuleDeletionConfirmation}
+                                onDeleteConfirmationNullId={handleRuleRemoveConfirmation}
                             />
                         ))}
                         <button onClick={addRuleForm}>Add New Rule</button>

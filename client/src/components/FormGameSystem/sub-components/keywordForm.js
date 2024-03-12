@@ -1,10 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
-const KeywordForm = ({ gsUsId, ruleId }) => {
+const KeywordForm = ({ gsUsId, ruleId, template, remove, index, totalForms, onDeleteConfirmation, onDeleteConfirmationNullId }) => {
     const [keywordId, setKeywordId] = useState(null);
     const [keywordName, setKeywordName] = useState('');
 
-    const onSubmitKeywordForm = async (e) => {
+    const onDeleteKeywordClick = useCallback(async () => {
+        try {
+            const response = await fetch(`http://localhost:4000/keyword/${keywordId}`, {
+                method: "DELETE"
+            });
+            if (response.ok) {
+                console.log("Deleted successfully");
+                setKeywordId(null);
+                setKeywordName('');
+                onDeleteConfirmation(); // Trigger the callback function after successful deletion
+            } else {
+                console.error("Failed to delete");
+            }
+        } catch (err) {
+            console.error(err.message);
+        }
+    }, [keywordId, onDeleteConfirmation]);
+
+    useEffect(() => { // since a useEffect is being used will run everytime that page loaded, also add a bool, to confirm whether should be added or not
+        if (remove === true){
+            if (index === totalForms - 1) {
+                console.log("REMOVED"); // Log only when the last GsSupertypeForm is removed
+                if (keywordId !== null){
+                    onDeleteKeywordClick();
+                } else {
+                    onDeleteConfirmationNullId();
+                }
+            }
+        }
+    }, [remove, index, totalForms, keywordId, onDeleteKeywordClick, onDeleteConfirmationNullId]);
+
+
+
+    useEffect(() => {
+        if (template) {
+            setKeywordId(template[0]);
+            setKeywordName(template[1]);
+        }
+    }, [template]);
+
+ const onSubmitKeywordForm = async (e) => {
         e.preventDefault(); // stops refreshing
         try {
             let body;
@@ -64,25 +104,6 @@ const KeywordForm = ({ gsUsId, ruleId }) => {
         }
     };
 
-    const onDeleteClick = async () => {
-        try {
-            const response = await fetch(`http://localhost:4000/keyword/${keywordId}`, {
-                method: "DELETE"
-            });
-            if (response.ok) {
-                console.log("Deleted successfully");
-                // Clear gs supertype form fields after deletion
-                setKeywordId(null);
-                setKeywordName('');
-            } else {
-                console.error("Failed to delete");
-            }
-        } catch (err) {
-            console.error(err.message);
-        }
-    };
-        
-
     return (
         <div>
             <h4>Add New Keyword</h4>
@@ -90,7 +111,7 @@ const KeywordForm = ({ gsUsId, ruleId }) => {
                 <label>keyword:</label>
                 <input type="text" value={keywordName} onChange={(e) => setKeywordName(e.target.value)} required />
                 <button type="submit">{keywordId ? "Update" : "Create"}</button>
-                {keywordId && <button type="button" onClick={onDeleteClick}>Delete</button>}
+                {keywordId && <button type="button" onClick={onDeleteKeywordClick}>Delete</button>}
             </form>
         </div>
     );

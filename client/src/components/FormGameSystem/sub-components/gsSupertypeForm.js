@@ -1,9 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
-const GsSupertypeForm = ({ gameSystemId, template }) => {
+const GsSupertypeForm = ({ gameSystemId, template, remove, index, totalForms, onDeleteConfirmation, onDeleteConfirmationNullId }) => {
     const [gsSupertypeId, setGsSupertypeId] = useState(null);
     const [gsSupertypeName, setGsSupertypeName] = useState('');
     const [gsSupertypeLower, setGsSupertypeLower] = useState(0); // should be null however otherwise error is encountered.
+
+    const onDeleteGsSupertypeClick = useCallback(async () => {
+        try {
+            const response = await fetch(`http://localhost:4000/gs_supertype/${gsSupertypeId}`, {
+                method: "DELETE"
+            });
+            if (response.ok) {
+                console.log("Deleted successfully");
+                setGsSupertypeId(null);
+                setGsSupertypeName('');
+                setGsSupertypeLower(0);
+                onDeleteConfirmation(); // Trigger the callback function after successful deletion
+            } else {
+                console.error("Failed to delete");
+            }
+        } catch (err) {
+            console.error(err.message);
+        }
+    }, [gsSupertypeId, onDeleteConfirmation]);
+
+    useEffect(() => { // since a useEffect is being used will run everytime that page loaded, also add a bool, to confirm whether should be added or not
+        if (remove === true){
+            if (index === totalForms - 1) {
+                console.log("REMOVED"); // Log only when the last GsSupertypeForm is removed
+                if (gsSupertypeId !== null){
+                    onDeleteGsSupertypeClick();
+                } else {
+                    onDeleteConfirmationNullId();
+                }
+            }
+        }
+    }, [remove, index, totalForms, gsSupertypeId, onDeleteGsSupertypeClick, onDeleteConfirmationNullId]);
 
     useEffect(() => {
         if (template) {
@@ -12,6 +44,7 @@ const GsSupertypeForm = ({ gameSystemId, template }) => {
             setGsSupertypeLower(template[2]);
         }
     }, [template]);
+
 
     const onSubmitGsSupertypeForm = async (e) => {
         e.preventDefault(); // stops refreshing
@@ -60,26 +93,6 @@ const GsSupertypeForm = ({ gameSystemId, template }) => {
             console.error(err.message);
         }
     };
-
-    const onDeleteGsSupertypeClick = async () => {
-        try {
-            const response = await fetch(`http://localhost:4000/gs_supertype/${gsSupertypeId}`, {
-                method: "DELETE"
-            });
-            if (response.ok) {
-                console.log("Deleted successfully");
-                // Clear gs supertype form fields after deletion
-                setGsSupertypeId(null);
-                setGsSupertypeName('');
-                setGsSupertypeLower(0);
-            } else {
-                console.error("Failed to delete");
-            }
-        } catch (err) {
-            console.error(err.message);
-        }
-    };
-        
 
     return (
         <div>

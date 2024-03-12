@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect, useCallback } from "react";
 import KeywordForm from "./keywordForm";
 
-const RuleForm = ({ gameSystemId, gsUsId, template, remove, ruleFormIndex, totalForms, onDeleteConfirmation, onDeleteConfirmationNullId }) => {
+const RuleForm = ({ gameSystemId, gsUsId, template }) => {
     const [ruleId, setRuleId] = useState(null);
     const [ruleName, setRuleName] = useState('');
     const [ruleDescription, setRuleDescription] = useState('');
@@ -11,57 +11,6 @@ const RuleForm = ({ gameSystemId, gsUsId, template, remove, ruleFormIndex, total
     const [numKeywordForms, setNumKeywordForms] = useState(1);
 
     const [removedKeyword, setRemovedKeyword] = useState(false);
-
-    const [cascadeDelete, setCascadeDelete] = useState(false);
-
-    useEffect(() => {
-        if (cascadeDelete === true){
-            setRemovedKeyword(true);
-        }
-        if (cascadeDelete === true && numKeywordForms === 0) {
-            // Perform the rule deletion once numKeywordForms becomes 0
-            performRuleDeletion();
-        }
-    }, [cascadeDelete, numKeywordForms]);
-    
-    const performRuleDeletion = async () => {
-        try {
-            const response = await fetch(`http://localhost:4000/rule/${ruleId}`, {
-                method: "DELETE"
-            });
-            if (response.ok) {
-                console.log("Deleted successfully");
-    
-                setRuleId(null);
-                setRuleName('');
-                setRuleDescription('');
-                onDeleteConfirmation(); // Trigger the callback function after successful deletion
-            } else {
-                console.error("Failed to delete");
-            }
-        } catch (err) {
-            console.error(err.message);
-        }
-    };
-    
-    const onDeleteRuleClick = useCallback(async () => { // also on delete ensure that all keywordId that are dependent on are deleted
-        setCascadeDelete(true);
-    }, []);
-
-    useEffect(() => { // since a useEffect is being used will run everytime that page loaded, also add a bool, to confirm whether should be added or not
-        if (remove === true){
-            if (ruleFormIndex === totalForms - 1) {
-                console.log("REMOVED"); // Log only when the last GsSupertypeForm is removed
-                if (ruleId !== null){
-                    onDeleteRuleClick();
-                } else {
-                    onDeleteConfirmationNullId();
-                }
-            }
-        }
-    }, [remove, ruleFormIndex, totalForms, ruleId, onDeleteRuleClick, onDeleteConfirmationNullId]);
-
-
 
     useEffect(() => {
         if (template) {
@@ -121,6 +70,25 @@ const RuleForm = ({ gameSystemId, gsUsId, template, remove, ruleFormIndex, total
         }
     };
 
+    const onDeleteClick = async () => {
+        try {
+            const response = await fetch(`http://localhost:4000/rule/${ruleId}`, {
+                method: "DELETE"
+            });
+            if (response.ok) {
+                console.log("Deleted successfully");
+
+                setRuleId(null);
+                setRuleName('');
+                setRuleDescription('');
+            } else {
+                console.error("Failed to delete");
+            }
+        } catch (err) {
+            console.error(err.message);
+        }
+    };
+
     const addKeywordForm = () => {
         setNumKeywordForms(prev => prev + 1); 
     };
@@ -150,7 +118,7 @@ const RuleForm = ({ gameSystemId, gsUsId, template, remove, ruleFormIndex, total
                 <label>rule description:</label>
                 <input type="text" value={ruleDescription} onChange={(e) => setRuleDescription(e.target.value)} required />
                 <button type="submit">{ruleId ? "Update" : "Create"}</button>
-                {ruleId && <button type="button" onClick={onDeleteRuleClick}>Delete</button>}
+                {ruleId && <button type="button" onClick={onDeleteClick}>Delete</button>}
             </form>
 
             {ruleId && (
