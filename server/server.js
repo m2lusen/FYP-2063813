@@ -968,8 +968,10 @@ app.put("/gs_game_mode/:id", async (req, res) => {
 
 app.put("/a_unit/:id", async (req, res) => {
     try {
+
         const { id } = req.params;
         const set = objArrToDbUpdateSet(req.body);
+
         const dbQuery = await pool.query(
             `
             UPDATE a_unit SET
@@ -981,12 +983,15 @@ app.put("/a_unit/:id", async (req, res) => {
             [id]
         );
 
+        console.log(dbQuery)
+        
         if (dbQuery.rowCount === 0) {
             res.status(404).json({ error: 'a_unit not found' });
         } else {
             res.json(dbQuery.rows)
         }
     } catch (err) {
+        // console.error(err)
         res.status(500).json({ error: 'Internal server error' });
     }
 });

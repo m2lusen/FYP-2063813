@@ -1,214 +1,7 @@
-// Current not working, check why, errors are as follows
-
-// Warning: `value` prop on `input` should not be null. Consider using an empty string to clear the component or `undefined` for uncontrolled components.
-// at input
-// at form
-// at div
-// at GsSupertypeForm (http://localhost:3000/static/js/bundle.js:2448:3)
-// at div
-// at div
-// at GameSystemForm (http://localhost:3000/static/js/bundle.js:1760:3)
-// at div
-// at div
-// at FormGame (http://localhost:3000/static/js/bundle.js:1506:74)
-// at Route (http://localhost:3000/static/js/bundle.js:38880:29)
-// at Switch (http://localhost:3000/static/js/bundle.js:39049:29)
-// at div
-// at Router (http://localhost:3000/static/js/bundle.js:38552:30)
-// at BrowserRouter (http://localhost:3000/static/js/bundle.js:38066:35)
-// at App
-// at Router (http://localhost:3000/static/js/bundle.js:38552:30)
-// at BrowserRouter (http://localhost:3000/static/js/bundle.js:38066:35)
-// overrideMethod @ console.js:213
-// printWarning @ react-dom.development.js:86
-// error @ react-dom.development.js:60
-// validateProperties$1 @ react-dom.development.js:3644
-// validatePropertiesInDevelopment @ react-dom.development.js:9540
-// diffProperties @ react-dom.development.js:9958
-// prepareUpdate @ react-dom.development.js:10977
-// updateHostComponent$1 @ react-dom.development.js:21786
-// completeWork @ react-dom.development.js:22155
-// completeUnitOfWork @ react-dom.development.js:26596
-// performUnitOfWork @ react-dom.development.js:26568
-// workLoopSync @ react-dom.development.js:26466
-// renderRootSync @ react-dom.development.js:26434
-// performConcurrentWorkOnRoot @ react-dom.development.js:25738
-// workLoop @ scheduler.development.js:266
-// flushWork @ scheduler.development.js:239
-// performWorkUntilDeadline @ scheduler.development.js:533
-// Show 17 more frames
-// Show less
-// console.js:213  Warning: A component is changing a controlled input to be uncontrolled. This is likely caused by the value changing from a defined to undefined, which should not happen. Decide between using a controlled or uncontrolled input element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components
-// at input
-// at form
-// at div
-// at GsSupertypeForm (http://localhost:3000/static/js/bundle.js:2448:3)
-// at div
-// at div
-// at GameSystemForm (http://localhost:3000/static/js/bundle.js:1760:3)
-// at div
-// at div
-// at FormGame (http://localhost:3000/static/js/bundle.js:1506:74)
-// at Route (http://localhost:3000/static/js/bundle.js:38880:29)
-// at Switch (http://localhost:3000/static/js/bundle.js:39049:29)
-// at div
-// at Router (http://localhost:3000/static/js/bundle.js:38552:30)
-// at BrowserRouter (http://localhost:3000/static/js/bundle.js:38066:35)
-// at App
-// at Router (http://localhost:3000/static/js/bundle.js:38552:30)
-// at BrowserRouter (http://localhost:3000/static/js/bundle.js:38066:35)
-// overrideMethod @ console.js:213
-// printWarning @ react-dom.development.js:86
-// error @ react-dom.development.js:60
-// updateWrapper @ react-dom.development.js:1819
-// updateProperties @ react-dom.development.js:10151
-// commitUpdate @ react-dom.development.js:11047
-// commitMutationEffectsOnFiber @ react-dom.development.js:24389
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24346
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24346
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24293
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24576
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24346
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24576
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24346
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24293
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24346
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24346
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24293
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24576
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24576
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24332
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24576
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24332
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24346
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24576
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24576
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24332
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24332
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24293
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24576
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24576
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24576
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24332
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24332
-// recursivelyTraverseMutationEffects @ react-dom.development.js:24273
-// commitMutationEffectsOnFiber @ react-dom.development.js:24432
-// commitMutationEffects @ react-dom.development.js:24243
-// commitRootImpl @ react-dom.development.js:26810
-// commitRoot @ react-dom.development.js:26682
-// finishConcurrentRender @ react-dom.development.js:25981
-// performConcurrentWorkOnRoot @ react-dom.development.js:25809
-// workLoop @ scheduler.development.js:266
-// flushWork @ scheduler.development.js:239
-// performWorkUntilDeadline @ scheduler.development.js:533
-// Show 71 more frames
-// Show less
-// console.js:213  Warning: <armyForm /> is using incorrect casing. Use PascalCase for React components, or lowercase for HTML elements.
-// at armyForm
-// at div
-// at FormArmy (http://localhost:3000/static/js/bundle.js:1163:3)
-// at div
-// at div
-// at FormGame (http://localhost:3000/static/js/bundle.js:1506:74)
-// at Route (http://localhost:3000/static/js/bundle.js:38880:29)
-// at Switch (http://localhost:3000/static/js/bundle.js:39049:29)
-// at div
-// at Router (http://localhost:3000/static/js/bundle.js:38552:30)
-// at BrowserRouter (http://localhost:3000/static/js/bundle.js:38066:35)
-// at App
-// at Router (http://localhost:3000/static/js/bundle.js:38552:30)
-// at BrowserRouter (http://localhost:3000/static/js/bundle.js:38066:35)
-// overrideMethod @ console.js:213
-// printWarning @ react-dom.development.js:86
-// error @ react-dom.development.js:60
-// createElement @ react-dom.development.js:9761
-// createInstance @ react-dom.development.js:10941
-// completeWork @ react-dom.development.js:22187
-// completeUnitOfWork @ react-dom.development.js:26596
-// performUnitOfWork @ react-dom.development.js:26568
-// workLoopSync @ react-dom.development.js:26466
-// renderRootSync @ react-dom.development.js:26434
-// performSyncWorkOnRoot @ react-dom.development.js:26085
-// flushSyncCallbacks @ react-dom.development.js:12042
-// (anonymous) @ react-dom.development.js:25651
-// Show 13 more frames
-// Show less
-// console.js:213  Warning: The tag <armyForm> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.
-// at armyForm
-// at div
-// at FormArmy (http://localhost:3000/static/js/bundle.js:1163:3)
-// at div
-// at div
-// at FormGame (http://localhost:3000/static/js/bundle.js:1506:74)
-// at Route (http://localhost:3000/static/js/bundle.js:38880:29)
-// at Switch (http://localhost:3000/static/js/bundle.js:39049:29)
-// at div
-// at Router (http://localhost:3000/static/js/bundle.js:38552:30)
-// at BrowserRouter (http://localhost:3000/static/js/bundle.js:38066:35)
-// at App
-// at Router (http://localhost:3000/static/js/bundle.js:38552:30)
-// at BrowserRouter (http://localhost:3000/static/js/bundle.js:38066:35)
-// overrideMethod @ console.js:213
-// printWarning @ react-dom.development.js:86
-// error @ react-dom.development.js:60
-// createElement @ react-dom.development.js:9816
-// createInstance @ react-dom.development.js:10941
-// completeWork @ react-dom.development.js:22187
-// completeUnitOfWork @ react-dom.development.js:26596
-// performUnitOfWork @ react-dom.development.js:26568
-// workLoopSync @ react-dom.development.js:26466
-// renderRootSync @ react-dom.development.js:26434
-// performSyncWorkOnRoot @ react-dom.development.js:26085
-// flushSyncCallbacks @ react-dom.development.js:12042
-// (anonymous) @ react-dom.development.js:25651
-// Show 13 more frames
-// Show less
-// console.js:213  Warning: React does not recognize the `gameSystem` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `gamesystem` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
-// at armyForm
-// at div
-// at FormArmy (http://localhost:3000/static/js/bundle.js:1163:3)
-// at div
-// at div
-// at FormGame (http://localhost:3000/static/js/bundle.js:1506:74)
-// at Route (http://localhost:3000/static/js/bundle.js:38880:29)
-// at Switch (http://localhost:3000/static/js/bundle.js:39049:29)
-// at div
-// at Router (http://localhost:3000/static/js/bundle.js:38552:30)
-// at BrowserRouter (http://localhost:3000/static/js/bundle.js:38066:35)
-// at App
-// at Router (http://localhost:3000/static/js/bundle.js:38552:30)
-// at BrowserRouter (http://localhost:3000/static/js/bundle.js:38066:35)
-
 import React, { useState, useEffect, Fragment, useCallback } from "react";
+import AUnitForm from "./aUnitForm";
 
-const armyForm = ({ gameSystem }) => {
+const ArmyForm = ({ gameSystem, template }) => {
 
     const [gameSystemId, setGameSystemId] = useState(null);
     const [armyId, setArmyId] = useState(null);
@@ -216,9 +9,22 @@ const armyForm = ({ gameSystem }) => {
     const [armyEdition, setArmyEdition] = useState('');
     const [armyVersion, setArmyVersion] = useState('');
 
+    const [aUnits, setAUnits] = useState([]);
+
+    const [numAUnitForms, setNumAUnitForms] = useState(1);
+
+    const [removedAUnit, setRemovedAUnit] = useState(false);
+
+    // useEffect(() => {
+    //     if (gameSystem) {
+    //         console.log(gameSystem);
+    //         setGameSystemId(gameSystem[0]);
+    //     }
+    // }, [gameSystem]);
+
     useEffect(() => {
         if (gameSystem) {
-            console.log(gameSystem);
+            // console.log(gameSystem);
             setGameSystemId(gameSystem[0]);
         }
     }, [gameSystem]);
@@ -275,7 +81,6 @@ const armyForm = ({ gameSystem }) => {
             });
             if (response.ok) {
                 console.log("Deleted successfully");
-                setGameSystemId(null);
                 setArmyId(null);
                 setArmyName('');
                 setArmyEdition('');
@@ -288,28 +93,27 @@ const armyForm = ({ gameSystem }) => {
         }
     };
 
-    // const addGsSupertypeForm = () => {
-    //     setNumGsSupertypeForms(prev => prev + 1); 
-    // };
-    // const removeGsSupertypeForm = () => {
-    //     if (gsSupertypes.length !== 0) {
-    //         setGsSupertypes(gsSupertypes.slice(0, gsSupertypes.length - 1));
-    //     }
-    //     setRemovedGsSupertype(true);
-    // };
+    const addAUnitForm = () => {
+        setNumAUnitForms(prev => prev + 1); 
+    };
+    const removeAUnitForm = () => {
+        // if (aUnits.length !== 0) {
+        //     setNumAUnitForms(aUnits.slice(0, aUnits.length - 1));
+        // }
+        setRemovedAUnit(true);
+    };
 
-    // const handleGsSupertypeRemoveConfirmation = useCallback(() => {
-    //     setRemovedGsSupertype(false);
-    //     setNumGsSupertypeForms(prev => prev - 1); 
-    // }, []);
-    // const handleGsSupertypeDeletionConfirmation = useCallback(() => {
-    //     setRemovedGsSupertype(false);
-    //     setNumGsSupertypeForms(prev => prev - 1); 
-    // }, []);
+    const handleAUnitRemoveConfirmation = useCallback(() => {
+        setRemovedAUnit(false);
+        setNumAUnitForms(prev => prev - 1); 
+    }, []);
+    const handleAUnitDeletionConfirmation = useCallback(() => {
+        setRemovedAUnit(false);
+        setNumAUnitForms(prev => prev - 1); 
+    }, []);
 
     return (
         <div>
-            <h1>TESTING</h1>
             <h1>{armyId ? "Edit army" : "Add New Army"}</h1>
             <form onSubmit={onSubmitArmyForm}>
                 <label>Name:</label>
@@ -322,29 +126,30 @@ const armyForm = ({ gameSystem }) => {
                 {armyId && <button type="button" onClick={onDeleteClick}>Delete</button>}
             </form>
 
-            {/* {armyId && (
+            {armyId && (
                 <Fragment>
                     <div>
-                        <h2>Manage GsSupertype</h2>
-                        {[...Array(numGsSupertypeForms)].map((_, index) => (
-                            <GsSupertypeForm 
+                        <h2>Manage AUnit</h2>
+                        {[...Array(numAUnitForms)].map((_, index) => (
+                            <AUnitForm 
                                 key={index} 
-                                gameSystemId={gameSystemId}
-                                template={gsSupertypes[index]} 
-                                remove={removedGsSupertype}
+                                gameSystem={gameSystem}
+                                armyId={armyId}
+                                template={aUnits[index]} 
+                                remove={removedAUnit}
                                 index={index} 
-                                totalForms={numGsSupertypeForms} 
-                                onDeleteConfirmation={handleGsSupertypeDeletionConfirmation}
-                                onDeleteConfirmationNullId={handleGsSupertypeRemoveConfirmation}
+                                totalForms={numAUnitForms} 
+                                onDeleteConfirmation={handleAUnitDeletionConfirmation}
+                                onDeleteConfirmationNullId={handleAUnitRemoveConfirmation}
                             /> 
                         ))}
-                        <button onClick={addGsSupertypeForm}>Add New GsSupertype</button>
-                        {numGsSupertypeForms > 0 && <button onClick={removeGsSupertypeForm}>Remove Newest GsSupertype</button>}
+                        <button onClick={addAUnitForm}>Add New unit</button>
+                        {numAUnitForms > 0 && <button onClick={removeAUnitForm}>Remove Newest unit</button>}
                     </div>
                 </Fragment>
-            )} */}
+            )}
         </div>
     );
 };
 
-export default armyForm;
+export default ArmyForm;
