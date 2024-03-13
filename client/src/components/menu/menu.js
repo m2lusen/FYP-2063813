@@ -8,8 +8,7 @@ function Menu() {
                 <Link to="/Game">Game</Link>
                 <Link to="/Settings">Settings</Link>
 
-                <Link to="/FormArmy">Form Army</Link>
-                <Link to="/FormGame">Form Game</Link>
+                <Link to="/FormGame">Form Game</Link> {/**TEMPORARY WILL ONLY BE IN GAME */}
             </div>
 
             <h1>menu</h1>

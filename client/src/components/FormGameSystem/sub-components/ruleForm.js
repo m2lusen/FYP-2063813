@@ -18,11 +18,7 @@ const RuleForm = ({ gameSystemId, gsUsId, template, remove, ruleFormIndex, total
         if (cascadeDelete === true){
             setRemovedKeyword(true);
         }
-        if (cascadeDelete === true && numKeywordForms === 0) {
-            // Perform the rule deletion once numKeywordForms becomes 0
-            performRuleDeletion();
-        }
-    }, [cascadeDelete, numKeywordForms]);
+    }, [cascadeDelete]);
     
     const performRuleDeletion = async () => {
         try {
@@ -61,7 +57,12 @@ const RuleForm = ({ gameSystemId, gsUsId, template, remove, ruleFormIndex, total
         }
     }, [remove, ruleFormIndex, totalForms, ruleId, onDeleteRuleClick, onDeleteConfirmationNullId]);
 
-
+    useEffect(() => {
+        if (cascadeDelete === true && numKeywordForms === 0) {
+            // Perform the rule deletion once numKeywordForms becomes 0
+            performRuleDeletion();
+        }
+    }, [cascadeDelete, numKeywordForms, performRuleDeletion]);
 
     useEffect(() => {
         if (template) {

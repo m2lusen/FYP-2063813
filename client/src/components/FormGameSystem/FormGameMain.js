@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import GameSystemForm from './sub-components/gameSystemForm';
 import ExistingGameSystems from './updateGameFormMain';
+import FormArmy from '../FormArmy/FormArmyMain'
 
 function FormGame() {
     const [mode, setMode] = useState('initial');
@@ -10,8 +11,16 @@ function FormGame() {
         setMode('form');
     };
 
-    const handleShowExisting = () => {
+    const handleShowChooseAction = () => {
+        setMode('chooseAction');
+    };
+
+    const handleChooseExisting = () => {
         setMode('existing');
+    };
+
+    const handleChooseArmyFormNav = () => {
+        setMode('armyFormNav');
     };
 
     const handleBack = () => {
@@ -24,6 +33,11 @@ function FormGame() {
         setTemplate(nestedArray);
     };
 
+    const handleArmyFormClick = (nestedArray) => {
+        setMode('armyForm');
+        setTemplate(nestedArray);
+    };
+
     const renderContent = () => {
         switch (mode) {
             case 'initial':
@@ -31,7 +45,16 @@ function FormGame() {
                     <div>
                         <h1>Add Game system</h1>
                         <button onClick={handleShowForm}>Add a new Game System</button>
-                        <button onClick={handleShowExisting}>Modify an existing Game System</button>
+                        <button onClick={handleShowChooseAction}>Modify an existing Game System</button>
+                    </div>
+                );
+            case 'chooseAction':
+                return (
+                    <div>
+                        <h1>Choose Action</h1>
+                        <button onClick={handleChooseExisting}>Update Game System</button>
+                        <button onClick={handleChooseArmyFormNav}>Create/Update Army List</button>
+                        <button onClick={handleBack}>Back</button>
                     </div>
                 );
             case 'form':
@@ -45,6 +68,20 @@ function FormGame() {
                 return (
                     <div>
                         <ExistingGameSystems handleClick={handleFormClick} />
+                        <button onClick={handleBack}>Back</button>
+                    </div>
+                );
+            case 'armyForm':
+                return (
+                    <div>
+                        <FormArmy gameSystem={template} />
+                        <button onClick={handleBack}>Back</button>
+                    </div>
+                );
+            case 'armyFormNav':
+                return (
+                    <div>
+                        <ExistingGameSystems handleClick={handleArmyFormClick} />
                         <button onClick={handleBack}>Back</button>
                     </div>
                 );

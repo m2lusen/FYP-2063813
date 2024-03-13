@@ -53,7 +53,7 @@ function App() {
                     <Route path='/ArmyList'>
                         <ArmyList/>
                     </Route>
-                    <Route path='/FormArmy'>
+                    <Route path='/FormArmy'>{/**POSSIBLY REMOVE */}
                         <FormArmy/>
                     </Route>
                     <Route path='/FormGame'>

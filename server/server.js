@@ -673,17 +673,26 @@ app.get("/upgrade/:id", async (req, res) => {
 app.get("/game_system", async (req, res) => {
     try {
         const dbQuery = await pool.query(
-            `SELECT
-            *
-            FROM game_system
-            JOIN gs_unit_structure ON gs_unit_structure.game_system_id = game_system.game_system_id
-            JOIN gs_stat ON gs_unit_structure.gs_us_id = gs_stat.gs_us_id
+            // `SELECT
+            // *
+            // FROM game_system
+            // JOIN gs_unit_structure ON gs_unit_structure.game_system_id = game_system.game_system_id
+            // JOIN gs_stat ON gs_unit_structure.gs_us_id = gs_stat.gs_us_id
             
-            LEFT JOIN rule ON game_system.game_system_id = rule.game_system_id
-            LEFT JOIN keyword_rule ON rule.rule_id = keyword_rule.rule_id
-            LEFT JOIN keyword ON keyword_rule.keyword_id = keyword.keyword_id
-            ;
-            `
+            // LEFT JOIN rule ON game_system.game_system_id = rule.game_system_id
+            // LEFT JOIN keyword_rule ON rule.rule_id = keyword_rule.rule_id
+            // LEFT JOIN keyword ON keyword_rule.keyword_id = keyword.keyword_id
+            // ;
+            // `
+            `SELECT 
+            game_system.game_system_id, game_system_name, game_system_edition, game_system_version, gs_unit_structure.gs_us_id, gs_stat_id, gs_stat_name, gs_stat_acronyme, gs_supertype_id, gs_supertype_name, gs_supertype_lower, keyword.keyword_id, keyword_name, rule.rule_id, rule_name, rule_description 
+            FROM game_system 
+            LEFT JOIN gs_unit_structure ON game_system.game_system_id = gs_unit_structure.game_system_id 
+            LEFT JOIN gs_stat ON gs_unit_structure.gs_us_id = gs_stat.gs_us_id 
+            LEFT JOIN gs_supertype ON game_system.game_system_id = gs_supertype.game_system_id 
+            LEFT JOIN rule ON game_system.game_system_id = rule.game_system_id 
+            LEFT JOIN keyword_rule ON rule.rule_id = keyword_rule.rule_id 
+            LEFT JOIN keyword ON keyword_rule.keyword_id = keyword.keyword_id ;`
         )
 
         res.json(dbQuery.rows);
@@ -698,14 +707,24 @@ app.get("/game_system/:id", async (req, res) => {
         const {id} = req.params;
 
         const dbQuery = await pool.query(
-            `
-            SELECT *
-            FROM game_system
-            JOIN gs_unit_structure ON gs_unit_structure.game_system_id = game_system.game_system_id
-            JOIN gs_stat ON gs_unit_structure.gs_us_id = gs_stat.gs_us_id
+            // `
+            // SELECT *
+            // FROM game_system
+            // JOIN gs_unit_structure ON gs_unit_structure.game_system_id = game_system.game_system_id
+            // JOIN gs_stat ON gs_unit_structure.gs_us_id = gs_stat.gs_us_id
             
-            LEFT JOIN rule ON game_system.game_system_id = rule.game_system_id
-            LEFT JOIN keyword_rule ON rule.rule_id = keyword_rule.rule_id
+            // LEFT JOIN rule ON game_system.game_system_id = rule.game_system_id
+            // LEFT JOIN keyword_rule ON rule.rule_id = keyword_rule.rule_id
+            // LEFT JOIN keyword ON keyword_rule.keyword_id = keyword.keyword_id
+            // WHERE
+            `SELECT 
+            game_system.game_system_id, game_system_name, game_system_edition, game_system_version, gs_unit_structure.gs_us_id, gs_stat_id, gs_stat_name, gs_stat_acronyme, gs_supertype_id, gs_supertype_name, gs_supertype_lower, keyword.keyword_id, keyword_name, rule.rule_id, rule_name, rule_description 
+            FROM game_system 
+            LEFT JOIN gs_unit_structure ON game_system.game_system_id = gs_unit_structure.game_system_id 
+            LEFT JOIN gs_stat ON gs_unit_structure.gs_us_id = gs_stat.gs_us_id 
+            LEFT JOIN gs_supertype ON game_system.game_system_id = gs_supertype.game_system_id 
+            LEFT JOIN rule ON game_system.game_system_id = rule.game_system_id 
+            LEFT JOIN keyword_rule ON rule.rule_id = keyword_rule.rule_id 
             LEFT JOIN keyword ON keyword_rule.keyword_id = keyword.keyword_id
             WHERE
             game_system.game_system_id = '${id}'

@@ -1,5 +1,3 @@
-// IS GOING TO modified so that after a nested array is added, auto fills out form according to said array
-
 import React, { useState, useEffect, Fragment, useCallback } from "react";
 import GsSupertypeForm from "./gsSupertypeForm";
 import GsStatForm from "./gsStatForm";

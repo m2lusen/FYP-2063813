@@ -1,30 +1,23 @@
 
-import React, {Fragment, useEffect, useState} from "react";
+import React, {useEffect} from "react";
+import armyForm from "./sub-components/armyForm";
 
-function FormArmy() {
-
-    const getGameSystem = async () => {
-        try {
-            
-            const response = await fetch("http://localhost:4000/game_system");
-            const jsonData = await response.json();
-            console.log(jsonData);
-
-        } catch (err) {
-            console.log(err.message) // TEMPORARY
-        }
-    }
+const FormArmy = ({gameSystem}) => {
 
     useEffect(() => {
-        getGameSystem();
-    })
-
+        console.log('test')
+        if (gameSystem){
+            console.log(gameSystem)
+        }
+    }, [gameSystem]);
 
     return (
         <div>
 
 
             <h1>FormArmy</h1>
+
+            <armyForm gameSystem={gameSystem} />
         </div>
     )
 }
