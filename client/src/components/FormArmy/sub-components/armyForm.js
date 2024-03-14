@@ -24,7 +24,6 @@ const ArmyForm = ({ gameSystem, template }) => {
 
     useEffect(() => {
         if (gameSystem) {
-            // console.log(gameSystem);
             setGameSystemId(gameSystem[0]);
         }
     }, [gameSystem]);
