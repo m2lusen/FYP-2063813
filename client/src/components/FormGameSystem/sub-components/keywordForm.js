@@ -66,10 +66,11 @@ const KeywordForm = ({ gsUsId, ruleId, template, remove, index, totalForms, onDe
                     setKeywordId(responseData[0].keyword_id);
 
                     const body_intersection = {
-                        "keyword_id": [responseData[0].keywordId_id],
-                        "rule_id": [ruleId]
+                        "rule_id": [ruleId],
+                        "keyword_id": [responseData[0].keyword_id]
                     };
-                    response_intersection = await fetch("http://localhost:4000/keyword_rule",{
+                    console.log(body_intersection)
+                    response_intersection = await fetch("http://localhost:4000/keyword_rule",{ // ruleId not valid
                         method: "POST",
                         headers: {"Content-Type": "application/json"},
                         body: JSON.stringify(body_intersection)

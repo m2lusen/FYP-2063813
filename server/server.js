@@ -138,6 +138,7 @@ app.post("/keyword_rule", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
+        console.log(err);
         res.status(500).json({ error: err.message });
     }
 });

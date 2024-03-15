@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Fragment, useCallback } from "react";
 import AUnitForm from "./aUnitForm";
+import AUpgradeTypeForm from "./aUpgradeTypeForm";
 
 const ArmyForm = ({ gameSystem, template }) => {
 
@@ -10,17 +11,13 @@ const ArmyForm = ({ gameSystem, template }) => {
     const [armyVersion, setArmyVersion] = useState('');
 
     const [aUnits, setAUnits] = useState([]);
+    const [aUpgradeTypes, setAUpgradeTypes] = useState([]);
 
     const [numAUnitForms, setNumAUnitForms] = useState(1);
+    const [numAUpgradeTypeForms, setNumAUpgradeTypeForms] = useState(1);
 
     const [removedAUnit, setRemovedAUnit] = useState(false);
-
-    // useEffect(() => {
-    //     if (gameSystem) {
-    //         console.log(gameSystem);
-    //         setGameSystemId(gameSystem[0]);
-    //     }
-    // }, [gameSystem]);
+    const [removedAUpgradeType, setRemovedAUpgradeType] = useState(false);
 
     useEffect(() => {
         if (gameSystem) {
@@ -101,7 +98,6 @@ const ArmyForm = ({ gameSystem, template }) => {
         // }
         setRemovedAUnit(true);
     };
-
     const handleAUnitRemoveConfirmation = useCallback(() => {
         setRemovedAUnit(false);
         setNumAUnitForms(prev => prev - 1); 
@@ -109,6 +105,24 @@ const ArmyForm = ({ gameSystem, template }) => {
     const handleAUnitDeletionConfirmation = useCallback(() => {
         setRemovedAUnit(false);
         setNumAUnitForms(prev => prev - 1); 
+    }, []);
+
+    const addAUpgradeTypeForm = () => {
+        setNumAUpgradeTypeForms(prev => prev + 1); 
+    };
+    const removeAUpgradeTypeForm = () => {
+        // if (aUpgradeTypes.length !== 0) {
+        //     setNumAUpgradeTypeForms(aUpgradeTypes.slice(0, aUpgradeTypes.length - 1));
+        // }
+        setRemovedAUpgradeType(true);
+    };
+    const handleAUpgradeTypeRemoveConfirmation = useCallback(() => {
+        setRemovedAUpgradeType(false);
+        setNumAUpgradeTypeForms(prev => prev - 1); 
+    }, []);
+    const handleAUpgradeTypeDeletionConfirmation = useCallback(() => {
+        setRemovedAUpgradeType(false);
+        setNumAUpgradeTypeForms(prev => prev - 1); 
     }, []);
 
     return (
@@ -128,7 +142,7 @@ const ArmyForm = ({ gameSystem, template }) => {
             {armyId && (
                 <Fragment>
                     <div>
-                        <h2>Manage AUnit</h2>
+                        <h2>Manage Units</h2>
                         {[...Array(numAUnitForms)].map((_, index) => (
                             <AUnitForm 
                                 key={index} 
@@ -144,6 +158,24 @@ const ArmyForm = ({ gameSystem, template }) => {
                         ))}
                         <button onClick={addAUnitForm}>Add New unit</button>
                         {numAUnitForms > 0 && <button onClick={removeAUnitForm}>Remove Newest unit</button>}
+                    </div>
+
+                    <div>
+                        <h2>Manage Upgrade Types</h2>
+                        {[...Array(numAUpgradeTypeForms)].map((_, index) => (
+                            <AUpgradeTypeForm 
+                                key={index} 
+                                gameSystem={gameSystem}
+                                template={aUpgradeTypes[index]} 
+                                remove={removedAUpgradeType}
+                                index={index} 
+                                totalForms={numAUpgradeTypeForms} 
+                                onDeleteConfirmation={handleAUpgradeTypeDeletionConfirmation}
+                                onDeleteConfirmationNullId={handleAUpgradeTypeRemoveConfirmation}
+                            /> 
+                        ))}
+                        <button onClick={addAUpgradeTypeForm}>Add New upgrade type</button>
+                        {numAUpgradeTypeForms > 0 && <button onClick={removeAUpgradeTypeForm}>Remove Newest upgrade type</button>}
                     </div>
                 </Fragment>
             )}

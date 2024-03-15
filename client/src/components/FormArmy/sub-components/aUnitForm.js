@@ -1,5 +1,7 @@
 import React, { useState, useEffect, Fragment, useCallback } from "react";
 import StatlineForm from "./statlineForm";
+import AUnitRuleForm from "./aUnitRuleForm";
+import AUnitKeywordForm from "./aUnitKeywordForm";
 
 const AUnitForm = ({ gameSystem, armyId, template, remove, index, totalForms, onDeleteConfirmation, onDeleteConfirmationNullId }) => {
 
@@ -11,13 +13,19 @@ const AUnitForm = ({ gameSystem, armyId, template, remove, index, totalForms, on
     const [gsSupertypes, setGsSupertypes] = useState([]);
 
     const [statlines, setStatlines] = useState([]);
+    const [aUnitRules, setAUnitRules] = useState([]);
+    const [aUnitKeywords, setAUnitKeywords] = useState([]);
 
     const [numStatlineForms, setNumStatlineForms] = useState(1);
+    const [numAUnitRuleForms, setNumAUnitRuleForms] = useState(1);
+    const [numAUnitKeywordForms, setNumAUnitKeywordForms] = useState(1);
 
     const [removedStatline, setRemovedStatline] = useState(false);
+    const [removedAUnitRule, setRemovedAUnitRule] = useState(false); // possibly not necessary
+    const [removedAUnitKeyword, setRemovedAUnitKeyword] = useState(false); // possibly not necessary
 
 
-    const onDeleteAUnitClick = useCallback(async () => {
+    const onDeleteAUnitClick = useCallback(async () => { // will need to be updated so that all a_statline and all a_upgrade will also be deleted 
         try {
             const response = await fetch(`http://localhost:4000/a_unit/${aUnitId}`, {
                 method: "DELETE"
@@ -65,13 +73,11 @@ const AUnitForm = ({ gameSystem, armyId, template, remove, index, totalForms, on
             if (aUnitId === null) {
                 body = {
                     "army_id": [armyId],
-                    "gs_supertype_id": [gsSupertypeId],
+                    "gs_supertype_id": [Number(gsSupertypeId)],
                     "a_unit_name": [aUnitName],
                     "a_unit_pc": [aUnitPC],
                     "a_unit_limit_per_army": [aUnitMin] 
                 };
-
-                console.log(body)
 
                 response = await fetch("http://localhost:4000/a_unit", {//possible false positive
                     method: "POST",
@@ -88,13 +94,11 @@ const AUnitForm = ({ gameSystem, armyId, template, remove, index, totalForms, on
             } else { // issue with update
                 body = {
                     "army_id": armyId,
-                    "gs_supertype_id": gsSupertypeId,
+                    "gs_supertype_id": Number(gsSupertypeId),
                     "a_unit_name": aUnitName,
                     "a_unit_pc": aUnitPC,
                     "a_unit_limit_per_army": aUnitMin
                 };
-
-                console.log(body)
 
                 response = await fetch(`http://localhost:4000/a_unit/${aUnitId}`, {
                     method: "PUT",
@@ -115,12 +119,11 @@ const AUnitForm = ({ gameSystem, armyId, template, remove, index, totalForms, on
         setNumStatlineForms(prev => prev + 1); 
     };
     const removeStatlineForm = () => {
-        // if (Statlines.length !== 0) {
-        //     setNumStatlineForms(Statlines.slice(0, Statlines.length - 1));
+        // if (statlines.length !== 0) {
+        //     setNumStatlineForms(statlines.slice(0, statlines.length - 1));
         // }
         setRemovedStatline(true);
     };
-
     const handleStatlineRemoveConfirmation = useCallback(() => {
         setRemovedStatline(false);
         setNumStatlineForms(prev => prev - 1); 
@@ -128,6 +131,42 @@ const AUnitForm = ({ gameSystem, armyId, template, remove, index, totalForms, on
     const handleStatlineDeletionConfirmation = useCallback(() => {
         setRemovedStatline(false);
         setNumStatlineForms(prev => prev - 1); 
+    }, []);
+
+    const addAUnitRuleForm = () => {
+        setNumAUnitRuleForms(prev => prev + 1); 
+    };
+    const removeAUnitRuleForm = () => {
+        // if (aUnitRule.length !== 0) {
+        //     setNumAUnitRuleForms(aUnitRule.slice(0, aUnitRule.length - 1));
+        // }
+        setRemovedAUnitRule(true);
+    };
+    const handleAUnitRuleRemoveConfirmation = useCallback(() => {
+        setRemovedAUnitRule(false);
+        setNumAUnitRuleForms(prev => prev - 1); 
+    }, []);
+    const handleAUnitRuleDeletionConfirmation = useCallback(() => {
+        setRemovedAUnitRule(false);
+        setNumAUnitRuleForms(prev => prev - 1); 
+    }, []);
+
+    const addAUnitKeywordForm = () => {
+        setNumAUnitKeywordForms(prev => prev + 1); 
+    };
+    const removeAUnitKeywordForm = () => {
+        // if (aUnitKeywords.length !== 0) {
+        //     setNumAUnitKeywordForms(aUnitKeywords.slice(0, aUnitKeywords.length - 1));
+        // }
+        setRemovedAUnitKeyword(true);
+    };
+    const handleAUnitKeywordRemoveConfirmation = useCallback(() => {
+        setRemovedAUnitKeyword(false);
+        setNumAUnitKeywordForms(prev => prev - 1); 
+    }, []);
+    const handleAUnitKeywordDeletionConfirmation = useCallback(() => {
+        setRemovedAUnitKeyword(false);
+        setNumAUnitKeywordForms(prev => prev - 1); 
     }, []);
 
     return (
@@ -170,6 +209,44 @@ const AUnitForm = ({ gameSystem, armyId, template, remove, index, totalForms, on
                         ))}
                         <button onClick={addStatlineForm}>Add New statline</button>
                         {numStatlineForms > 0 && <button onClick={removeStatlineForm}>Remove Newest statline</button>}
+                    </div>
+
+                    <div>
+                        <h2>Manage Rules</h2>
+                        {[...Array(numAUnitRuleForms)].map((_, index) => (
+                            <AUnitRuleForm 
+                                key={index} 
+                                gameSystem={gameSystem}
+                                aUnitId={aUnitId} 
+                                template={aUnitRules[index]}
+                                remove={removedAUnitRule} 
+                                index={index} 
+                                totalForms={numAUnitRuleForms} 
+                                onDeleteConfirmation={handleAUnitRuleDeletionConfirmation}
+                                onDeleteConfirmationNullId={handleAUnitRuleRemoveConfirmation}
+                            /> 
+                        ))}
+                        <button onClick={addAUnitRuleForm}>Link new Rule</button>
+                        {numAUnitRuleForms > 0 && <button onClick={removeAUnitRuleForm}>Remove Newest Rule</button>}
+                    </div>
+
+                    <div>
+                        <h2>Manage Keywords</h2>
+                        {[...Array(numAUnitKeywordForms)].map((_, index) => (
+                            <AUnitKeywordForm 
+                                key={index} 
+                                gameSystem={gameSystem}
+                                aUnitId={aUnitId} 
+                                template={aUnitKeywords[index]}
+                                remove={removedAUnitKeyword} 
+                                index={index} 
+                                totalForms={numAUnitKeywordForms} 
+                                onDeleteConfirmation={handleAUnitKeywordDeletionConfirmation}
+                                onDeleteConfirmationNullId={handleAUnitKeywordRemoveConfirmation}
+                            /> 
+                        ))}
+                        <button onClick={addAUnitKeywordForm}>Link new Keyword</button>
+                        {numAUnitKeywordForms > 0 && <button onClick={removeAUnitKeywordForm}>Remove Newest Keyword</button>}
                     </div>
                 </Fragment>
             )}

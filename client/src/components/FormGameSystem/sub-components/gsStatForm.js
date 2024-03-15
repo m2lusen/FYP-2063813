@@ -95,34 +95,6 @@ const GsStatForm = ({ gsUsId, template, remove, index, totalForms, onDeleteConfi
         }
     };
 
-    // const onDeleteGsStatClick = async () => {
-    //     try {
-    //         const response = await fetch(`http://localhost:4000/gs_stat/${gsStatId}`, {
-    //             method: "DELETE"
-    //         });
-    //         if (response.ok) {
-    //             console.log("Deleted successfully");
-    //             // Clear gs supertype form fields after deletion
-    //             setGsStatId(null);
-    //             setGsStatName('');
-    //             setGsStatAcronyme('');
-    //         } else {
-    //             console.error("Failed to delete");
-    //         }
-    //     } catch (err) {
-    //         console.error(err.message);
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     if (index === totalForms - 1) {
-    //         console.log("REMOVED"); // Log only when the last GsStatForm is removed
-    //         if (gsStatId !== null){
-    //             onDeleteGsStatClick();
-    //         }
-    //     }
-    // }, [index, totalForms, gsStatId, onDeleteGsStatClick]);
-
     return (
         <div>
             <h4>Add New gsStat</h4>
@@ -130,7 +102,7 @@ const GsStatForm = ({ gsUsId, template, remove, index, totalForms, onDeleteConfi
                 <label>Name:</label>
                 <input type="text" value={gsStatName} onChange={(e) => setGsStatName(e.target.value)} required />
                 <label>Acronym:</label>
-                <input type="text" value={gsStatAcronyme} onChange={(e) => setGsStatAcronyme(e.target.value)} required />
+                <input type="text" value={gsStatAcronyme} onChange={(e) => setGsStatAcronyme(e.target.value)} maxLength={4} required />
                 <button type="submit">{gsStatId ? "Update" : "Create"}</button>
                 {gsStatId && <button type="button" onClick={onDeleteGsStatClick}>Delete</button>}
             </form>
