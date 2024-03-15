@@ -2029,6 +2029,7 @@ app.post("/rawSQL", async (req, res) => {
         const dbQuery = await pool.query(content);
         res.json(dbQuery.rows);
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: err.message });
     }
 });

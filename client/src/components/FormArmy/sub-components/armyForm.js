@@ -20,6 +20,12 @@ const ArmyForm = ({ gameSystem, template }) => {
     const [removedAUpgradeType, setRemovedAUpgradeType] = useState(false);
 
     useEffect(() => {
+        if (template) {
+            console.log(template);
+        }
+    }, [template]);
+
+    useEffect(() => {
         if (gameSystem) {
             setGameSystemId(gameSystem[0]);
         }
@@ -166,6 +172,7 @@ const ArmyForm = ({ gameSystem, template }) => {
                             <AUpgradeTypeForm 
                                 key={index} 
                                 gameSystem={gameSystem}
+                                armyId={armyId}
                                 template={aUpgradeTypes[index]} 
                                 remove={removedAUpgradeType}
                                 index={index} 

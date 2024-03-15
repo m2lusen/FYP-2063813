@@ -1,8 +1,9 @@
 import React, { useState, useEffect, Fragment, useCallback } from "react";
 import AUpgradeRuleForm from "./aUpgradeRuleForm";
 import AUpgradeKeywordForm from "./aUpgradeKeywordForm";
+import AUnitAUpgradeMain from "./aUnitAUpgradeMain";
 
-const AUpgradeForm = ({ gameSystem, aUTId, template, remove, index, totalForms, onDeleteConfirmation, onDeleteConfirmationNullId }) => {
+const AUpgradeForm = ({ gameSystem, armyId, aUTId, template, remove, index, totalForms, onDeleteConfirmation, onDeleteConfirmationNullId }) => {
 
     const [aUpgradeId, setAUpgradeId] = useState(null);
     const [aUpgradePc, setAUpgradePc] = useState(0);
@@ -185,6 +186,15 @@ const AUpgradeForm = ({ gameSystem, aUTId, template, remove, index, totalForms, 
                         <button onClick={addAUpgradeKeywordForm}>Link new Keyword</button>
                         {numAUpgradeKeywordForms > 0 && <button onClick={removeAUpgradeKeywordForm}>Remove Newest Keyword</button>}
                     </div>
+
+                    {/* <div>
+                        <h2>Link Upgrade To Units</h2>
+                        <AUnitAUpgradeMain 
+                            gameSystem={gameSystem}
+                            armyId={armyId}
+                            aUpgradeId={aUpgradeId}
+                        />
+                    </div> */}
                 </Fragment>
             )}
         </div>

@@ -1,37 +1,12 @@
-Get game system
+Next for form 2.
 
-INSERT Army
-INSERT GS_supertype
-INSERT A_unit
-INSERT rule
-INSERT A_statline
-INSERT A_upgrade
-INSERT keyword
-INSERT A_upgrade_type
+- Create Query
 
-INSERT A_upgrade_rule
-INSERT A_statline_GS_stat
-INSERT A_upgrade_keyword
-INSERT keyword_rule
-INSERT A_unit_A_upgrade
-INSERT a_unit_keyword
-INSERT A_unit_A_statline
-INSERT a_unit_rule	
+- Create template format
 
-UPDATE Army
-UPDATE GS_supertype
-UPDATE A_unit
-UPDATE rule
-UPDATE A_statline
-UPDATE A_upgrade
-UPDATE keyword
-UPDATE A_upgrade_type
+- Apply template for all
 
-UPDATE A_upgrade_rule
-UPDATE A_statline_GS_stat
-UPDATE A_upgrade_keyword
-UPDATE keyword_rule
-UPDATE A_unit_A_upgrade
-UPDATE a_unit_keyword
-UPDATE A_unit_A_statline
-UPDATE a_unit_rule	
+- Add 2 page policy
+	- There will be a seperate screen for Units, and Upgrades
+	- At the end of each screen there will be a "submit" button that will update the template, and once this is done navigate the user to the next page
+	- after the upgrades page, there will be a new page for the intersection between upgrades and units.

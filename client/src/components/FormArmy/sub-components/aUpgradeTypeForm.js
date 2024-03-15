@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment, useCallback } from "react";
 import AUpgradeForm from "./aUpgradeForm";
 
-const AUpgradeTypeForm = ({ gameSystem, template, remove, index, totalForms, onDeleteConfirmation, onDeleteConfirmationNullId }) => {
+const AUpgradeTypeForm = ({ gameSystem, armyId, template, remove, index, totalForms, onDeleteConfirmation, onDeleteConfirmationNullId }) => {
 
     const [aUTId, setAUTId] = useState(null);
     const [aUTName, setAUTName] = useState('');
@@ -136,6 +136,7 @@ const AUpgradeTypeForm = ({ gameSystem, template, remove, index, totalForms, onD
                             <AUpgradeForm 
                                 key={index}
                                 gameSystem={gameSystem}
+                                armyId={armyId}
                                 aUTId={aUTId}
                                 template={upgrades[index]}
                                 remove={removedUpgrade} 
