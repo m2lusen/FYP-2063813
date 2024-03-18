@@ -14,6 +14,17 @@ const AUpgradeTypeForm = ({ gameSystem, armyId, template, remove, index, totalFo
 
     const [removedUpgrade, setRemovedUpgrade] = useState(false);
 
+    useEffect(() => {
+        if (template) {
+            const [id, name, min, max, limit, upgradesArr] = template;
+            setAUTId(id);
+            setAUTName(name);
+            setAUTMin(min);
+            setAUTMax(max);
+            setUpgrades(upgradesArr);
+            setNumUpgradeForms(upgradesArr.length);
+        }
+    }, [template]);
 
     const onDeleteAUpgradeTypeClick = useCallback(async () => {
         try {
@@ -99,9 +110,9 @@ const AUpgradeTypeForm = ({ gameSystem, armyId, template, remove, index, totalFo
         setNumUpgradeForms(prev => prev + 1); 
     };
     const removeUpgradeForm = () => {
-        // if (upgrades.length !== 0) {
-        //     setNumUpgradeForms(upgrades.slice(0, upgrades.length - 1));
-        // }
+        if (upgrades.length !== 0) {
+            setUpgrades(upgrades.slice(0, upgrades.length - 1));
+        }
         setRemovedUpgrade(true);
     };
     const handleUpgradeRemoveConfirmation = useCallback(() => {

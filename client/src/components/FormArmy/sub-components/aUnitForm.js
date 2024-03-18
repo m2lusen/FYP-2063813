@@ -24,6 +24,22 @@ const AUnitForm = ({ gameSystem, armyId, template, remove, index, totalForms, on
     const [removedAUnitRule, setRemovedAUnitRule] = useState(false); // possibly not necessary
     const [removedAUnitKeyword, setRemovedAUnitKeyword] = useState(false); // possibly not necessary
 
+    useEffect(() => {
+        if (template) {
+            const [id, supertype_id, name, pc, min, aUnitRulesArr, aUnitKeywordsArr, statlinesArr] = template;
+            setAUnitId(id);
+            setGsSupertypeId(supertype_id);
+            setAUnitName(name);
+            setAUnitPC(pc);
+            setAUnitMin(min);
+            setAUnitRules(aUnitRulesArr);
+            setNumAUnitRuleForms(aUnitRulesArr.length);
+            setAUnitKeywords(aUnitKeywordsArr);
+            setNumAUnitKeywordForms(aUnitKeywordsArr.length);
+            setStatlines(statlinesArr);
+            setNumStatlineForms(statlinesArr.length);
+        }
+    }, [template]);
 
     const onDeleteAUnitClick = useCallback(async () => { // will need to be updated so that all a_statline and all a_upgrade will also be deleted 
         try {
@@ -119,9 +135,9 @@ const AUnitForm = ({ gameSystem, armyId, template, remove, index, totalForms, on
         setNumStatlineForms(prev => prev + 1); 
     };
     const removeStatlineForm = () => {
-        // if (statlines.length !== 0) {
-        //     setNumStatlineForms(statlines.slice(0, statlines.length - 1));
-        // }
+        if (statlines.length !== 0) {
+            setStatlines(statlines.slice(0, statlines.length - 1));
+        }
         setRemovedStatline(true);
     };
     const handleStatlineRemoveConfirmation = useCallback(() => {
@@ -137,9 +153,9 @@ const AUnitForm = ({ gameSystem, armyId, template, remove, index, totalForms, on
         setNumAUnitRuleForms(prev => prev + 1); 
     };
     const removeAUnitRuleForm = () => {
-        // if (aUnitRule.length !== 0) {
-        //     setNumAUnitRuleForms(aUnitRule.slice(0, aUnitRule.length - 1));
-        // }
+        if (aUnitRules.length !== 0) {
+            setAUnitRules(aUnitRules.slice(0, aUnitRules.length - 1));
+        }
         setRemovedAUnitRule(true);
     };
     const handleAUnitRuleRemoveConfirmation = useCallback(() => {
@@ -155,9 +171,9 @@ const AUnitForm = ({ gameSystem, armyId, template, remove, index, totalForms, on
         setNumAUnitKeywordForms(prev => prev + 1); 
     };
     const removeAUnitKeywordForm = () => {
-        // if (aUnitKeywords.length !== 0) {
-        //     setNumAUnitKeywordForms(aUnitKeywords.slice(0, aUnitKeywords.length - 1));
-        // }
+        if (aUnitKeywords.length !== 0) {
+            setAUnitKeywords(aUnitKeywords.slice(0, aUnitKeywords.length - 1));
+        }
         setRemovedAUnitKeyword(true);
     };
     const handleAUnitKeywordRemoveConfirmation = useCallback(() => {

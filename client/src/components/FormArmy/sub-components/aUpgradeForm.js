@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment, useCallback } from "react";
 import AUpgradeRuleForm from "./aUpgradeRuleForm";
 import AUpgradeKeywordForm from "./aUpgradeKeywordForm";
-import AUnitAUpgradeMain from "./aUnitAUpgradeMain";
+
 
 const AUpgradeForm = ({ gameSystem, armyId, aUTId, template, remove, index, totalForms, onDeleteConfirmation, onDeleteConfirmationNullId }) => {
 
@@ -18,6 +18,18 @@ const AUpgradeForm = ({ gameSystem, armyId, aUTId, template, remove, index, tota
     const [removedAUpgradeRule, setRemovedAUpgradeRule] = useState(false);
     const [removedAUpgradeKeyword, setRemovedAUpgradeKeyword] = useState(false);
 
+    useEffect(() => {
+        if (template) {
+            const [id, pc, name, upgradesRulesArr, aUpgradesKeywordsArr] = template;
+            setAUpgradeId(id);
+            setAUpgradePc(pc);
+            setAUpgradeName(name);
+            setAUpgradeRules(upgradesRulesArr);
+            setNumAUpgradeRuleForms(upgradesRulesArr.length);
+            setAUpgradeKeywords(aUpgradesKeywordsArr);
+            setNumAUpgradeKeywordForms(aUpgradesKeywordsArr.length);
+        }
+    }, [template]);
 
     const onDeleteAUpgradeClick = useCallback(async () => {
         try {
@@ -102,9 +114,9 @@ const AUpgradeForm = ({ gameSystem, armyId, aUTId, template, remove, index, tota
         setNumAUpgradeRuleForms(prev => prev + 1); 
     };
     const removeAUpgradeRuleForm = () => {
-        // if (aUpgradeRules.length !== 0) {
-        //     setNumAUpgradeRuleForms(aUpgradeRules.slice(0, aUpgradeRules.length - 1));
-        // }
+        if (aUpgradeRules.length !== 0) {
+            setAUpgradeRules(aUpgradeRules.slice(0, aUpgradeRules.length - 1));
+        }
         setRemovedAUpgradeRule(true);
     };
     const handleAUpgradeRuleRemoveConfirmation = useCallback(() => {
@@ -120,9 +132,9 @@ const AUpgradeForm = ({ gameSystem, armyId, aUTId, template, remove, index, tota
         setNumAUpgradeKeywordForms(prev => prev + 1); 
     };
     const removeAUpgradeKeywordForm = () => {
-        // if (aUpgradeKeywords.length !== 0) {
-        //     setNumAUpgradeKeywordForms(aUpgradeKeywords.slice(0, aUpgradeKeywords.length - 1));
-        // }
+        if (aUpgradeKeywords.length !== 0) {
+            setAUpgradeKeywords(aUpgradeKeywords.slice(0, aUpgradeKeywords.length - 1));
+        }
         setRemovedAUpgradeKeyword(true);
     };
     const handleAUpgradeKeywordRemoveConfirmation = useCallback(() => {
@@ -187,14 +199,6 @@ const AUpgradeForm = ({ gameSystem, armyId, aUTId, template, remove, index, tota
                         {numAUpgradeKeywordForms > 0 && <button onClick={removeAUpgradeKeywordForm}>Remove Newest Keyword</button>}
                     </div>
 
-                    {/* <div>
-                        <h2>Link Upgrade To Units</h2>
-                        <AUnitAUpgradeMain 
-                            gameSystem={gameSystem}
-                            armyId={armyId}
-                            aUpgradeId={aUpgradeId}
-                        />
-                    </div> */}
                 </Fragment>
             )}
         </div>

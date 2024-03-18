@@ -6,6 +6,13 @@ const AUnitKeywordForm = ({ gameSystem, aUnitId, template, remove, index, totalF
     const [oldKeywordId, setOldKeywordId] = useState(null);
     const [keywords, setKeywords] = useState([]);
 
+    useEffect(() => {
+        if (template) {
+            setKeywordId(template);
+            setOldKeywordId(template);
+        }
+    }, [template]);
+
     const onDeleteAUnitKeywordClick = useCallback(async () => {
         try {
             const response = await fetch(`http://localhost:4000/keyword_a_unit/${oldKeywordId}/${aUnitId}`, {
@@ -41,19 +48,14 @@ const AUnitKeywordForm = ({ gameSystem, aUnitId, template, remove, index, totalF
     useEffect(() => {
         if (gameSystem) {
             let keywordsArr = [];
-            // gameSystem[7].forEach(rule => {
-            //     console.log(rule[3])
-            //     const keywords = rule[3]; // Get the array of keywords from the input rule
-            //     keywordsArr.push(...keywords); // Push each keyword array into the output array
-            // });
             let keywordsSet = new Set();
             gameSystem[7].forEach(rule => {
-                const keywords = rule[3]; // Get the array of keywords from the input rule
+                const keywords = rule[3];
                 keywords.forEach(keyword => {
                     const [keywordId] = keyword;
                     if (!keywordsSet.has(keywordId)) {
-                        keywordsSet.add(keywordId); // Add the keyword ID to the set if it's not already present
-                        keywordsArr.push(keyword); // Push the keyword array into the output array
+                        keywordsSet.add(keywordId);
+                        keywordsArr.push(keyword);
                     }
                 });
             });

@@ -11,6 +11,18 @@ const StatlineForm = ({ gameSystem, aUnitId, template, remove, index, totalForms
     
     const [statlineValues, setStatlineValues] = useState([]);
 
+    useEffect(() => {
+        if (template) {
+            const [id, nameArr, min, max, pc, statsArr] = template;
+            setAStatlineId(id);
+            setAStatlineName(nameArr[0]);
+            setAStatlineMin(min);
+            setAStatlineMax(max);
+            setAStatlinePc(pc);
+            setStatlineValues(statsArr); 
+        }
+    }, [template]);
+
     const onDeleteStatlineClick = useCallback(async () => {
         try {
             const response = await fetch(`http://localhost:4000/a_statline/${aStatlineId}`, {
@@ -49,10 +61,12 @@ const StatlineForm = ({ gameSystem, aUnitId, template, remove, index, totalForms
     }, [remove, index, totalForms, aStatlineId, onDeleteStatlineClick, onDeleteConfirmationNullId]);
 
     useEffect(() => {
-        if (gameSystem) {
+
+        if (!template && gameSystem) {
+
             const initialStatlineValues = gameSystem[5].map(([id, _, acronym]) => [id, 0]); // Initialize statline values as nested array
             setStatlineValues(initialStatlineValues);
-        }
+        } 
     }, [gameSystem]);
 
     const handleStatlineChange = (statId, value) => {
@@ -187,7 +201,6 @@ const StatlineForm = ({ gameSystem, aUnitId, template, remove, index, totalForms
                         "A_statline_max": aStatlineMax,
                         "a_statline_point_cost": aStatlinePc
                     }
-                    console.log(bodyAUnitAStatline)
                     responseAUnitAStatline = await fetch(`http://localhost:4000/a_unit_a_statline/${aUnitId}/${aStatlineId}`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },

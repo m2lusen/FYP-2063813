@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment, useCallback } from "react";
+import IntersectionForm from "./intersectionForm";
 
 function organizeData(data) {
     if (!Array.isArray(data)) {
@@ -121,7 +122,7 @@ function organizeData(data) {
                     ]);
                 }
             }
-            if (!intersections.some(intersection => intersection[0] === item.intersection)) {
+            if (item.intersection !== ' - ' && !intersections.some(intersection => intersection[0] === item.intersection)) {
                 intersections.push([item.intersection]);
             }
 
@@ -136,18 +137,10 @@ function organizeData(data) {
     return nestedArrays;
 }
 
-
-
-function ExistingArmies({ gameSystem, handleClick }) {
-    const [nestedData, setNestedData] = useState(null);
-
-
-
-    const getArmyList = async () => {
-        try {
-
-            const body = { // rawSQL used to determine code, should be done remove
-                "sql": `
+async function RefreshTemplate({ gameSystemId }) {
+    try {        
+        const body = {
+            "sql": `
                 SELECT 
                 army.army_id, army_name, army_edition, army_version,
                 a_unit.a_unit_id, gs_supertype_id, a_unit_name, a_unit_pc, a_unit_limit_per_army,
@@ -180,42 +173,108 @@ function ExistingArmies({ gameSystem, handleClick }) {
                 LEFT JOIN keyword_a_upgrade ON a_upgrade.a_upgrade_id = keyword_a_upgrade.a_upgrade_id
 
                 WHERE
-                game_system_id = ${gameSystem[0]}
+                game_system_id = ${gameSystemId}
                 ;
-                `
-            };
-            const response = await fetch("http://localhost:4000/rawSQL", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body)
-            });
+            `
+        };
 
-            const responseData = await response.json();
-            console.log(organizeData(responseData));
+        const response = await fetch("http://localhost:4000/rawSQL", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
 
-            setNestedData(organizeData(responseData));
-        } catch (err) {
-            console.error("Error fetching data:", err);
-        }
+        const responseData = await response.json();
+
+        return organizeData(responseData);
+    } catch (err) {
+        console.error("Error fetching data:", err);
+        throw err; // Re-throw the error to be handled by the caller
     }
+}
 
+
+
+const IntersectionMain = ({ gameSystemId, armyId}) => {
+
+    const [aUnits, setAUnits] = useState([]);
+
+    const [aUpgrades, setAUpgrades] = useState([]);
+
+    const [intersections, setIntersections] = useState([]);
+    const [template, setTemplate] = useState(null);
+
+    const [numIntersectionForms, setNumIntersectionForms] = useState(1);
+
+    const [removedIntersection, setRemovedIntersection] = useState(false);
 
     useEffect(() => {
-        getArmyList();
-    }, [getArmyList]);
+        if (!template) {
+            const fetchData = async () => {
+                try {
+                    const refreshedTemplates = await RefreshTemplate({ gameSystemId });
+                    const selectedTemplate = refreshedTemplates.find(array => array[0] === Number(armyId));
+    
+                    if (!selectedTemplate) {
+                        console.error('Matching data not found in refreshedTemplate');
+                    } else {
+                        setTemplate(selectedTemplate);
+                    }
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            };
+            fetchData();
+        }
+        if (template) {
+            setIntersections(template[6]);
+            setAUnits(template[4]);
+            setAUpgrades(template[5].flatMap(arr => arr[5]));       
+            setNumIntersectionForms(intersections.length);
+        }
+    }, [gameSystemId, armyId, template]);
+
+    const addIntersectionForm = () => {
+        setNumIntersectionForms(prev => prev + 1); 
+    };
+    const removeIntersectionForm = () => {
+        if (intersections.length !== 0) {
+            setIntersections(intersections.slice(0, intersections.length - 1));
+        }
+        setRemovedIntersection(true);
+    };
+    const handleIntersectionRemoveConfirmation = useCallback(() => {
+        setRemovedIntersection(false);
+        setNumIntersectionForms(prev => prev - 1); 
+    }, []);
+    const handleIntersectionDeletionConfirmation = useCallback(() => {
+        setRemovedIntersection(false);
+        setNumIntersectionForms(prev => prev - 1); 
+    }, []);
 
     return (
         <div>
+            <h1>Intersection</h1>
+
             <div>
-                <h2>Choose an Existing Army</h2>
-                {nestedData && nestedData.map((nestedArray, index) => (
-                    <button key={index} onClick={() => handleClick(nestedArray)}>
-                        {nestedArray[1]} - {nestedArray[2]} - {nestedArray[3]}
-                    </button>
+                {[...Array(numIntersectionForms)].map((_, index) => (
+                    <IntersectionForm
+                        key={index} 
+                        aUnits={aUnits}
+                        aUpgrades={aUpgrades}
+                        Intersection={intersections[index]}
+                        remove={removedIntersection}
+                        index={index} 
+                        totalForms={numIntersectionForms} 
+                        onDeleteConfirmation={handleIntersectionDeletionConfirmation}
+                        onDeleteConfirmationNullId={handleIntersectionRemoveConfirmation}
+                    /> 
                 ))}
+                <button onClick={addIntersectionForm}>Add New Intersection between unit and upgrade</button>
+                {numIntersectionForms > 0 && <button onClick={removeIntersectionForm}>Remove Newest Intersection between unit and upgrade</button>}
             </div>
         </div>
     );
-}
+};
 
-export default ExistingArmies;
+export default IntersectionMain;

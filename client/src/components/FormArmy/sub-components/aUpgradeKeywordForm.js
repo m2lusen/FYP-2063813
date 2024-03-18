@@ -6,6 +6,13 @@ const AUpgradeKeywordForm = ({ gameSystem, aUpgradeId, template, remove, index, 
     const [oldKeywordId, setOldKeywordId] = useState(null);
     const [keywords, setKeywords] = useState([]);
 
+    useEffect(() => {
+        if (template) {
+            setKeywordId(template);
+            setOldKeywordId(template);
+        }
+    }, [template]);
+
     const onDeleteAUpgradeKeywordClick = useCallback(async () => {
         try {
             const response = await fetch(`http://localhost:4000/keyword_a_upgrade/${oldKeywordId}/${aUpgradeId}`, {

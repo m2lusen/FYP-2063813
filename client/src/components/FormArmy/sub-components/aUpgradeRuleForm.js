@@ -6,6 +6,13 @@ const AUpgradeRuleForm = ({ gameSystem, aUpgradeId, template, remove, index, tot
     const [oldRuleId, setOldRuleId] = useState(null);
     const [rules, setRules] = useState([]);
 
+    useEffect(() => {
+        if (template) {
+            setRuleId(template);
+            setOldRuleId(template);
+        }
+    }, [template]);
+
     const onDeleteAUpgradeRuleClick = useCallback(async () => {
         try {
             const response = await fetch(`http://localhost:4000/rule_a_upgrade/${oldRuleId}/${aUpgradeId}`, {

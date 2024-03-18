@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Fragment, useCallback } from "react";
 import AUnitForm from "./aUnitForm";
 import AUpgradeTypeForm from "./aUpgradeTypeForm";
+import IntersectionForm from "./intersectionsMain";
 
 const ArmyForm = ({ gameSystem, template }) => {
 
@@ -19,9 +20,19 @@ const ArmyForm = ({ gameSystem, template }) => {
     const [removedAUnit, setRemovedAUnit] = useState(false);
     const [removedAUpgradeType, setRemovedAUpgradeType] = useState(false);
 
+    const [displayMode, setDisplayMode] = useState("army");
+
     useEffect(() => {
         if (template) {
-            console.log(template);
+            const [id, name, edition, version, aUnitsArr, aUpgradeTypesArr, intersections] = template;
+            setArmyId(id);
+            setArmyName(name);
+            setArmyEdition(edition);
+            setArmyVersion(version);
+            setAUnits(aUnitsArr);
+            setNumAUnitForms(aUnitsArr.length);
+            setAUpgradeTypes(aUpgradeTypesArr);
+            setNumAUpgradeTypeForms(aUpgradeTypesArr.length);
         }
     }, [template]);
 
@@ -99,9 +110,9 @@ const ArmyForm = ({ gameSystem, template }) => {
         setNumAUnitForms(prev => prev + 1); 
     };
     const removeAUnitForm = () => {
-        // if (aUnits.length !== 0) {
-        //     setNumAUnitForms(aUnits.slice(0, aUnits.length - 1));
-        // }
+        if (aUnits.length !== 0) {
+            setAUnits(aUnits.slice(0, aUnits.length - 1));
+        }
         setRemovedAUnit(true);
     };
     const handleAUnitRemoveConfirmation = useCallback(() => {
@@ -117,9 +128,9 @@ const ArmyForm = ({ gameSystem, template }) => {
         setNumAUpgradeTypeForms(prev => prev + 1); 
     };
     const removeAUpgradeTypeForm = () => {
-        // if (aUpgradeTypes.length !== 0) {
-        //     setNumAUpgradeTypeForms(aUpgradeTypes.slice(0, aUpgradeTypes.length - 1));
-        // }
+        if (aUpgradeTypes.length !== 0) {
+            setAUpgradeTypes(aUpgradeTypes.slice(0, aUpgradeTypes.length - 1));
+        }
         setRemovedAUpgradeType(true);
     };
     const handleAUpgradeTypeRemoveConfirmation = useCallback(() => {
@@ -131,63 +142,161 @@ const ArmyForm = ({ gameSystem, template }) => {
         setNumAUpgradeTypeForms(prev => prev - 1); 
     }, []);
 
+    const handleNextClick = async () => {
+        if (displayMode === "army") {
+            setDisplayMode("units");
+        } else if (displayMode === "units") {
+            setDisplayMode("upgrades");
+        } else if (displayMode === "upgrades") {
+            setDisplayMode("intersection");
+        }
+    };
+
+    const handleBackClick = () => {
+        if (displayMode === "units") {
+            setDisplayMode("army");
+        } else if (displayMode === "upgrades") {
+            setDisplayMode("units");
+        } else if (displayMode === "intersection") {
+            setDisplayMode("upgrades");
+        }
+    };
+
     return (
         <div>
-            <h1>{armyId ? "Edit army" : "Add New Army"}</h1>
-            <form onSubmit={onSubmitArmyForm}>
-                <label>Name:</label>
-                <input type="text" value={armyName} onChange={(e) => setArmyName(e.target.value)} required />
-                <label>Edition:</label>
-                <input type="text" value={armyEdition} onChange={(e) => setArmyEdition(e.target.value)} required />
-                <label>Version:</label>
-                <input type="number" value={armyVersion} onChange={(e) => setArmyVersion(e.target.value)} required />
-                <button type="submit">{armyId ? "Update" : "Create"}</button>
-                {armyId && <button type="button" onClick={onDeleteClick}>Delete</button>}
-            </form>
+            {displayMode === "army" && (
+                <form onSubmit={onSubmitArmyForm}>
+                    <h1>{armyId ? "Edit army" : "Add New Army"}</h1>
+                    <label>Name:</label>
+                    <input type="text" value={armyName} onChange={(e) => setArmyName(e.target.value)} required />
+                    <label>Edition:</label>
+                    <input type="text" value={armyEdition} onChange={(e) => setArmyEdition(e.target.value)} required />
+                    <label>Version:</label>
+                    <input type="number" value={armyVersion} onChange={(e) => setArmyVersion(e.target.value)} required />
+                    <button type="submit">{armyId ? "Update" : "Create"}</button>
+                    {armyId && <button type="button" onClick={onDeleteClick}>Delete</button>}
+                    {armyId && <button onClick={handleNextClick}>Next</button>}
+                </form>
+            )}
 
-            {armyId && (
-                <Fragment>
-                    <div>
-                        <h2>Manage Units</h2>
-                        {[...Array(numAUnitForms)].map((_, index) => (
-                            <AUnitForm 
-                                key={index} 
-                                gameSystem={gameSystem}
-                                armyId={armyId}
-                                template={aUnits[index]} 
-                                remove={removedAUnit}
-                                index={index} 
-                                totalForms={numAUnitForms} 
-                                onDeleteConfirmation={handleAUnitDeletionConfirmation}
-                                onDeleteConfirmationNullId={handleAUnitRemoveConfirmation}
-                            /> 
-                        ))}
-                        <button onClick={addAUnitForm}>Add New unit</button>
-                        {numAUnitForms > 0 && <button onClick={removeAUnitForm}>Remove Newest unit</button>}
-                    </div>
+            {displayMode === "units" && (
+                <div>
+                    <h2>Manage Units</h2>
+                    {[...Array(numAUnitForms)].map((_, index) => (
+                        <AUnitForm 
+                            key={index} 
+                            gameSystem={gameSystem}
+                            armyId={armyId}
+                            template={aUnits[index]} 
+                            remove={removedAUnit}
+                            index={index} 
+                            totalForms={numAUnitForms} 
+                            onDeleteConfirmation={handleAUnitDeletionConfirmation}
+                            onDeleteConfirmationNullId={handleAUnitRemoveConfirmation}
+                        /> 
+                    ))}
+                    <button onClick={addAUnitForm}>Add New unit</button>
+                    {numAUnitForms > 0 && <button onClick={removeAUnitForm}>Remove Newest unit</button>}
+                    <button onClick={handleBackClick}>Back</button>
+                    <button onClick={handleNextClick}>Next</button>
+                </div>
+            )}
 
-                    <div>
-                        <h2>Manage Upgrade Types</h2>
-                        {[...Array(numAUpgradeTypeForms)].map((_, index) => (
-                            <AUpgradeTypeForm 
-                                key={index} 
-                                gameSystem={gameSystem}
-                                armyId={armyId}
-                                template={aUpgradeTypes[index]} 
-                                remove={removedAUpgradeType}
-                                index={index} 
-                                totalForms={numAUpgradeTypeForms} 
-                                onDeleteConfirmation={handleAUpgradeTypeDeletionConfirmation}
-                                onDeleteConfirmationNullId={handleAUpgradeTypeRemoveConfirmation}
-                            /> 
-                        ))}
-                        <button onClick={addAUpgradeTypeForm}>Add New upgrade type</button>
-                        {numAUpgradeTypeForms > 0 && <button onClick={removeAUpgradeTypeForm}>Remove Newest upgrade type</button>}
-                    </div>
-                </Fragment>
+            {displayMode === "upgrades" && (
+                <div>
+                    <h2>Manage Upgrade Types</h2>
+                    {[...Array(numAUpgradeTypeForms)].map((_, index) => (
+                        <AUpgradeTypeForm 
+                            key={index} 
+                            gameSystem={gameSystem}
+                            armyId={armyId}
+                            template={aUpgradeTypes[index]} 
+                            remove={removedAUpgradeType}
+                            index={index} 
+                            totalForms={numAUpgradeTypeForms} 
+                            onDeleteConfirmation={handleAUpgradeTypeDeletionConfirmation}
+                            onDeleteConfirmationNullId={handleAUpgradeTypeRemoveConfirmation}
+                        /> 
+                    ))}
+                    <button onClick={addAUpgradeTypeForm}>Add New upgrade type</button>
+                    {numAUpgradeTypeForms > 0 && <button onClick={removeAUpgradeTypeForm}>Remove Newest upgrade type</button>}
+                    <button onClick={handleBackClick}>Back</button>
+                    <button onClick={handleNextClick}>Next</button>
+                </div>
+            )}
+
+            {displayMode === "intersection" && (
+                <div>
+                    <h2>Manage What upgrades each unit has</h2>
+                    
+                    <IntersectionForm 
+                        gameSystemId={gameSystemId}
+                        armyId={armyId}
+                    /> 
+
+                    <button onClick={handleBackClick}>Back</button>
+                    <button onClick={handleNextClick}>Next</button>
+                </div>
             )}
         </div>
     );
 };
 
 export default ArmyForm;
+
+        // <div>
+        //     {/* <h1>{armyId ? "Edit army" : "Add New Army"}</h1>
+        //     <form onSubmit={onSubmitArmyForm}>
+        //         <label>Name:</label>
+        //         <input type="text" value={armyName} onChange={(e) => setArmyName(e.target.value)} required />
+        //         <label>Edition:</label>
+        //         <input type="text" value={armyEdition} onChange={(e) => setArmyEdition(e.target.value)} required />
+        //         <label>Version:</label>
+        //         <input type="number" value={armyVersion} onChange={(e) => setArmyVersion(e.target.value)} required />
+        //         <button type="submit">{armyId ? "Update" : "Create"}</button>
+        //         {armyId && <button type="button" onClick={onDeleteClick}>Delete</button>}
+        //     </form>
+
+        //     {armyId && (
+        //         <Fragment>
+        //             <div>
+        //                 <h2>Manage Units</h2>
+        //                 {[...Array(numAUnitForms)].map((_, index) => (
+        //                     <AUnitForm 
+        //                         key={index} 
+        //                         gameSystem={gameSystem}
+        //                         armyId={armyId}
+        //                         template={aUnits[index]} 
+        //                         remove={removedAUnit}
+        //                         index={index} 
+        //                         totalForms={numAUnitForms} 
+        //                         onDeleteConfirmation={handleAUnitDeletionConfirmation}
+        //                         onDeleteConfirmationNullId={handleAUnitRemoveConfirmation}
+        //                     /> 
+        //                 ))}
+        //                 <button onClick={addAUnitForm}>Add New unit</button>
+        //                 {numAUnitForms > 0 && <button onClick={removeAUnitForm}>Remove Newest unit</button>}
+        //             </div>
+
+        //             <div>
+        //                 <h2>Manage Upgrade Types</h2>
+        //                 {[...Array(numAUpgradeTypeForms)].map((_, index) => (
+        //                     <AUpgradeTypeForm 
+        //                         key={index} 
+        //                         gameSystem={gameSystem}
+        //                         armyId={armyId}
+        //                         template={aUpgradeTypes[index]} 
+        //                         remove={removedAUpgradeType}
+        //                         index={index} 
+        //                         totalForms={numAUpgradeTypeForms} 
+        //                         onDeleteConfirmation={handleAUpgradeTypeDeletionConfirmation}
+        //                         onDeleteConfirmationNullId={handleAUpgradeTypeRemoveConfirmation}
+        //                     /> 
+        //                 ))}
+        //                 <button onClick={addAUpgradeTypeForm}>Add New upgrade type</button>
+        //                 {numAUpgradeTypeForms > 0 && <button onClick={removeAUpgradeTypeForm}>Remove Newest upgrade type</button>}
+        //             </div>
+        //         </Fragment>
+        //     )}
+        // </div> */}
+    // );
