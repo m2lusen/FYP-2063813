@@ -145,10 +145,11 @@ app.post("/keyword_rule", async (req, res) => {
 
 app.post("/gs_game_mode", async (req, res) => {
     try {
-        const rows = objArrToDbInsertValues(req.body);
+        const rows = objArrToDbInsertValues(req.body); // add point cost upper and lower
         const dbQuery = await pool.query(
             `
-            INSERT INTO gs_game_mode(game_system_id, gs_gm_name) VALUES
+            INSERT INTO gs_game_mode(game_system_id, gs_gm_name, gs_gm_point_upper, gs_gm_point_lower) 
+            VALUES
             ${rows}
             RETURNING *;
             `
@@ -447,8 +448,8 @@ app.get("/army_list", async (req, res) => {
             JOIN gs_game_mode ON army_list.gs_gm_id = gs_game_mode.gs_gm_id
             JOIN game_system ON army_list.game_system_id = game_system.game_system_id
             
-            JOIN al_force ON army_list.army_list_id = al_force.army_list_id
-            JOIN army ON al_force.army_id = army.army_id
+            LEFT JOIN al_force ON army_list.army_list_id = al_force.army_list_id
+            LEFT JOIN army ON al_force.army_id = army.army_id
             
             LEFT JOIN al_unit ON al_force.al_force_id = al_unit.al_force_id
             LEFT JOIN a_unit ON al_unit.a_unit_id = a_unit.a_unit_id
@@ -480,8 +481,8 @@ app.get("/army_list/:id", async (req, res) => {
             JOIN gs_game_mode ON army_list.gs_gm_id = gs_game_mode.gs_gm_id
             JOIN game_system ON army_list.game_system_id = game_system.game_system_id
             
-            JOIN al_force ON army_list.army_list_id = al_force.army_list_id
-            JOIN army ON al_force.army_id = army.army_id
+            LEFT JOIN al_force ON army_list.army_list_id = al_force.army_list_id
+            LEFT JOIN army ON al_force.army_id = army.army_id
             
             LEFT JOIN al_unit ON al_force.al_force_id = al_unit.al_force_id
             LEFT JOIN a_unit ON al_unit.a_unit_id = a_unit.a_unit_id
@@ -494,7 +495,7 @@ app.get("/army_list/:id", async (req, res) => {
             JOIN a_statline ON al_unit_a_unit_a_statline_quantity.a_statline_id = a_statline.a_statline_id
             
             WHERE
-            army_list.army_list_id = '${id}'
+            game_system.game_system_id = '${id}'
             ;`
         )
 
@@ -510,11 +511,43 @@ app.get("/army_list/:id", async (req, res) => {
 app.get("/army", async (req, res) => {
     try {
         const dbQuery = await pool.query(
-            `SELECT 
-            *
-            FROM army
-            JOIN game_system ON army.game_system_id = game_system.game_system_id
-            ;`
+            // `SELECT 
+            // *
+            // FROM army
+            // JOIN game_system ON army.game_system_id = game_system.game_system_id
+            // ;`
+            `
+            SELECT 
+                army.army_id, army_name, army_edition, army_version,
+                a_unit.a_unit_id, gs_supertype_id, a_unit_name, a_unit_pc, a_unit_limit_per_army,
+                rule_a_unit.rule_id AS a_unit_rule_id,
+                keyword_a_unit.keyword_id AS a_unit_keyword_id,
+                a_statline.a_statline_id, a_statline_name,
+                a_statline_min, a_statline_max, a_statline_point_cost,
+                gs_stat_id, stat_value,
+
+                CONCAT(a_unit_a_upgrade.a_unit_id, ' - ', a_unit_a_upgrade.a_upgrade_id) AS intersection,
+
+                a_upgrade.a_upgrade_id, a_upgrade.a_ut_id, a_upgrade_pc, a_upgrade_name,
+                a_ut_name, a_ut_min, a_ut_max, a_ut_limit_per_army,
+                rule_a_upgrade.rule_id AS a_upgrade_rule_id,
+                keyword_a_upgrade.keyword_id AS a_upgrade_keyword_id
+                
+                FROM army
+                LEFT JOIN a_unit ON army.army_id = a_unit.army_id
+                LEFT JOIN rule_a_unit ON a_unit.a_unit_id = rule_a_unit.a_unit_id
+                LEFT JOIN keyword_a_unit ON a_unit.a_unit_id = keyword_a_unit.a_unit_id
+                LEFT JOIN a_unit_a_statline ON a_unit.a_unit_id = a_unit_a_statline.a_unit_id
+                LEFT JOIN a_statline ON a_unit_a_statline.a_statline_id = a_statline.a_statline_id
+                LEFT JOIN a_statline_gs_stat ON a_statline.a_statline_id = a_statline_gs_stat.a_statline_id
+
+                LEFT JOIN a_unit_a_upgrade ON a_unit.a_unit_id = a_unit_a_upgrade.a_unit_id
+
+                LEFT JOIN a_upgrade ON a_unit_a_upgrade.a_upgrade_id = a_upgrade.a_upgrade_id
+                LEFT JOIN a_upgrade_type ON a_upgrade.a_ut_id = a_upgrade_type.a_ut_id
+                LEFT JOIN rule_a_upgrade ON a_upgrade.a_upgrade_id = rule_a_upgrade.a_upgrade_id
+                LEFT JOIN keyword_a_upgrade ON a_upgrade.a_upgrade_id = keyword_a_upgrade.a_upgrade_id
+            `
         )
 
         res.json(dbQuery.rows);
@@ -529,12 +562,40 @@ app.get("/army/:id", async (req, res) => {
         const {id} = req.params;
 
         const dbQuery = await pool.query(
-            `SELECT 
-            *
-            FROM army
-            JOIN game_system ON army.game_system_id = game_system.game_system_id
-            WHERE
-            army.army_id = '${id}'
+            `
+            SELECT 
+                army.army_id, army_name, army_edition, army_version,
+                a_unit.a_unit_id, gs_supertype_id, a_unit_name, a_unit_pc, a_unit_limit_per_army,
+                rule_a_unit.rule_id AS a_unit_rule_id,
+                keyword_a_unit.keyword_id AS a_unit_keyword_id,
+                a_statline.a_statline_id, a_statline_name,
+                a_statline_min, a_statline_max, a_statline_point_cost,
+                gs_stat_id, stat_value,
+
+                CONCAT(a_unit_a_upgrade.a_unit_id, ' - ', a_unit_a_upgrade.a_upgrade_id) AS intersection,
+
+                a_upgrade.a_upgrade_id, a_upgrade.a_ut_id, a_upgrade_pc, a_upgrade_name,
+                a_ut_name, a_ut_min, a_ut_max, a_ut_limit_per_army,
+                rule_a_upgrade.rule_id AS a_upgrade_rule_id,
+                keyword_a_upgrade.keyword_id AS a_upgrade_keyword_id
+                
+                FROM army
+                LEFT JOIN a_unit ON army.army_id = a_unit.army_id
+                LEFT JOIN rule_a_unit ON a_unit.a_unit_id = rule_a_unit.a_unit_id
+                LEFT JOIN keyword_a_unit ON a_unit.a_unit_id = keyword_a_unit.a_unit_id
+                LEFT JOIN a_unit_a_statline ON a_unit.a_unit_id = a_unit_a_statline.a_unit_id
+                LEFT JOIN a_statline ON a_unit_a_statline.a_statline_id = a_statline.a_statline_id
+                LEFT JOIN a_statline_gs_stat ON a_statline.a_statline_id = a_statline_gs_stat.a_statline_id
+
+                LEFT JOIN a_unit_a_upgrade ON a_unit.a_unit_id = a_unit_a_upgrade.a_unit_id
+
+                LEFT JOIN a_upgrade ON a_unit_a_upgrade.a_upgrade_id = a_upgrade.a_upgrade_id
+                LEFT JOIN a_upgrade_type ON a_upgrade.a_ut_id = a_upgrade_type.a_ut_id
+                LEFT JOIN rule_a_upgrade ON a_upgrade.a_upgrade_id = rule_a_upgrade.a_upgrade_id
+                LEFT JOIN keyword_a_upgrade ON a_upgrade.a_upgrade_id = keyword_a_upgrade.a_upgrade_id
+
+                WHERE
+                game_system_id = ${id}
             ;`
         )
 
@@ -685,15 +746,26 @@ app.get("/game_system", async (req, res) => {
             // LEFT JOIN keyword ON keyword_rule.keyword_id = keyword.keyword_id
             // ;
             // `
-            `SELECT 
-            game_system.game_system_id, game_system_name, game_system_edition, game_system_version, gs_unit_structure.gs_us_id, gs_stat_id, gs_stat_name, gs_stat_acronyme, gs_supertype_id, gs_supertype_name, gs_supertype_lower, keyword.keyword_id, keyword_name, rule.rule_id, rule_name, rule_description 
+            `
+            SELECT 
+            game_system.game_system_id, game_system_name, game_system_edition, game_system_version, 
+            gs_unit_structure.gs_us_id, 
+            gs_stat_id, gs_stat_name, gs_stat_acronyme, 
+            gs_supertype_id, gs_supertype_name, gs_supertype_lower, 
+            keyword.keyword_id, keyword_name, 
+            rule.rule_id, rule_name, rule_description,
+            
+            gs_gm_id, gs_gm_name, gs_gm_point_upper, gs_gm_point_lower
+
             FROM game_system 
             LEFT JOIN gs_unit_structure ON game_system.game_system_id = gs_unit_structure.game_system_id 
             LEFT JOIN gs_stat ON gs_unit_structure.gs_us_id = gs_stat.gs_us_id 
             LEFT JOIN gs_supertype ON game_system.game_system_id = gs_supertype.game_system_id 
             LEFT JOIN rule ON game_system.game_system_id = rule.game_system_id 
             LEFT JOIN keyword_rule ON rule.rule_id = keyword_rule.rule_id 
-            LEFT JOIN keyword ON keyword_rule.keyword_id = keyword.keyword_id ;`
+            LEFT JOIN keyword ON keyword_rule.keyword_id = keyword.keyword_id 
+            LEFT JOIN gs_game_mode ON game_system.game_system_id = gs_game_mode.game_system_id
+            ;`
         )
 
         res.json(dbQuery.rows);
@@ -718,15 +790,25 @@ app.get("/game_system/:id", async (req, res) => {
             // LEFT JOIN keyword_rule ON rule.rule_id = keyword_rule.rule_id
             // LEFT JOIN keyword ON keyword_rule.keyword_id = keyword.keyword_id
             // WHERE
-            `SELECT 
-            game_system.game_system_id, game_system_name, game_system_edition, game_system_version, gs_unit_structure.gs_us_id, gs_stat_id, gs_stat_name, gs_stat_acronyme, gs_supertype_id, gs_supertype_name, gs_supertype_lower, keyword.keyword_id, keyword_name, rule.rule_id, rule_name, rule_description 
+            `
+            SELECT 
+            game_system.game_system_id, game_system_name, game_system_edition, game_system_version, 
+            gs_unit_structure.gs_us_id, 
+            gs_stat_id, gs_stat_name, gs_stat_acronyme, 
+            gs_supertype_id, gs_supertype_name, gs_supertype_lower, 
+            keyword.keyword_id, keyword_name, 
+            rule.rule_id, rule_name, rule_description,
+            
+            gs_gm_id, gs_gm_name, gs_gm_point_upper, gs_gm_point_lower
+
             FROM game_system 
             LEFT JOIN gs_unit_structure ON game_system.game_system_id = gs_unit_structure.game_system_id 
             LEFT JOIN gs_stat ON gs_unit_structure.gs_us_id = gs_stat.gs_us_id 
             LEFT JOIN gs_supertype ON game_system.game_system_id = gs_supertype.game_system_id 
             LEFT JOIN rule ON game_system.game_system_id = rule.game_system_id 
             LEFT JOIN keyword_rule ON rule.rule_id = keyword_rule.rule_id 
-            LEFT JOIN keyword ON keyword_rule.keyword_id = keyword.keyword_id
+            LEFT JOIN keyword ON keyword_rule.keyword_id = keyword.keyword_id 
+            LEFT JOIN gs_game_mode ON game_system.game_system_id = gs_game_mode.game_system_id
             WHERE
             game_system.game_system_id = '${id}'
             ;`

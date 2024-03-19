@@ -146,52 +146,12 @@ function ExistingArmies({ gameSystem, handleClick }) {
     const getArmyList = async () => {
         try {
 
-            const body = { // rawSQL used to determine code, should be done remove
-                "sql": `
-                SELECT 
-                army.army_id, army_name, army_edition, army_version,
-                a_unit.a_unit_id, gs_supertype_id, a_unit_name, a_unit_pc, a_unit_limit_per_army,
-                rule_a_unit.rule_id AS a_unit_rule_id,
-                keyword_a_unit.keyword_id AS a_unit_keyword_id,
-                a_statline.a_statline_id, a_statline_name,
-                a_statline_min, a_statline_max, a_statline_point_cost,
-                gs_stat_id, stat_value,
-
-                CONCAT(a_unit_a_upgrade.a_unit_id, ' - ', a_unit_a_upgrade.a_upgrade_id) AS intersection,
-
-                a_upgrade.a_upgrade_id, a_upgrade.a_ut_id, a_upgrade_pc, a_upgrade_name,
-                a_ut_name, a_ut_min, a_ut_max, a_ut_limit_per_army,
-                rule_a_upgrade.rule_id AS a_upgrade_rule_id,
-                keyword_a_upgrade.keyword_id AS a_upgrade_keyword_id
-                
-                FROM army
-                LEFT JOIN a_unit ON army.army_id = a_unit.army_id
-                LEFT JOIN rule_a_unit ON a_unit.a_unit_id = rule_a_unit.a_unit_id
-                LEFT JOIN keyword_a_unit ON a_unit.a_unit_id = keyword_a_unit.a_unit_id
-                LEFT JOIN a_unit_a_statline ON a_unit.a_unit_id = a_unit_a_statline.a_unit_id
-                LEFT JOIN a_statline ON a_unit_a_statline.a_statline_id = a_statline.a_statline_id
-                LEFT JOIN a_statline_gs_stat ON a_statline.a_statline_id = a_statline_gs_stat.a_statline_id
-
-                LEFT JOIN a_unit_a_upgrade ON a_unit.a_unit_id = a_unit_a_upgrade.a_unit_id
-
-                LEFT JOIN a_upgrade ON a_unit_a_upgrade.a_upgrade_id = a_upgrade.a_upgrade_id
-                LEFT JOIN a_upgrade_type ON a_upgrade.a_ut_id = a_upgrade_type.a_ut_id
-                LEFT JOIN rule_a_upgrade ON a_upgrade.a_upgrade_id = rule_a_upgrade.a_upgrade_id
-                LEFT JOIN keyword_a_upgrade ON a_upgrade.a_upgrade_id = keyword_a_upgrade.a_upgrade_id
-
-                WHERE
-                game_system_id = ${gameSystem[0]}
-                ;
-                `
-            };
-            const response = await fetch("http://localhost:4000/rawSQL", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body)
+            const response = await fetch(`http://localhost:4000/army/${gameSystem[0]}`, {
+                method: "GET"
             });
 
             const responseData = await response.json();
-            console.log(organizeData(responseData));
+            // console.log(organizeData(responseData));
 
             setNestedData(organizeData(responseData));
         } catch (err) {

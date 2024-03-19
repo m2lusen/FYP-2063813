@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment, useCallback } from "react";
 import GsSupertypeForm from "./gsSupertypeForm";
 import GsStatForm from "./gsStatForm";
 import RuleForm from "./ruleForm";
+import GsGameModeForm from "./gsGameModeForm";
 
 const GameSystemForm = ({ template }) => {
     const [gameSystemId, setGameSystemId] = useState(null);
@@ -14,18 +15,21 @@ const GameSystemForm = ({ template }) => {
     const [gsStats, setGsStats] = useState([]);
     const [gsSupertypes, setGsSupertypes] = useState([]);
     const [rules, setRules] = useState([]);
+    const [gameModes, setGameModes] = useState([]);
 
     const [numGsSupertypeForms, setNumGsSupertypeForms] = useState(1);
     const [numGsStatForms, setNumGsStatForms] = useState(1);
     const [numRuleForms, setNumRuleForms] = useState(1);
+    const [numGameModeForms, setNumGameModeForms] = useState(1);
 
     const [removedGsSupertype, setRemovedGsSupertype] = useState(false);
     const [removedGsStat, setRemovedGsStat] = useState(false);
     const [removedRule, setRemovedRule] = useState(false);
+    const [removedGameMode, setRemovedGameMode] = useState(false);
 
     useEffect(() => {
         if (template) {
-            const [id, name, edition, version, usId, gsStatsArr, gsSupertypesArr, rulesArr] = template;
+            const [id, name, edition, version, usId, gsStatsArr, gsSupertypesArr, rulesArr, gameModesArr] = template;
             setGameSystemId(id);
             setGameSystemName(name);
             setGameSystemEdition(edition);
@@ -37,6 +41,8 @@ const GameSystemForm = ({ template }) => {
             setNumGsSupertypeForms(gsSupertypesArr.length);
             setRules(rulesArr);
             setNumRuleForms(rulesArr.length);
+            setGameModes(gameModesArr);
+            setNumGameModeForms(gameModesArr.length);
         }
     }, [template]);
 
@@ -150,6 +156,16 @@ const GameSystemForm = ({ template }) => {
         // setNumRuleForms(prev => prev - 1); 
     };
 
+    const addGameModeForm = () => {
+        setNumGameModeForms(prev => prev + 1);
+    };
+    const removeGameModeForm = () => {
+        if (rules.length !== 0) {
+            setGameModes(rules.slice(0, rules.length - 1));
+        }
+        setRemovedGameMode(true);
+    };
+
     const handleGsSupertypeRemoveConfirmation = useCallback(() => {
         setRemovedGsSupertype(false);
         setNumGsSupertypeForms(prev => prev - 1); 
@@ -175,6 +191,15 @@ const GameSystemForm = ({ template }) => {
     const handleRuleDeletionConfirmation = useCallback(() => {
         setRemovedRule(false);
         setNumRuleForms(prev => prev - 1); 
+    }, []);
+
+    const handleGameModeRemoveConfirmation = useCallback(() => {
+        setRemovedGameMode(false);
+        setNumGameModeForms(prev => prev - 1); 
+    }, []);
+    const handleGameModeDeletionConfirmation = useCallback(() => {
+        setRemovedGameMode(false);
+        setNumGameModeForms(prev => prev - 1); 
     }, []);
 
     return (
@@ -260,6 +285,24 @@ const GameSystemForm = ({ template }) => {
                         ))}
                         <button onClick={addRuleForm}>Add New Rule</button>
                         <button onClick={removeRuleForm}>Remove Newest Rule</button>
+                    </div>
+
+                    <div>
+                        <h2>Manage Game Mode</h2>
+                        {[...Array(numGameModeForms)].map((_, index) => (
+                            <GsGameModeForm
+                                key={index} 
+                                gameSystemId={gameSystemId}  
+                                template={gameModes[index]}
+                                remove={removeGameModeForm}
+                                ruleFormIndex={index} 
+                                totalForms={numGameModeForms} 
+                                onDeleteConfirmation={handleGameModeDeletionConfirmation}
+                                onDeleteConfirmationNullId={handleGameModeRemoveConfirmation}
+                            />
+                        ))}
+                        <button onClick={addGameModeForm}>Add New game mode</button>
+                        <button onClick={removeGameModeForm}>Remove Newest game mode</button>
                     </div>
                 </Fragment>
             )}

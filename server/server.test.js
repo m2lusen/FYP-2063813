@@ -276,7 +276,9 @@ describe('POST /gs_game_mode', () => {
     it('should insert a new gs_game_mode', async () => {
         const gs_game_mode = {
             "game_system_id": [insertedGameSystemId],
-            "gs_gm_name": ['Game Mode']
+            "gs_gm_name": ['Game Mode'],
+            "gs_gm_point_upper": [2],
+            "gs_gm_point_lower": [1]
         };
         
         const response = await request(server)
@@ -1320,7 +1322,9 @@ describe('PUT /gs_game_mode/:id', () => {
     it('should update an existing gs_game_mode', async () => {
         const gs_game_mode = {
             "game_system_id": insertedGameSystemId,
-            "gs_gm_name": "New Mode"
+            "gs_gm_name": "New Mode",
+            "gs_gm_point_upper": 2,
+            "gs_gm_point_lower": 1
         }
         
     
@@ -1349,7 +1353,9 @@ describe('PUT /gs_game_mode/:id', () => {
             .put('/gs_game_mode/99999')
             .send({
                 "game_system_id": insertedGameSystemId,
-                "gs_gm_name": 'New Mode'
+                "gs_gm_name": 'New Mode',
+                "gs_gm_point_upper": 2,
+                "gs_gm_point_lower": 1
             });
 
         expect(response.status).toBe(500);

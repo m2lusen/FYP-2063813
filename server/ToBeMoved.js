@@ -145,7 +145,7 @@ function calculateUnitPointCost(points, al_unit_id){
     return sum;
 }
 
-function calculateTotalPointCost(points){
+function calculateTotalPointCost(points){ // modify so that it can work for all in supertype, all in force, all in army 
     let sum = 0;
 
     for (const al_unit_id in points) {
@@ -215,7 +215,6 @@ function createSupertype(rawData) {
         arr[index].push(createAlUnit(item));
     })
 
-    console.log(arr)
     return arr;
 }
 
@@ -226,6 +225,19 @@ function createForce(rawData) {
     const subsets = uniqueForceIds.map(al_force_id => rawData.filter(item => item.al_force_id === al_force_id));
     subsets.forEach((item, index) => {
         arr[index].push(createSupertype(item));
+    })
+    
+    return arr;
+}
+
+function createArmyList(rawData) {
+    let arr = createArrayFromDBWithoutCheck(rawData, ['army_list_id', 'game_system_id', 'gs_gm_id', 'army_list_name'])
+    // arr.push(calculateTotalPointCost(calculatePoints(response.rows)));
+    const uniqueArmyIds = [...new Set(rawData.map(item => item.army_list_id))];
+    const subsets = uniqueArmyIds.map(army_list_id => rawData.filter(item => item.army_list_id === army_list_id));
+    subsets.forEach((item, index) => {
+        arr[index].push(calculateTotalPointCost(calculatePoints(item)));
+        arr[index].push(createForce(item));
     })
     
     return arr;
@@ -262,7 +274,7 @@ pool.query(dbQuery).then((response) => {
     // console.log(calculatePoints(response.rows))
     // console.log(calculateUnitPointCost(calculatePoints(response.rows), 1))
     // console.log(calculateTotalPointCost(calculatePoints(response.rows)))
-    console.log(createForce(response.rows));
+    console.log(createArmyList(response.rows));
 }).catch((err) => {
     console.log(err);
 });

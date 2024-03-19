@@ -21,6 +21,7 @@ function organizeData(data) { // there is a issue with the following function, o
         const gsStats = [];
         const gsSupertypes = [];
         const rules = [];
+        const gsGameModes = [];
 
         systemData.forEach(item => {
             if (!gsStats.some(stat => stat[0] === item.gs_stat_id)) {
@@ -28,6 +29,10 @@ function organizeData(data) { // there is a issue with the following function, o
             }
             if (!gsSupertypes.some(supertype => supertype[0] === item.gs_supertype_id)) {
                 gsSupertypes.push([item.gs_supertype_id, item.gs_supertype_name, item.gs_supertype_lower]);
+            }
+            if (!gsGameModes.some(gameMode => gameMode[0] === item.gs_gm_id)) {
+                console.log(item.gs_gm_id)
+                gsGameModes.push([item.gs_gm_id, item.gs_gm_name, item.gs_gm_point_upper, item.gs_gm_point_lower]);
             }
             if (!rules.some(rule => rule[0] === item.rule_id)) {
                 // Create a nested array for keywords within each rule array
@@ -52,6 +57,7 @@ function organizeData(data) { // there is a issue with the following function, o
         nestedArray.push(gsStats);
         nestedArray.push(gsSupertypes);
         nestedArray.push(rules);
+        nestedArray.push(gsGameModes);
     
         nestedArrays.push(nestedArray);
     });
