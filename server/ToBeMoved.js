@@ -232,7 +232,6 @@ function createForce(rawData) {
 
 function createArmyList(rawData) {
     let arr = createArrayFromDBWithoutCheck(rawData, ['army_list_id', 'game_system_id', 'gs_gm_id', 'army_list_name'])
-    // arr.push(calculateTotalPointCost(calculatePoints(response.rows)));
     const uniqueArmyIds = [...new Set(rawData.map(item => item.army_list_id))];
     const subsets = uniqueArmyIds.map(army_list_id => rawData.filter(item => item.army_list_id === army_list_id));
     subsets.forEach((item, index) => {
@@ -241,6 +240,69 @@ function createArmyList(rawData) {
     })
     
     return arr;
+}
+
+function organizeAL(data) {
+    
+    if (!Array.isArray(data)) {
+        console.error('Input data is not an array');
+        return [];
+    }
+  
+    const nestedArrays = [];
+    const uniqueArmyListIds = [...new Set(data.map(item => item.army_list_id))];
+  
+    uniqueArmyListIds.forEach(listId => {
+        const nestedArray = [];
+        const listData = data.filter(item => item.army_list_id === listId);
+        nestedArray.push(listId); 
+        nestedArray.push(listData[0].game_system_id); 
+        nestedArray.push(listData[0].gs_gm_id); 
+        nestedArray.push(listData[0]. army_list_name); 
+    
+        const forces = [];
+
+        listData.forEach(item => {
+            if (!forces.some(force => force[0] === item.al_force_id)) {
+                forces.push([
+                    item.al_force_id,
+                    item.army_id,
+                    item.army_name,
+                    item.army_edition,
+                    item.army_version
+                ]);
+            }
+        //     if (!gsSupertypes.some(supertype => supertype[0] === item.gs_supertype_id)) {
+        //         gsSupertypes.push([item.gs_supertype_id, item.gs_supertype_name, item.gs_supertype_lower]);
+        //     }
+        //     if (!rules.some(rule => rule[0] === item.rule_id)) {
+        //         // Create a nested array for keywords within each rule array
+        //         const keywords = [];
+        //         systemData
+        //             .filter(rule => rule.rule_id === item.rule_id)
+        //             .forEach(keyword => {
+        //                 // Check if the keyword is unique before pushing it
+        //                 if (!keywords.some(k => k[0] === keyword.keyword_id)) {
+        //                     keywords.push([keyword.keyword_id, keyword.keyword_name]);
+        //                 }
+        //             });
+        //         rules.push([
+        //             item.rule_id,
+        //             item.rule_name,
+        //             item.rule_description,
+        //             keywords
+        //         ]);
+        //     }
+        //     if (!gsGameModes.some(gameMode => gameMode[0] === item.gs_gm_id)) {
+        //         gsGameModes.push([item.gs_gm_id, item.gs_gm_name, item.gs_gm_point_upper, item.gs_gm_point_lower]);
+        //     }
+        });
+
+        nestedArray.push(forces);
+    
+        nestedArrays.push(nestedArray);
+    });
+    return nestedArrays;
 }
 
 
@@ -274,7 +336,8 @@ pool.query(dbQuery).then((response) => {
     // console.log(calculatePoints(response.rows))
     // console.log(calculateUnitPointCost(calculatePoints(response.rows), 1))
     // console.log(calculateTotalPointCost(calculatePoints(response.rows)))
-    console.log(createArmyList(response.rows));
+    // console.log(createArmyList(response.rows));
+    console.log(organizeAL(response.rows));
 }).catch((err) => {
     console.log(err);
 });

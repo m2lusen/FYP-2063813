@@ -244,33 +244,6 @@ export async function GetArmy() {
     }
 }
 
-
-function calculatePoints(rawData) {
-    const uniqueUnits = {};
-
-    rawData.forEach((item) => {
-        const { al_unit_id, al_upgrade_id, a_upgrade_id, a_unit_id, a_statline_id, quantity, a_statline_min, a_statline_point_cost, a_upgrade_pc } = item;
-
-        if (!uniqueUnits[al_unit_id]) {
-            uniqueUnits[al_unit_id] = [al_unit_id, a_unit_id, item.a_unit_pc, [], []];
-        }
-
-        const upgradeKey = `${al_upgrade_id}_${a_upgrade_id}`;
-        if(al_upgrade_id !== null){
-            if (!uniqueUnits[al_unit_id][3][upgradeKey]) {
-                uniqueUnits[al_unit_id][3][upgradeKey] = a_upgrade_pc;
-            }
-        }
-
-        const statlineKey = `${al_unit_id}_${a_unit_id}_${a_statline_id}`;
-        if (!uniqueUnits[al_unit_id][4][statlineKey]) {
-            uniqueUnits[al_unit_id][4][statlineKey] = (quantity - a_statline_min) * a_statline_point_cost;
-        }
-    });
-
-    return uniqueUnits;
-}
-
 function calculateUnitPointCost(points, al_unit_id){
     const arr = points[al_unit_id];
 
@@ -383,7 +356,115 @@ function createArmyList(rawData) {
     return arr;
 }
 
-// REWRITE ORGANISE DATA FOR
+function calculatePoints(rawData) {
+    const uniqueUnits = {};
+
+    rawData.forEach((item) => {
+        const { al_unit_id, al_upgrade_id, a_upgrade_id, a_unit_id, a_statline_id, quantity, a_statline_min, a_statline_point_cost, a_upgrade_pc } = item;
+
+        if (!uniqueUnits[al_unit_id]) {
+            uniqueUnits[al_unit_id] = [al_unit_id, a_unit_id, item.a_unit_pc, [], []];
+        }
+
+        const upgradeKey = `${al_upgrade_id}_${a_upgrade_id}`;
+        if(al_upgrade_id !== null){
+            if (!uniqueUnits[al_unit_id][3][upgradeKey]) {
+                uniqueUnits[al_unit_id][3][upgradeKey] = a_upgrade_pc;
+            }
+        }
+
+        const statlineKey = `${al_unit_id}_${a_unit_id}_${a_statline_id}`;
+        if (!uniqueUnits[al_unit_id][4][statlineKey]) {
+            uniqueUnits[al_unit_id][4][statlineKey] = (quantity - a_statline_min) * a_statline_point_cost;
+        }
+    });
+
+    return uniqueUnits;
+}
+
+function organizeAL(data) {
+    
+    if (!Array.isArray(data)) {
+        console.error('Input data is not an array');
+        return [];
+    }
+  
+    const nestedArrays = [];
+    const uniqueArmyListIds = [...new Set(data.map(item => item.army_list_id))];
+  
+    uniqueArmyListIds.forEach(listId => {
+        const nestedArray = [];
+        const listData = data.filter(item => item.army_list_id === listId);
+        nestedArray.push(listId); 
+        nestedArray.push(listData[0].game_system_id); 
+        nestedArray.push(listData[0].gs_gm_id); 
+        nestedArray.push(listData[0]. army_list_name); 
+    
+
+        const forces = [];
+
+        listData.forEach(item => {
+            if (!forces.some(force => force[0] === item.al_force_id)) {
+
+                const alUnits = [];
+                listData
+                    .filter(force => force.al_force_id === item.al_force_id)
+                    .forEach(alUnit => {
+                        // Check if the keyword is unique before pushing it
+                        if (!alUnits.some(k => k[0] === alUnit.al_unit_id)) {
+                            alUnits.push([
+                                alUnit.al_unit_id,
+                                alUnit.al_unit_name,
+                                alUnit.al_unit_color,
+                                alUnit.a_unit_name,
+                                alUnit.a_unit_pc,
+                                alUnit.a_unit_limit_per_army
+                            ]);
+                        }
+                    });
+
+                forces.push([
+                    item.al_force_id,
+                    item.army_id,
+                    item.army_name,
+                    item.army_edition,
+                    item.army_version,
+                    alUnits
+                ]);
+            }
+        //     if (!gsSupertypes.some(supertype => supertype[0] === item.gs_supertype_id)) {
+        //         gsSupertypes.push([item.gs_supertype_id, item.gs_supertype_name, item.gs_supertype_lower]);
+        //     }
+        //     if (!rules.some(rule => rule[0] === item.rule_id)) {
+        //         // Create a nested array for keywords within each rule array
+        //         const keywords = [];
+        //         systemData
+        //             .filter(rule => rule.rule_id === item.rule_id)
+        //             .forEach(keyword => {
+        //                 // Check if the keyword is unique before pushing it
+        //                 if (!keywords.some(k => k[0] === keyword.keyword_id)) {
+        //                     keywords.push([keyword.keyword_id, keyword.keyword_name]);
+        //                 }
+        //             });
+        //         rules.push([
+        //             item.rule_id,
+        //             item.rule_name,
+        //             item.rule_description,
+        //             keywords
+        //         ]);
+        //     }
+        //     if (!gsGameModes.some(gameMode => gameMode[0] === item.gs_gm_id)) {
+        //         gsGameModes.push([item.gs_gm_id, item.gs_gm_name, item.gs_gm_point_upper, item.gs_gm_point_lower]);
+        //     }
+        });
+
+        nestedArray.push(forces);
+    
+        nestedArrays.push(nestedArray);
+    });
+    return nestedArrays;
+}
+
 
 export async function GetArmyList() { // may have to update army_list get request
     try {        
@@ -392,6 +473,10 @@ export async function GetArmyList() { // may have to update army_list get reques
         });
 
         const responseData = await response.json();
+
+        console.log(organizeAL(responseData));
+
+        console.log(calculatePoints(responseData));
 
         return createArmyList(responseData);
     } catch (err) {

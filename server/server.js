@@ -457,7 +457,7 @@ app.get("/army_list", async (req, res) => {
             LEFT JOIN al_upgrade ON  al_unit.al_unit_id = al_upgrade.al_unit_id
             LEFT JOIN a_upgrade ON al_upgrade.a_upgrade_id = a_upgrade.a_upgrade_id
 
-            JOIN al_unit_a_unit_a_statline_quantity ON al_unit.al_unit_id = al_unit_a_unit_a_statline_quantity.al_unit_id
+            LEFT JOIN al_unit_a_unit_a_statline_quantity ON al_unit.al_unit_id = al_unit_a_unit_a_statline_quantity.al_unit_id
             LEFT JOIN a_unit_a_statline ON al_unit_a_unit_a_statline_quantity.a_statline_id = a_unit_a_statline.a_statline_id AND al_unit_a_unit_a_statline_quantity.a_unit_id = a_unit_a_statline.a_unit_id
             LEFT JOIN a_statline ON al_unit_a_unit_a_statline_quantity.a_statline_id = a_statline.a_statline_id
             ;`
@@ -490,9 +490,9 @@ app.get("/army_list/:id", async (req, res) => {
             LEFT JOIN al_upgrade ON  al_unit.al_unit_id = al_upgrade.al_unit_id
             LEFT JOIN a_upgrade ON al_upgrade.a_upgrade_id = a_upgrade.a_upgrade_id
 
-            JOIN al_unit_a_unit_a_statline_quantity ON al_unit.al_unit_id = al_unit_a_unit_a_statline_quantity.al_unit_id
-            JOIN a_unit_a_statline ON al_unit_a_unit_a_statline_quantity.a_statline_id = a_unit_a_statline.a_statline_id
-            JOIN a_statline ON al_unit_a_unit_a_statline_quantity.a_statline_id = a_statline.a_statline_id
+            LEFT JOIN al_unit_a_unit_a_statline_quantity ON al_unit.al_unit_id = al_unit_a_unit_a_statline_quantity.al_unit_id
+            LEFT JOIN a_unit_a_statline ON al_unit_a_unit_a_statline_quantity.a_statline_id = a_unit_a_statline.a_statline_id
+            LEFT JOIN a_statline ON al_unit_a_unit_a_statline_quantity.a_statline_id = a_statline.a_statline_id
             
             WHERE
             game_system.game_system_id = '${id}'
