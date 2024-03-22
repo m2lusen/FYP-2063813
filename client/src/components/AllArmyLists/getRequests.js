@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect} from 'react';
+
 
 /**
  * Checks if a specified statistic acronym is used in a given statblock.
@@ -382,7 +382,7 @@ function calculatePoints(rawData) {
     return uniqueUnits;
 }
 
-function organizeAL(data) {
+function organizeAL(data) { // issue  with incerting nulls // missing supertype
     
     if (!Array.isArray(data)) {
         console.error('Input data is not an array');
@@ -400,70 +400,87 @@ function organizeAL(data) {
         nestedArray.push(listData[0].gs_gm_id); 
         nestedArray.push(listData[0]. army_list_name); 
     
-
+        let totalPointCost = 0;
         const forces = [];
 
         listData.forEach(item => {
             if (!forces.some(force => force[0] === item.al_force_id)) {
-
+                let totalForceCost = 0;
                 const alUnits = [];
                 listData
                     .filter(force => force.al_force_id === item.al_force_id)
                     .forEach(alUnit => {
-                        // Check if the keyword is unique before pushing it
-                        if (!alUnits.some(k => k[0] === alUnit.al_unit_id)) {
+                        if (!alUnits.some(unit => unit[0] === alUnit.al_unit_id)) {
+                            let totalUnitCost = 0;
+                            const aStatlines = [];
+                            listData
+                                .filter(unit => unit.al_unit_id === alUnit.al_unit_id)
+                                .forEach(aStatline => {
+                                    if (!aStatlines.some(statline => statline[0] === aStatline.a_statline_id)) {
+                                        const statlineCost = (aStatline.quantity - aStatline.a_statline_min) * aStatline.a_statline_point_cost;
+                                        totalUnitCost = totalUnitCost + statlineCost;
+                                        aStatlines.push([
+                                            aStatline.a_statline_id,
+                                            aStatline.quantity,
+                                            aStatline.a_statline_min,
+                                            aStatline.a_statline_max,
+                                            aStatline.a_statline_point_cost,
+                                            aStatline.a_statline_name,
+                                            statlineCost
+                                        ])
+                                    }
+                                });
+                            const alUpgrades = [];
+                            listData
+                                .filter(unit => unit.al_unit_id === alUnit.al_unit_id)
+                                .forEach(alUpgrade => {
+                                    if (!alUpgrades.some(upgrade => upgrade[0] === alUpgrade.al_upgrade_id)){
+                                        totalUnitCost = totalUnitCost + alUpgrade.a_upgrade_pc
+                                        alUpgrades.push([
+                                            alUpgrade.al_upgrade_id,
+                                            alUpgrade.a_upgrade_id,
+                                            alUpgrade.a_ut_id,
+                                            alUpgrade.a_upgrade_name,
+                                            alUpgrade.a_upgrade_pc
+                                        ]);
+                                    }
+                                })
+                            totalUnitCost = totalUnitCost + alUnit.a_unit_pc;
+                            totalForceCost = totalForceCost + totalUnitCost;
                             alUnits.push([
                                 alUnit.al_unit_id,
                                 alUnit.al_unit_name,
                                 alUnit.al_unit_color,
                                 alUnit.a_unit_name,
                                 alUnit.a_unit_pc,
-                                alUnit.a_unit_limit_per_army
+                                alUnit.a_unit_limit_per_army,
+                                alUnit.gs_supertype_id,
+                                totalUnitCost,
+                                aStatlines,
+                                alUpgrades
                             ]);
                         }
                     });
-
+                totalPointCost = totalPointCost + totalForceCost;
                 forces.push([
                     item.al_force_id,
                     item.army_id,
                     item.army_name,
                     item.army_edition,
                     item.army_version,
+                    totalForceCost,
                     alUnits
                 ]);
             }
-        //     if (!gsSupertypes.some(supertype => supertype[0] === item.gs_supertype_id)) {
-        //         gsSupertypes.push([item.gs_supertype_id, item.gs_supertype_name, item.gs_supertype_lower]);
-        //     }
-        //     if (!rules.some(rule => rule[0] === item.rule_id)) {
-        //         // Create a nested array for keywords within each rule array
-        //         const keywords = [];
-        //         systemData
-        //             .filter(rule => rule.rule_id === item.rule_id)
-        //             .forEach(keyword => {
-        //                 // Check if the keyword is unique before pushing it
-        //                 if (!keywords.some(k => k[0] === keyword.keyword_id)) {
-        //                     keywords.push([keyword.keyword_id, keyword.keyword_name]);
-        //                 }
-        //             });
-        //         rules.push([
-        //             item.rule_id,
-        //             item.rule_name,
-        //             item.rule_description,
-        //             keywords
-        //         ]);
-        //     }
-        //     if (!gsGameModes.some(gameMode => gameMode[0] === item.gs_gm_id)) {
-        //         gsGameModes.push([item.gs_gm_id, item.gs_gm_name, item.gs_gm_point_upper, item.gs_gm_point_lower]);
-        //     }
-        });
-
+        })
+        nestedArray.push(totalPointCost);
         nestedArray.push(forces);
     
         nestedArrays.push(nestedArray);
     });
     return nestedArrays;
-}
+};
+
 
 
 export async function GetArmyList() { // may have to update army_list get request
@@ -474,11 +491,9 @@ export async function GetArmyList() { // may have to update army_list get reques
 
         const responseData = await response.json();
 
-        console.log(organizeAL(responseData));
+        // console.log(organizeAL(responseData));
 
-        console.log(calculatePoints(responseData));
-
-        return createArmyList(responseData);
+        return organizeAL(responseData);
     } catch (err) {
         console.error("Error fetching data:", err);
         throw err; 

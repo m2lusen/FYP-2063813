@@ -1,7 +1,7 @@
-import React, { useState, useEffect, Fragment, useCallback } from "react";
+import React, { useState, useEffect} from "react";
 import {GetArmyList} from './getRequests';
 
-function CreateNewListPrompt({gameSystem}) { // pass in gameSystemId
+function CreateNewListPrompt({gameSystem, handleClick}) {
     
     const [armyListId, setArmyListId] = useState(null);
     const [gameSystemId, setGameSystemId] = useState(null);
@@ -10,21 +10,48 @@ function CreateNewListPrompt({gameSystem}) { // pass in gameSystemId
 
     const [gameModes, setGameModes] = useState([]);
 
-    useEffect(() => { // RETURN TOO
+    useEffect(() => { 
         if (gameSystem) {
             setGameSystemId(gameSystem[0]);
-            // create gameModes, array containing Id  at position [0] and name at position [1]. 
+            
             const gsGM = gameSystem[8];
-            console.log(gameSystem)
 
-            const gameModesRelevant = gsGM.map(gameMode => { // issue with
+            const gameModesRelevant = gsGM.map(gameMode => {
                 const target = [ gameMode[0], gameMode [1] ]
                 return target;
             });
-            console.log(gameModesRelevant);
             setGameModes(gameModesRelevant);
         }
     }, [gameSystem]);
+
+    useEffect(() => {
+        if (armyListId) {
+            const fetchData = async () => {
+                try {
+                    const armyList = await GetArmyList();
+                    console.log(armyList);
+                    console.log(armyListId);
+
+
+                    submit(armyList.find(subArray => subArray[0] === armyListId));
+                    // setArmyLists(armyList);
+                    
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            };
+            fetchData();
+        }
+    }, [armyListId]);
+
+    const submit = (NewArmyList) => {
+
+        handleClick ({
+            "Army_List": NewArmyList,
+            "Linked_Game_System": gameSystem,
+            "Linked_Armies": []
+        });
+    };
 
     const onSubmitArmyListForm = async (e) => {
         e.preventDefault();
@@ -38,7 +65,7 @@ function CreateNewListPrompt({gameSystem}) { // pass in gameSystemId
                 "army_list_name": [armyListName]
             };
 
-            response = await fetch("http://localhost:4000/army_list", {//possible false positive
+            response = await fetch("http://localhost:4000/army_list", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
@@ -46,7 +73,7 @@ function CreateNewListPrompt({gameSystem}) { // pass in gameSystemId
             if (response.ok) {
                 const responseData = await response.json();
                 console.log("body: ", responseData);
-                setArmyListId(responseData[0].armyListId);
+                setArmyListId(responseData[0].army_list_id);
             } else {
                 console.error("Failed to create");
             }

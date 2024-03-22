@@ -45,7 +45,7 @@ function DisplayAllArmyLists({handleClick}) {  // will also include delete army 
             };
             fetchData();
         }
-    }, [games]);
+    }, [games, armies, armyLists]);
 
     const linkedGameSystem = (gameSystemId) => {
         let targetGame = games.find(item => item[0] === gameSystemId); 
@@ -93,6 +93,8 @@ function DisplayAllArmyLists({handleClick}) {  // will also include delete army 
                             {linkedGameSystem(nestedArray[1])[1]} - {linkedGameSystem(nestedArray[1])[2]} -
                             {displayLinkedArmy(nestedArray[5])}
                         </button>
+                        
+                        // add in delete button for each
                     ))}
                 </div>
             ) : (

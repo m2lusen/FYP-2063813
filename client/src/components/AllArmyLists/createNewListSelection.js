@@ -8,9 +8,9 @@ function CreateNewListSelection({handleClick}) {
     const [armies, setArmies] = useState(null);
     const [armyLists, setArmyLists] = useState(null);
 
-    const [game, setGame] = useState(null);
-    const [army, setArmy] = useState(null);
-    const [armyList, setArmyList] = useState(null);
+    // const [game, setGame] = useState(null);
+    // const [army, setArmy] = useState(null);
+    // const [armyList, setArmyList] = useState(null);
 
     useEffect(() => {
         if (!games) {

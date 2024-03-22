@@ -6,6 +6,7 @@ import DisplayAllArmyLists from './displayAllArmyLists';
 import { Link } from 'react-router-dom';
 import CreateNewListSelection from './createNewListSelection';
 import CreateNewListPrompt from './createNewListPrompt';
+import ArmyListsMain from './sub-components/ArmyListMain';
 
 function AllArmyListsMain() {
 
@@ -14,6 +15,10 @@ function AllArmyListsMain() {
     const [armyList, setArmyList] = useState(null);
 
     const [mode, setMode] = useState('initial');
+
+    // add deleting
+
+    // add search/sort
 
     const handleCreateNew = () => {
         setMode('new');
@@ -28,18 +33,14 @@ function AllArmyListsMain() {
     };
 
     const handleSelection = (selection) => {
-        console.log(selection);
-
         setArmyList(selection.Army_List);
         setGame(selection.Linked_Game_System);
         setArmy(selection.Linked_Armies);
 
-        setMode('initial'); // TEMPORARY WILL SET MODE TO CREATE LIST
+        setMode('armyListMain');
     };
 
     const handleNew = (gameMode) => {
-        console.log(gameMode);
-
         setGame(gameMode);
 
         setMode('prompt');
@@ -64,8 +65,15 @@ function AllArmyListsMain() {
             case 'prompt':
                 return (
                     <div>
-                        <CreateNewListPrompt gameSystem={game}/>
+                        <CreateNewListPrompt gameSystem={game} handleClick={handleSelection}/>
                         <button onClick={handleBack}>Back</button>
+                    </div>
+                );
+            case 'armyListMain':
+                return (
+                    <div>
+                        <button onClick={handleBack}>Back</button>
+                        <ArmyListsMain armyListInitial={armyList} gameSystemInitial={game} armiesInitial={army} />
                     </div>
                 );
             default:
