@@ -43,7 +43,7 @@ function organizeGameSystem(data) { // there is a issue with the following funct
                 gsStats.push([item.gs_stat_id, item.gs_stat_name, item.gs_stat_acronyme]);
             }
             if (!gsSupertypes.some(supertype => supertype[0] === item.gs_supertype_id)) {
-                gsSupertypes.push([item.gs_supertype_id, item.gs_supertype_name, item.gs_supertype_lower]);
+                gsSupertypes.push([item.gs_supertype_id, item.gs_supertype_name, item.gs_supertype_lower, item.gs_supertype_upper]);
             }
             if (!rules.some(rule => rule[0] === item.rule_id)) {
                 // Create a nested array for keywords within each rule array
@@ -244,143 +244,143 @@ export async function GetArmy() {
     }
 }
 
-function calculateUnitPointCost(points, al_unit_id){
-    const arr = points[al_unit_id];
+// function calculateUnitPointCost(points, al_unit_id){
+//     const arr = points[al_unit_id];
 
-    let sum = arr[2];
+//     let sum = arr[2];
 
-    for (const key in arr[3]) {
-        sum += arr[3][key];
-    }
-    for (const key in arr[4]) {
-        sum += arr[4][key];
-    }
+//     for (const key in arr[3]) {
+//         sum += arr[3][key];
+//     }
+//     for (const key in arr[4]) {
+//         sum += arr[4][key];
+//     }
 
-    return sum;
-}
+//     return sum;
+// }
 
-function calculateTotalPointCost(points){
-    let sum = 0;
+// function calculateTotalPointCost(points){
+//     let sum = 0;
 
-    for (const al_unit_id in points) {
-        sum = sum + calculateUnitPointCost(points, al_unit_id);
-    }
+//     for (const al_unit_id in points) {
+//         sum = sum + calculateUnitPointCost(points, al_unit_id);
+//     }
 
-    return sum;
-}
+//     return sum;
+// }
 
-function createArrayFromDBWithoutCheck(rawData, dataArray) {
-    let proccessedData = [];
-    for (let i = 0; i < rawData.length; i++) {
-        let entry = [];
-        for (let j = 0; j < dataArray.length; j++) {
-            let value = rawData[i][dataArray[j]];
+// function createArrayFromDBWithoutCheck(rawData, dataArray) {
+//     let proccessedData = [];
+//     for (let i = 0; i < rawData.length; i++) {
+//         let entry = [];
+//         for (let j = 0; j < dataArray.length; j++) {
+//             let value = rawData[i][dataArray[j]];
 
-            entry.push(value);
-        }
-        if (!checkIfStatUsed(proccessedData, entry[0])) {
-            proccessedData.push(entry);
-        }
-    }
-    return proccessedData ;
-}
+//             entry.push(value);
+//         }
+//         if (!checkIfStatUsed(proccessedData, entry[0])) {
+//             proccessedData.push(entry);
+//         }
+//     }
+//     return proccessedData ;
+// }
 
-function createObjFromDBWithoutCheck(rawData, dataArray) {
-    let Obj = {};
-    let processedData = createArrayFromDBWithoutCheck(rawData, dataArray);
+// function createObjFromDBWithoutCheck(rawData, dataArray) {
+//     let Obj = {};
+//     let processedData = createArrayFromDBWithoutCheck(rawData, dataArray);
 
-    for (let i = 0; i < processedData.length; i++) {
-        let ObjName = processedData[i][processedData[i].length-1];
+//     for (let i = 0; i < processedData.length; i++) {
+//         let ObjName = processedData[i][processedData[i].length-1];
 
-        let elements = [];
-        for (let j = 0; j < processedData[i].length; j++) {
-            elements.push(processedData[i][j]);
-        }
+//         let elements = [];
+//         for (let j = 0; j < processedData[i].length; j++) {
+//             elements.push(processedData[i][j]);
+//         }
 
-        if (!Obj[ObjName]) {
-            Obj[ObjName] = [];
-        }
+//         if (!Obj[ObjName]) {
+//             Obj[ObjName] = [];
+//         }
 
-        Obj[ObjName].push(elements);
-    }
+//         Obj[ObjName].push(elements);
+//     }
 
-    return Obj;
-}
+//     return Obj;
+// }
 
 
-function createAlUnit(rawData) {
-    let arr = createArrayFromDBWithoutCheck(rawData, ['al_unit_id', 'al_unit_name', 'al_unit_color', 'a_unit_name', 'a_unit_pc', 'a_unit_limit_per_army']);
+// function createAlUnit(rawData) {
+//     let arr = createArrayFromDBWithoutCheck(rawData, ['al_unit_id', 'al_unit_name', 'al_unit_color', 'a_unit_name', 'a_unit_pc', 'a_unit_limit_per_army']);
 
-    const uniqueAlUnitIds = [...new Set(rawData.map(item => item.al_unit_id))];
-    const subsets = uniqueAlUnitIds.map(al_unit_id => rawData.filter(item => item.al_unit_id === al_unit_id));
-    subsets.forEach((item, index) => {
-        arr[index].push(createObjFromDBWithoutCheck(item, ['a_upgrade_id', 'a_ut_id', 'a_upgrade_pc', 'a_upgrade_name']))
-        arr[index].push(createObjFromDBWithoutCheck(item, ['a_statline_id', 'quantity', 'a_statline_min', 'a_statline_max', 'a_statline_point_cost', 'a_statline_name']))
-    })
-    return arr;
-}
+//     const uniqueAlUnitIds = [...new Set(rawData.map(item => item.al_unit_id))];
+//     const subsets = uniqueAlUnitIds.map(al_unit_id => rawData.filter(item => item.al_unit_id === al_unit_id));
+//     subsets.forEach((item, index) => {
+//         arr[index].push(createObjFromDBWithoutCheck(item, ['a_upgrade_id', 'a_ut_id', 'a_upgrade_pc', 'a_upgrade_name']))
+//         arr[index].push(createObjFromDBWithoutCheck(item, ['a_statline_id', 'quantity', 'a_statline_min', 'a_statline_max', 'a_statline_point_cost', 'a_statline_name']))
+//     })
+//     return arr;
+// }
 
-function createSupertype(rawData) {
-    let arr = createArrayFromDBWithoutCheck(rawData, ['gs_supertype_id'])// SUPERTYPE
+// function createSupertype(rawData) {
+//     let arr = createArrayFromDBWithoutCheck(rawData, ['gs_supertype_id'])// SUPERTYPE
 
-    const uniqueSupertypeIds = [...new Set(rawData.map(item => item.gs_supertype_id))];
-    const subsets = uniqueSupertypeIds.map(gs_supertype_id => rawData.filter(item => item.gs_supertype_id === gs_supertype_id));
-    subsets.forEach((item, index) => {
-        arr[index].push(createAlUnit(item));
-    })
+//     const uniqueSupertypeIds = [...new Set(rawData.map(item => item.gs_supertype_id))];
+//     const subsets = uniqueSupertypeIds.map(gs_supertype_id => rawData.filter(item => item.gs_supertype_id === gs_supertype_id));
+//     subsets.forEach((item, index) => {
+//         arr[index].push(createAlUnit(item));
+//     })
 
-    return arr;
-}
+//     return arr;
+// }
 
-function createForce(rawData) {
-    let arr = createArrayFromDBWithoutCheck(rawData, ['al_force_id', 'army_id', 'army_name', 'army_edition', 'army_version'])// FORCE
+// function createForce(rawData) {
+//     let arr = createArrayFromDBWithoutCheck(rawData, ['al_force_id', 'army_id', 'army_name', 'army_edition', 'army_version'])// FORCE
 
-    const uniqueForceIds = [...new Set(rawData.map(item => item.al_force_id))];
-    const subsets = uniqueForceIds.map(al_force_id => rawData.filter(item => item.al_force_id === al_force_id));
-    subsets.forEach((item, index) => {
-        arr[index].push(createSupertype(item));
-    })
+//     const uniqueForceIds = [...new Set(rawData.map(item => item.al_force_id))];
+//     const subsets = uniqueForceIds.map(al_force_id => rawData.filter(item => item.al_force_id === al_force_id));
+//     subsets.forEach((item, index) => {
+//         arr[index].push(createSupertype(item));
+//     })
     
-    return arr;
-}
+//     return arr;
+// }
 
-function createArmyList(rawData) {
-    let arr = createArrayFromDBWithoutCheck(rawData, ['army_list_id', 'game_system_id', 'gs_gm_id', 'army_list_name'])
-    const uniqueArmyIds = [...new Set(rawData.map(item => item.army_list_id))];
-    const subsets = uniqueArmyIds.map(army_list_id => rawData.filter(item => item.army_list_id === army_list_id));
-    subsets.forEach((item, index) => {
-        arr[index].push(calculateTotalPointCost(calculatePoints(item)));
-        arr[index].push(createForce(item));
-    })
+// function createArmyList(rawData) {
+//     let arr = createArrayFromDBWithoutCheck(rawData, ['army_list_id', 'game_system_id', 'gs_gm_id', 'army_list_name'])
+//     const uniqueArmyIds = [...new Set(rawData.map(item => item.army_list_id))];
+//     const subsets = uniqueArmyIds.map(army_list_id => rawData.filter(item => item.army_list_id === army_list_id));
+//     subsets.forEach((item, index) => {
+//         arr[index].push(calculateTotalPointCost(calculatePoints(item)));
+//         arr[index].push(createForce(item));
+//     })
     
-    return arr;
-}
+//     return arr;
+// }
 
-function calculatePoints(rawData) {
-    const uniqueUnits = {};
+// function calculatePoints(rawData) {
+//     const uniqueUnits = {};
 
-    rawData.forEach((item) => {
-        const { al_unit_id, al_upgrade_id, a_upgrade_id, a_unit_id, a_statline_id, quantity, a_statline_min, a_statline_point_cost, a_upgrade_pc } = item;
+//     rawData.forEach((item) => {
+//         const { al_unit_id, al_upgrade_id, a_upgrade_id, a_unit_id, a_statline_id, quantity, a_statline_min, a_statline_point_cost, a_upgrade_pc } = item;
 
-        if (!uniqueUnits[al_unit_id]) {
-            uniqueUnits[al_unit_id] = [al_unit_id, a_unit_id, item.a_unit_pc, [], []];
-        }
+//         if (!uniqueUnits[al_unit_id]) {
+//             uniqueUnits[al_unit_id] = [al_unit_id, a_unit_id, item.a_unit_pc, [], []];
+//         }
 
-        const upgradeKey = `${al_upgrade_id}_${a_upgrade_id}`;
-        if(al_upgrade_id !== null){
-            if (!uniqueUnits[al_unit_id][3][upgradeKey]) {
-                uniqueUnits[al_unit_id][3][upgradeKey] = a_upgrade_pc;
-            }
-        }
+//         const upgradeKey = `${al_upgrade_id}_${a_upgrade_id}`;
+//         if(al_upgrade_id !== null){
+//             if (!uniqueUnits[al_unit_id][3][upgradeKey]) {
+//                 uniqueUnits[al_unit_id][3][upgradeKey] = a_upgrade_pc;
+//             }
+//         }
 
-        const statlineKey = `${al_unit_id}_${a_unit_id}_${a_statline_id}`;
-        if (!uniqueUnits[al_unit_id][4][statlineKey]) {
-            uniqueUnits[al_unit_id][4][statlineKey] = (quantity - a_statline_min) * a_statline_point_cost;
-        }
-    });
+//         const statlineKey = `${al_unit_id}_${a_unit_id}_${a_statline_id}`;
+//         if (!uniqueUnits[al_unit_id][4][statlineKey]) {
+//             uniqueUnits[al_unit_id][4][statlineKey] = (quantity - a_statline_min) * a_statline_point_cost;
+//         }
+//     });
 
-    return uniqueUnits;
-}
+//     return uniqueUnits;
+// }
 
 function organizeAL(data) { // issue  with incerting nulls // missing supertype
     
@@ -457,8 +457,9 @@ function organizeAL(data) { // issue  with incerting nulls // missing supertype
                                 alUnit.gs_supertype_id,
                                 totalUnitCost,
                                 aStatlines,
-                                alUpgrades
-                            ]);
+                                alUpgrades,
+                                alUnit.a_unit_id,
+                            ]); // check aUnitId hasnt caused any errors
                         }
                     });
                 totalPointCost = totalPointCost + totalForceCost;

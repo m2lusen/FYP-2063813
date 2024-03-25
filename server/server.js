@@ -751,7 +751,7 @@ app.get("/game_system", async (req, res) => {
             game_system.game_system_id, game_system_name, game_system_edition, game_system_version, 
             gs_unit_structure.gs_us_id, 
             gs_stat_id, gs_stat_name, gs_stat_acronyme, 
-            gs_supertype_id, gs_supertype_name, gs_supertype_lower, 
+            gs_supertype_id, gs_supertype_name, gs_supertype_lower, gs_supertype_upper,
             keyword.keyword_id, keyword_name, 
             rule.rule_id, rule_name, rule_description,
             
@@ -795,7 +795,7 @@ app.get("/game_system/:id", async (req, res) => {
             game_system.game_system_id, game_system_name, game_system_edition, game_system_version, 
             gs_unit_structure.gs_us_id, 
             gs_stat_id, gs_stat_name, gs_stat_acronyme, 
-            gs_supertype_id, gs_supertype_name, gs_supertype_lower, 
+            gs_supertype_id, gs_supertype_name, gs_supertype_lower, gs_supertype_upper,
             keyword.keyword_id, keyword_name, 
             rule.rule_id, rule_name, rule_description,
             

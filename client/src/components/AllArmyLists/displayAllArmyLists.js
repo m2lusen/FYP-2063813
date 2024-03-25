@@ -53,10 +53,16 @@ function DisplayAllArmyLists({handleClick}) {  // will also include delete army 
     };
 
     const linkedArmy = (forces) => {
-        const linkedArmies = forces.map(force => {
-            const targetArmy = armies.find(item => item[0] === force[1]);
+        const uniqueArmyIds = new Set();
+        forces.forEach(force => {
+            uniqueArmyIds.add(force[1]);
+        });
+    
+        const linkedArmies = Array.from(uniqueArmyIds).map(armyId => {
+            const targetArmy = armies.find(item => item[0] === armyId);
             return targetArmy;
         });
+    
         return linkedArmies;
     };
 

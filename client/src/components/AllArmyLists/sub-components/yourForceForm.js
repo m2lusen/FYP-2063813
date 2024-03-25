@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { GetArmy, GetArmyList } from "../getRequests";
 
-const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleCreate }) => {
+const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleCreate }) => { // error when addiding force due to reading [6]
 
     const [mode, setMode] = useState('forces');
 
@@ -44,7 +44,11 @@ const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleCreate }) => {
     useEffect(() => {  
         if (forceId){
             const force = forces.find(row => row[0] == forceId);
-            setUnits(groupBySupertype(force[6]));
+            console.log(force);
+            if (force !== undefined){
+                setUnits(groupBySupertype(force[6]));
+            }
+            // setUnits(groupBySupertype(force[6]));
 
             // console.log(groupBySupertype(force[6]));
         }
@@ -164,6 +168,7 @@ const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleCreate }) => {
                     const newForces = [...new Set(filteredNewArmyLists[5].map(filteredNewArmyList => filteredNewArmyList[1]))];
 
                     const filteredNewArmies = newArmies.filter(item => newForces.includes(item[0]));
+                    console.log(filteredNewArmies)
 
                     const newTemplate = {
                         "Army_List": filteredNewArmyLists,

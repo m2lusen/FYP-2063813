@@ -1,6 +1,8 @@
 import React, { Fragment, useState, useEffect} from 'react';
 import ArmyListUpdate from './armyListUpdateForm';
 import YourUnitsMain from './yourUnitsMain';
+import AllArmyListsMain from '../AllArmyListsMain';
+import AllUnitsMain from './allUnitsMain';
 // import PdfViewer from './components/pdf/PdfViewer';
 
 
@@ -29,7 +31,7 @@ function ArmyListsMain({ armyListInitial, gameSystemInitial, armiesInitial }) {
     const updateTemplate = (selection) => {
         console.log("updating template")
 
-        
+
         setArmyList(selection.Army_List);
         setGameSystem(selection.Linked_Game_System);
         setArmies(selection.Linked_Armies);
@@ -55,6 +57,7 @@ function ArmyListsMain({ armyListInitial, gameSystemInitial, armiesInitial }) {
                     <div>
                         <button disabled>All Units</button>
                         <button onClick={handleYourUnitsClick}>Your Units</button>
+                        <AllUnitsMain gameSystem={gameSystem} armyList={armyList} armies={armies} handleCreate={updateTemplate} />
                     </div>
                 );
             case 'your units':
