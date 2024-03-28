@@ -9,6 +9,7 @@
     "axios": "^1.6.7",
     "fs": "^0.0.1-security",
     "react": "^18.2.0",
+    "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
     "react-pdf": "^7.7.0",
     "react-router-dom": "^5.3.4",

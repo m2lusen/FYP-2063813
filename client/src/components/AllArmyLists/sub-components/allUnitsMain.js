@@ -47,7 +47,7 @@ function AllUnitsMain({ armyList, gameSystem, armies, handleCreate }) {
 
             setArmy(armies.find(row => row[0] == force[1]));
 
-            if (army.length !== 0) {
+            if (army.length !== 0) { // not dependent on force??
                 setUnits(groupBySupertype(army[4]));
             }
         }

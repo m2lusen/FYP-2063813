@@ -13,11 +13,11 @@ function AllUnitsSupertype({ armyList, gameSystem, armies, forceId, content, han
     useEffect(() => {
         const supertypeInfo = gameSystem[6].find(item => item[0] === content[0][0]);
         if (supertypeInfo[2] !== null){
-            console.log(supertypeInfo[2])
+            // console.log(supertypeInfo[2])
             setSupertypeMinimum(supertypeInfo[2]);
         }
         if (supertypeInfo[3] !== null){
-            console.log(supertypeInfo[3])
+            // console.log(supertypeInfo[3])
             setSupertypeLimit(supertypeInfo[3]);
         }
     }, [armyList, gameSystem, armies]);

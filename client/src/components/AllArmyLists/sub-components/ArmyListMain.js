@@ -65,7 +65,7 @@ function ArmyListsMain({ armyListInitial, gameSystemInitial, armiesInitial }) {
                     <div>
                         <button onClick={handleAllUnitsClick}>All Units</button>
                         <button disabled>Your Units</button>
-                        <YourUnitsMain gameSystem={gameSystem} armyList={armyList} armies={armies} handleCreate={updateTemplate} />
+                        <YourUnitsMain gameSystem={gameSystem} armyList={armyList} handleCreate={updateTemplate} />
                     </div>
                 );
             case 'update':

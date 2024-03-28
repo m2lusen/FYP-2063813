@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { GetArmy, GetArmyList } from "../getRequests";
 
-const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleCreate }) => { // error when addiding force due to reading [6]
+const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleClick, handleCreate }) => { // error when addiding force due to reading [6]
 
     const [mode, setMode] = useState('forces');
 
@@ -20,10 +20,11 @@ const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleCreate }) => {
         setForces(armyList[5]);
         if (!forceId){ 
             if (armyList[5][0][0] !== null){
+                
                 setForceId(armyList[5][0][0]);
             }
         }
-    }, [forces, armyList, gameSystem, armies]);
+    }, [forces, armyList, gameSystem, armies, forceId]);
 
     const groupBySupertype = (data) => {
         const groupedByValue = {};
@@ -33,7 +34,7 @@ const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleCreate }) => {
                 groupedByValue[supertype] = [];
             }
             const supertypeInfo = gameSystem[6];
-            const supertypeData = supertypeInfo.find(info => info[0] === supertype);
+            const supertypeData = supertypeInfo.find(info => info[0] == supertype);
             const supertypeID = supertypeData ? supertypeData[0] : null; 
             const supertypeName = supertypeData ? supertypeData[1] : null; 
             groupedByValue[supertype].push([supertypeID, supertypeName, ...row]);
@@ -44,15 +45,17 @@ const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleCreate }) => {
     useEffect(() => {  
         if (forceId){
             const force = forces.find(row => row[0] == forceId);
-            console.log(force);
             if (force !== undefined){
                 setUnits(groupBySupertype(force[6]));
             }
-            // setUnits(groupBySupertype(force[6]));
 
-            // console.log(groupBySupertype(force[6]));
         }
     }, [forceId, armyList, gameSystem, armies]);
+
+    const checkUnitClick = (unit, forceId) => {
+
+        handleClick(unit, forceId)
+    }
 
     const UnitsComponent = () => {
         // Group units by supertype
@@ -75,7 +78,7 @@ const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleCreate }) => {
                 <h2>{supertype}</h2>
                 <div>
                     {units.map(unit => (
-                        <button key={unit[3]}>
+                        <button key={unit[3]}  onClick={() => checkUnitClick(unit, forceId)}>
                             {unit[3]} - {unit[6]} - {unit[7]} pts
                         </button>
                     ))}
@@ -91,7 +94,7 @@ const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleCreate }) => {
     };
 
     useEffect(() => {
-        if (mode === 'update force') {
+        if (mode == 'update force') {
             const fetchData = async () => {
                 try {
                     const newArmies = await GetArmy();
@@ -163,12 +166,11 @@ const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleCreate }) => {
                     const newLists = await GetArmyList();
                     const newArmies = await GetArmy();
 
-                    const filteredNewArmyLists = newLists.find(subArray => subArray[0] === armyList[0]);
+                    const filteredNewArmyLists = newLists.find(subArray => subArray[0] == armyList[0]);
 
                     const newForces = [...new Set(filteredNewArmyLists[5].map(filteredNewArmyList => filteredNewArmyList[1]))];
 
                     const filteredNewArmies = newArmies.filter(item => newForces.includes(item[0]));
-                    console.log(filteredNewArmies)
 
                     const newTemplate = {
                         "Army_List": filteredNewArmyLists,
@@ -222,7 +224,7 @@ const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleCreate }) => {
     };
 
     const decideSubmit = (e) => {
-        if (e.target.value === 'new') {
+        if (e.target.value == 'new') {
             setMode("update force");
         } else {
             setMode("forces");
@@ -231,7 +233,7 @@ const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleCreate }) => {
     }
 
     const getForceNumber = (index) => {
-        const count = forces.slice(0, index).filter(([_, __, name]) => name === forces[index][2]).length;
+        const count = forces.slice(0, index).filter(([_, __, name]) => name == forces[index][2]).length;
         return count > 0 ? `(${count + 1})` : '';
     };
 

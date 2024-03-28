@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect} from 'react';
+import React, { Fragment, useState, useEffect, forwardRef} from 'react';
 import { GetArmyList } from "../getRequests";
 // currently not using handleCreate
 
@@ -18,24 +18,34 @@ const AllUnitsUnit = ({ armyList, gameSystem, armies, forceId, content, supertyp
 
     const [updated, setUpdated] = useState(false);
 
-    useEffect(() => {     // may have cause a issue with sypertype limit????
-        const force = armyList[5].find(item => item[0] === forceId);
-        const matchingAlUnit = force[6].reduce((acc, item) => {
-            if (item[10] === content[2] && !acc.some(existingItem => existingItem[0] === item[0])) {
-                acc.push(item);
-            }
-            return acc;
-        }, []);
-        if (matchingAlUnit.length !== 0){
-            console.log(matchingAlUnit);
+    const [statlineIds, setStatlineIds] = useState([]);
+    const [quantities, setQuantities] = useState([]);
 
+    useEffect(() => {     // may have cause a issue with sypertype limit????
+        if (content){
+            setStatlineIds(content[9].map((innerArray) => innerArray[0]));
+            setQuantities(content[9].map((innerArray) => innerArray[2]));
+        }
+    }, [armyList, gameSystem, armies, forceId, content]);
+
+    useEffect(() => {     // may have cause a issue with sypertype limit????
+        const force = armyList[5].find(item => item[0] == forceId); 
+        if (force !== undefined){
+            const matchingAlUnit = force[6].reduce((acc, item) => { // causes error
+                if (item[10] === content[2] && !acc.some(existingItem => existingItem[0] === item[0])) {
+                    acc.push(item);
+                }
+                return acc;
+            }, []);
+            // if (matchingAlUnit.length !== 0){
+                
             matchingAlUnit.forEach(matchingUnit => {
                 setAlUnitIds(prevIds => [...prevIds, matchingUnit[0]]);
             });
-
-            console.log(alUnitIds)
+            // console.log(alUnitIds)
             callculateTotalInstances(matchingAlUnit.length, setAUnitId);
             setAlUnitNumber(matchingAlUnit.length);
+            // }
         }
     }, [armyList, gameSystem, armies, forceId, content]);
     
@@ -92,7 +102,7 @@ const AllUnitsUnit = ({ armyList, gameSystem, armies, forceId, content, supertyp
         if (content[6] !== null) {
             setAUnitLimit(content[6])
         }
-    }, [statlines, aUnitId, alUnitName, armyList, gameSystem, armies, content]);
+    }, [statlines, aUnitId, alUnitName, armyList, gameSystem, armies, content, forceId]);
 
     useEffect(() => {
         // setHardLimit(aUnitLimit < (supertypeLimit - totalInstances) ? aUnitLimit : (supertypeLimit - totalInstances));
@@ -174,8 +184,36 @@ const AllUnitsUnit = ({ armyList, gameSystem, armies, forceId, content, supertyp
             if (response.ok) {
                 const responseData = await response.json();
                 console.log("body: ", responseData);
-                console.log(responseData[0].al_unit_id);
+                // console.log(responseData[0].al_unit_id);
                 setAlUnitIds(prevIds => [...prevIds, responseData[0].al_unit_id]);
+
+                for (let i = 0; i < statlineIds.length; i++) {
+
+                    body = {
+                        "al_unit_id":  [responseData[0].al_unit_id],
+                        "a_unit_id": [aUnitId],
+                        "a_statline_id": [statlineIds[i]],
+                        "quantity": [quantities[i]]
+                    };
+
+                    // Send POST request
+                    response = await fetch("http://localhost:4000/al_unit_a_unit_a_statline_quantity", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(body)
+                    });
+
+                    // Check response and update state
+                    if (response.ok) {
+                        const responseData = await response.json();
+                        console.log('Created : ', responseData)
+                        setUpdated(true);
+                    } else {
+                        console.error("Failed to create");
+                    }
+                }
+
+
                 setUpdated(true);
                 // setAlUnitIds(alUnitIds.push(responseData[0].al_unit_id));
             } else {
@@ -227,14 +265,14 @@ const AllUnitsUnit = ({ armyList, gameSystem, armies, forceId, content, supertyp
             //in order all ids that are being deleted 
             let idsForDelete = [];
             for (let i = 0; i < difference; i++) {
-                console.log(alUnitIds[alUnitIds.length - i - 1]);
+                // console.log(alUnitIds[alUnitIds.length - i - 1]);
                 idsForDelete.push(alUnitIds[alUnitIds.length - i - 1]); 
             }
 
-            console.log(idsForDelete)
+            // console.log(idsForDelete)
 
             for (let i = 0; i < difference; i++) {
-                console.log('Subtracting');
+                // console.log('Subtracting');
                 onDeleteClick(idsForDelete[i]);
             }
         }
@@ -244,7 +282,7 @@ const AllUnitsUnit = ({ armyList, gameSystem, armies, forceId, content, supertyp
     }
 
     return (
-        <div>
+        <div> 
             <p>{error}</p>
             <form onSubmit={onSubmitArmyForm}>
                 <label>
