@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
-import { GetArmyList } from "../getRequests";
+import React, { useState, useEffect, useRef, Fragment } from "react";
+import { GetArmyList, GetArmy } from "../getRequests";
 import { CompactPicker } from 'react-color';
 import UnitStatline from "./unitStatlineQuantity";
 import UpgradeSupertype from "./upgradeSupertype";
 
-const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, handleCreate }) => {
+const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, handleCreate }) => { // the value of armies changes when in unitMain (or possibly a child not sure why)
 
     const [alUnitId, setAlUnitId] = useState(null);
     const [aUnitId, setAUnitId] = useState(null);
@@ -19,14 +19,6 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
     const [unitStatlines, setUnitStatlines] = useState([]);
 
     const [supertypes, setSupertypes] = useState([]);
-
-    // const [unitX, setUnitX] = useState(null);
-
-    // useEffect(() => {
-    //     console.log(unit)
-    //     console.log(armyList[5].find(item => item[0] == forceId))
-    // }, [unit, armyList]);
-
 
     const filterUpgrades = (idsArr, upgradesArr) => {
         const ids = idsArr.flatMap(id => id);
@@ -222,48 +214,55 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
             </table>
         );
     };
-    
-    
-    
-    
-    
-    
+
     
 
     return (
         <div>
-            <form onSubmit={e => { e.preventDefault(); updateUnit(); }}>
-                <button type="button" onClick={onDeleteClick}>Delete</button>
-                <div ref={colorPickerRef}>
-                    <div 
-                        onClick={() => setColorPickerVisible(!colorPickerVisible)} 
-                        style={{ backgroundColor: alUnitColor || '#ffffff', width: '30px', height: '30px', cursor: 'pointer', border: '1px solid #000' }} 
-                    />
-                    {colorPickerVisible &&
-                        <CompactPicker color={alUnitColor || '#ffffff'} onChange={handleColorChange} />
-                    }
-                </div>
-                <input value={alUnitName} onChange={handleNameChange} />
-                <h4>{unit[9]} - pts</h4> {/** not updating */}
-                <h4>{unit[5]}</h4>
-            </form>
+            {/* <form onSubmit={e => { e.preventDefault(); updateUnit(); }}>
+                <button type="button" onClick={onDeleteClick}>Delete</button> */}
+                {unit !== undefined ? (
+                    <form onSubmit={e => { e.preventDefault(); updateUnit(); }}>
+                        <button type="button" onClick={onDeleteClick}>Delete</button>
+                            <div ref={colorPickerRef}>
+                            <div 
+                                onClick={() => setColorPickerVisible(!colorPickerVisible)} 
+                                style={{ backgroundColor: alUnitColor || '#ffffff', width: '30px', height: '30px', cursor: 'pointer', border: '1px solid #000' }} 
+                            />
+                            {colorPickerVisible &&
+                                <CompactPicker color={alUnitColor || '#ffffff'} onChange={handleColorChange} />
+                            }
+                        </div>
+                        <input value={alUnitName} onChange={handleNameChange} />
+                        <h4>{unit[9]} - pts</h4> {/** not updating */}
+                        <h4>{unit[5]}</h4>
+                    </form>
+                ) : (
+                    <p>loading...</p>
+                )}
+            {/* </form> */}
 
             <div>
                 {statlines.length !== 0 ? (<UnitStatlineTable data={statlines}/>) : (<div>Loading...</div>)}
-
-                {[...Array(unitStatlines.length)].map((_, index) => (
-                    <UnitStatline
-                        gameSystem={gameSystem}
-                        armyList={armyList}
-                        armies={armies}
-                        forceId={forceId}
-                        statlineRow={unitStatlines[index]}
-                        unit={unit}
-                        alUnitId={alUnitId}
-                        aUnitId={aUnitId}
-                        handleCreate={handleCreate}
-                    /> 
-                ))}
+                {armies && unit !== undefined ? (
+                    <Fragment>
+                        {[...Array(unitStatlines.length)].map((_, index) => (
+                        <UnitStatline
+                            gameSystem={gameSystem}
+                            armyList={armyList}
+                            armies={armies}
+                            forceId={forceId}
+                            statlineRow={unitStatlines[index]}
+                            unit={unit}
+                            alUnitId={alUnitId}
+                            aUnitId={aUnitId}
+                            handleCreate={handleCreate}
+                        /> 
+                        ))}
+                    </Fragment>
+                ) : (
+                    <p>loading</p>
+                ) }
             </div>
 
             <div>
@@ -271,18 +270,24 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
             </div>
 
             <div>
-                {[...Array(supertypes.length)].map((_, index) => (
-                    // <p>{supertypes[index]}</p>
-                    <UpgradeSupertype
-                        gameSystem={gameSystem}
-                        armyList={armyList}
-                        armies={armies}
-                        forceId={forceId}
-                        supertype={supertypes[index]}
-                        alUnitId={alUnitId}
-                        handleCreate={handleCreate}
-                    /> 
-                ))}
+                {armies !== undefined ? (
+                    <Fragment>
+                        {[...Array(supertypes.length)].map((_, index) => (
+                        // <p>{supertypes[index]}</p>
+                        <UpgradeSupertype
+                            gameSystem={gameSystem}
+                            armyList={armyList}
+                            armies={armies}
+                            forceId={forceId}
+                            supertype={supertypes[index]}
+                            alUnitId={alUnitId}
+                            handleCreate={handleCreate}
+                        /> 
+                    ))}
+                    </Fragment>
+                ) : (
+                    <p>loading</p>
+                ) }
             </div>
 
             <div>

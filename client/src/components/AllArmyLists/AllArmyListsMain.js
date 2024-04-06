@@ -1,24 +1,17 @@
-import React, { Fragment, useState} from 'react';
-// import PdfViewer from './components/pdf/PdfViewer';
-
+import React, { Fragment, useState } from 'react';
 import DisplayAllArmyLists from './displayAllArmyLists';
-
 import { Link } from 'react-router-dom';
 import CreateNewListSelection from './createNewListSelection';
 import CreateNewListPrompt from './createNewListPrompt';
 import ArmyListsMain from './sub-components/ArmyListMain';
+import './armyList.css';
 
 function AllArmyListsMain() {
 
     const [game, setGame] = useState(null);
     const [army, setArmy] = useState(null);
     const [armyList, setArmyList] = useState(null);
-
     const [mode, setMode] = useState('initial');
-
-    // add deleting
-
-    // add search/sort
 
     const handleCreateNew = () => {
         setMode('new');
@@ -36,13 +29,11 @@ function AllArmyListsMain() {
         setArmyList(selection.Army_List);
         setGame(selection.Linked_Game_System);
         setArmy(selection.Linked_Armies);
-
         setMode('armyListMain');
     };
 
     const handleNew = (gameMode) => {
         setGame(gameMode);
-
         setMode('prompt');
     }
 
@@ -52,27 +43,27 @@ function AllArmyListsMain() {
                 return (
                     <div>
                         <DisplayAllArmyLists handleClick={handleSelection} />
-                        <button onClick={handleCreateNew}>Add New List</button>
+                        <button className="AddNewButton" onClick={handleCreateNew}>+</button>
                     </div>
                 );
             case 'new':
                 return (
                     <div>
-                        <CreateNewListSelection handleClick={handleNew}/>
-                        <button onClick={handleBack}>Back</button>
+                        <CreateNewListSelection handleClick={handleNew} />
+                        <button className="BackButton" onClick={handleBack}>{'<'}</button>
                     </div>
                 );
             case 'prompt':
                 return (
                     <div>
-                        <CreateNewListPrompt gameSystem={game} handleClick={handleSelection}/>
-                        <button onClick={handleBack}>Back</button>
+                        <CreateNewListPrompt gameSystem={game} handleClick={handleSelection} />
+                        <button className="BackButton" onClick={handleBack}>{'<'}</button>
                     </div>
                 );
             case 'armyListMain':
                 return (
                     <div>
-                        <button onClick={handleBack}>Back</button>
+                        <button className="BackButton" onClick={handleBack}>{'<'}</button>
                         <ArmyListsMain armyListInitial={armyList} gameSystemInitial={game} armiesInitial={army} />
                     </div>
                 );
@@ -83,10 +74,8 @@ function AllArmyListsMain() {
 
     return (
         <Fragment>
-            <div>
-                <Link to="/ArmyList">Army List</Link>
-            </div>
-
+            <div class="backgroundSquare"></div>
+            <h1 className='alTitle'>Army List</h1>
             {renderContent()}
         </Fragment>
     );

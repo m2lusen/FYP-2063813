@@ -7,11 +7,6 @@ const Upgrade = ({ armyList, gameSystem, armies, forceId, upgrade, typeMinimum, 
     const [alUpgradeId, setAlUpgradeId] = useState(null);
     const [aUpgradeId, setAUpgradeId] = useState(null);
 
-    // al_upgrade_id
-    // al_unit_id
-    // a_upgrade_id
-    // a_ut_id
-
     const [updated, setUpdated] = useState(false);
 
     useEffect(() => {
@@ -21,17 +16,18 @@ const Upgrade = ({ armyList, gameSystem, armies, forceId, upgrade, typeMinimum, 
         if (armyList){
             const army = armyList[5].find(item => item[0] == forceId);
             const unit = army[6].find(item => item[10] == alUnitId);
-            const upgrades = (unit[9].filter(item => item[0][0] !== null))
-            const revelevantUpgrade = (upgrades.find(item => item[1] == upgrade[0]))
-            if (revelevantUpgrade !== undefined){
-                setAlUpgradeId(revelevantUpgrade[0]);
+            if (unit !== undefined){
+                const upgrades = (unit[9].filter(item => item[0][0] !== null))
+                const revelevantUpgrade = (upgrades.find(item => item[1] == upgrade[0]))
+                if (revelevantUpgrade !== undefined){
+                    setAlUpgradeId(revelevantUpgrade[0]);
+                }
             }
-            // console.log(upgrades.find(item => item[0][1] !== undefined))
 
         }
     }, [upgrade, armyList]);
 
-    const onDeleteClick = async () => { 
+    const onDeleteUpgradeClick = async () => { 
         try {
             const response = await fetch(`http://localhost:4000/al_upgrade/${alUpgradeId}`, {
                 method: "DELETE"
@@ -50,7 +46,7 @@ const Upgrade = ({ armyList, gameSystem, armies, forceId, upgrade, typeMinimum, 
         }
     };
 
-    const onSubmitForm = async () => {
+    const onSubmitUpgradeForm = async () => {
         try {
             let body;
             let response;
@@ -105,22 +101,23 @@ const Upgrade = ({ armyList, gameSystem, armies, forceId, upgrade, typeMinimum, 
     }, [updated]);
 
     const submitDecide = () => {
-        if (alUpgradeId !== null){
-            onSubmitForm();
+        console.log('submitDecide', alUpgradeId)
+        if (alUpgradeId == null){
+            onSubmitUpgradeForm();
         } else {
-            onDeleteClick();
+            onDeleteUpgradeClick();
         }
     }
 
 // add button for rules
     return (
         <div> 
-            <form onSubmit={submitDecide}> 
+            <form> 
                 <label>
                     {upgrade[2]}
                     {upgrade[1]} pts
                 </label>
-                <button type='submit'>{alUpgradeId ? "-" : "+"}</button>
+                <button onClick={submitDecide}>{alUpgradeId ? "-" : "+"}</button>
                 {/* <input min={0} type="number" value={alUnitNumber} onChange={(e) => handleChange(e.target.value)} required /> */}
             </form>
         </div>

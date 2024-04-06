@@ -11,7 +11,6 @@ const UnitStatline = ({ gameSystem, armyList, armies, forceId, statlineRow, unit
     const [updated, setUpdated] = useState(false);
     const [error, setError] = useState(null);
 
-
     useEffect(() => { // error i believe it has to do with statlines not being part of unit... possibly to do with unit not being updated after it is picked
         if (statlineRow && unit) {
             setAStatlineId(statlineRow[0]);

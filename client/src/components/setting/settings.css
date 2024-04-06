@@ -1,0 +1,33 @@
+/* currently issue where you have to go to settings for markup to work */
+
+.settings-container {
+    text-align: center;
+    margin: 5em;
+}
+
+.mode.active {
+    font-weight: bold;  
+}
+
+.mode-toggle {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.light-mode {
+    --mode-border-color: #ccc;
+    --mode-bg-color: #f5f5f5;
+    --mode-text-color: #333;
+}
+
+.dark-mode {
+    --mode-border-color: #333;
+    --mode-bg-color: #ccc;
+    --mode-text-color: #fff;
+}
+
+.mode {
+    border: 2px solid var(--mode-border-color);
+    background-color: var(--mode-bg-color); 
+    color: var(--mode-text-color);
+}

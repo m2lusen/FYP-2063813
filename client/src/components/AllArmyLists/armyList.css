@@ -1,0 +1,126 @@
+.backgroundSquare {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(1/7 * 100vw);
+    height: calc(1/7 * 100vw);
+    background-color: var(--box-color); /* Adjust background color and opacity as needed */
+}
+
+.alTitle {
+    position: absolute;
+    top: 0;
+    left: calc(1/7 * 100vw);
+    background-color: var(--box-color);
+    color: var(--link-color);
+    padding: 16px;
+    font-size: calc(1/16 * 100vw); 
+    border: none;
+    width: calc(5/7 * 100vw);
+    height: calc(1/7 * 100vw); 
+    display: flex;
+}
+
+.search-sort-section {
+    position: absolute;
+    top: calc(1/7 * 100vw);
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.search-sort-section > div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.search-sort-section input[type="text"],
+.search-sort-section select {
+    width: calc(48% - 5px); /* Adjust width and consider margin */
+}
+
+.search-sort-section > div > * {
+    width: calc(48% - 5px); /* Adjust width and consider margin */
+}
+
+.button-container {
+    position: absolute;
+    top: calc(3/7 * 100vw);
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.button-container button {
+    width: 100%; /* Button takes full width */
+    margin-bottom: 10px;
+}
+
+.button-box {
+    border: 1px solid #ccc; /* Border color */
+    margin-bottom: 1em; /* Adjust margin as needed */
+}
+
+.button-content {
+    padding: 1em; /* Adjust padding as needed */
+}
+
+.button-name {
+    font-size: 1.5em; /* Adjust font size as needed */
+    font-weight: bold;
+}
+
+.button-point {
+    font-size: 1.2em; /* Adjust font size as needed */
+}
+
+.button-game,
+.button-army {
+    margin-top: 0.5em; /* Adjust margin as needed */
+}
+
+.button-game span,
+.button-army span {
+    font-weight: bold;
+}
+
+
+/* Styles for the button container */
+/* .BackButton, .AddNewButton {
+    position: relative; */
+/* } */
+
+/* Styles for the "+" button */
+.AddNewButton {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: calc(1/7 * 100vw); 
+    height: calc(1/7 * 100vw); 
+    border-radius: 50%;
+    background-color: var(--box-color); 
+    color: var(--link-color); 
+    font-size: calc(1/14 * 100vw); 
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.BackButton{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(1/7 * 100vw);
+    height: calc(1/7 * 100vw); 
+    background-color: var(--box-color); 
+    color: var(--text-color);
+    font-size: calc(1/14 * 100vw);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

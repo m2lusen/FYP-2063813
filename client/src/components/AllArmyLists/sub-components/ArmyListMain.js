@@ -5,6 +5,8 @@ import AllArmyListsMain from '../AllArmyListsMain';
 import AllUnitsMain from './allUnitsMain';
 // import PdfViewer from './components/pdf/PdfViewer';
 
+import { Link } from 'react-router-dom';
+
 
 function ArmyListsMain({ armyListInitial, gameSystemInitial, armiesInitial }) {
 
@@ -65,7 +67,7 @@ function ArmyListsMain({ armyListInitial, gameSystemInitial, armiesInitial }) {
                     <div>
                         <button onClick={handleAllUnitsClick}>All Units</button>
                         <button disabled>Your Units</button>
-                        <YourUnitsMain gameSystem={gameSystem} armyList={armyList} handleCreate={updateTemplate} />
+                        <YourUnitsMain gameSystem={gameSystem} armyList={armyList} armies={armies} handleCreate={updateTemplate} />
                     </div>
                 );
             case 'update':
@@ -89,7 +91,15 @@ function ArmyListsMain({ armyListInitial, gameSystemInitial, armiesInitial }) {
                         <h1>{armyList[3]}</h1>
                         <h3>{armyList[4]}  pts</h3>
                         <button onClick={handArmyListUpdate}>REPLACE WITH ICON - update army list</button>
-                        <button>REPLACE WITH ICON - pdf</button> {/**possiblt replace with link */}
+                        {/* <button>REPLACE WITH ICON - pdf</button> *possiblt replace with link */}
+                        <Link to={{
+                            pathname: '/PdfViewer',
+                            state: {
+                                armyList: armyList,
+                                gameSystem: gameSystem,
+                                armies: armies
+                            }
+                        }}>REPLACE WITH ICON - pdf</Link>
                     </div>
 
                     {renderContent()}

@@ -2118,9 +2118,23 @@ app.post("/rawSQL", async (req, res) => {
 
 // PDF
 
-app.get('/pdf', async (req, res) => {
+// app.get('/pdf', async (req, res) => {
+//     try {
+//         const pdfStream = await createPdf();
+//         res.setHeader('Content-Type', 'application/pdf');
+//         res.setHeader('Content-Disposition', 'attachment; filename="output.pdf"');
+//         pdfStream.pipe(res);
+//     } catch (error) {
+//         console.error('Error creating PDF:', error);
+//         res.status(500).send('Internal Server Error');
+//     }
+// });
+
+app.post('/pdf', async (req, res) => {
     try {
-        const pdfStream = await createPdf();
+        const body = req.body;
+
+        const pdfStream = await createPdf(body);
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename="output.pdf"');
         pdfStream.pipe(res);
@@ -2129,7 +2143,6 @@ app.get('/pdf', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
-
 
 const server = app.listen(4000, () => console.log("server on localhost 4000"));
 

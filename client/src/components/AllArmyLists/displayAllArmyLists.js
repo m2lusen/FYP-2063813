@@ -1,12 +1,15 @@
-import React, { Fragment, useState, useEffect} from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
+import { GetGameSystems, GetArmy, GetArmyList } from './getRequests';
+import './armyList.css'; // Import CSS file for styles
 
-import {GetGameSystems, GetArmy, GetArmyList} from './getRequests';
-
-function DisplayAllArmyLists({handleClick}) {  // will also include delete army list functionality here
-
+function DisplayAllArmyLists({ handleClick }) {
     const [games, setGames] = useState(null);
     const [armies, setArmies] = useState(null);
     const [armyLists, setArmyLists] = useState(null);
+    const [searchBy, setSearchBy] = useState('name');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [orderBy, setOrderBy] = useState('name');
+    const [orderDirection, setOrderDirection] = useState('asc');
 
     useEffect(() => {
         if (!games) {
@@ -14,9 +17,8 @@ function DisplayAllArmyLists({handleClick}) {  // will also include delete army 
                 try {
                     const gameSystems = await GetGameSystems();
                     setGames(gameSystems);
-                    
                 } catch (error) {
-                    console.error('Error fetching data:', error);
+                    console.error('Error fetching game systems:', error);
                 }
             };
             fetchData();
@@ -24,11 +26,10 @@ function DisplayAllArmyLists({handleClick}) {  // will also include delete army 
         if (!armies) {
             const fetchData = async () => {
                 try {
-                    const army = await GetArmy();
-                    setArmies(army);
-                    
+                    const armyData = await GetArmy();
+                    setArmies(armyData);
                 } catch (error) {
-                    console.error('Error fetching data:', error);
+                    console.error('Error fetching armies:', error);
                 }
             };
             fetchData();
@@ -36,11 +37,10 @@ function DisplayAllArmyLists({handleClick}) {  // will also include delete army 
         if (!armyLists) {
             const fetchData = async () => {
                 try {
-                    const armyList = await GetArmyList();
-                    setArmyLists(armyList);
-                    
+                    const armyListData = await GetArmyList();
+                    setArmyLists(armyListData);
                 } catch (error) {
-                    console.error('Error fetching data:', error);
+                    console.error('Error fetching army lists:', error);
                 }
             };
             fetchData();
@@ -48,7 +48,9 @@ function DisplayAllArmyLists({handleClick}) {  // will also include delete army 
     }, [games, armies, armyLists]);
 
     const linkedGameSystem = (gameSystemId) => {
-        let targetGame = games.find(item => item[0] === gameSystemId); 
+        if (!games) return null;
+
+        let targetGame = games.find(item => item[0] === gameSystemId);
         return targetGame;
     };
 
@@ -57,12 +59,12 @@ function DisplayAllArmyLists({handleClick}) {  // will also include delete army 
         forces.forEach(force => {
             uniqueArmyIds.add(force[1]);
         });
-    
+
         const linkedArmies = Array.from(uniqueArmyIds).map(armyId => {
             const targetArmy = armies.find(item => item[0] === armyId);
             return targetArmy;
         });
-    
+
         return linkedArmies;
     };
 
@@ -71,13 +73,28 @@ function DisplayAllArmyLists({handleClick}) {  // will also include delete army 
             const targetArmy = armies.find(item => item[0] === force[1]);
             return targetArmy ? targetArmy[1] : '';
         });
-    
+
         const displayString = linkedArmies.join(', ');
         const truncatedString = displayString.length > 50 ? displayString.slice(0, 50) + '...' : displayString;
-        
+
         return truncatedString;
     };
-    
+
+    const getValueToSortBy = (nestedArray) => {
+        switch (orderBy) {
+            case 'name':
+                return nestedArray[3].toLowerCase();
+            case 'point':
+                return nestedArray[4].toString();
+            case 'army':
+                return displayLinkedArmy(nestedArray[5]).toLowerCase();
+            case 'game':
+                return linkedGameSystem(nestedArray[1])[1].toLowerCase();
+            default:
+                return '';
+        }
+    };
+
     const onClick = (nestedArray) => {
         const gameSystem = linkedGameSystem(nestedArray[1]);
         const linkedArmies = linkedArmy(nestedArray[5]);
@@ -88,20 +105,86 @@ function DisplayAllArmyLists({handleClick}) {  // will also include delete army 
             "Linked_Armies": linkedArmies
         };
     };
-    
+
+    const filteredArmyLists = armyLists ? armyLists.filter(armyList => {
+        if (searchTerm === '') return true;
+        switch (searchBy) {
+            case 'name':
+                return armyList[3].toLowerCase().includes(searchTerm.toLowerCase());
+            case 'point':
+                return armyList[4].toString().toLowerCase().includes(searchTerm.toLowerCase());
+            case 'army':
+                return displayLinkedArmy(armyList[5]).toLowerCase().includes(searchTerm.toLowerCase());
+            case 'game':
+                return linkedGameSystem(armyList[1])[1].toLowerCase().includes(searchTerm.toLowerCase());
+            default:
+                return true;
+        }
+    }).sort((a, b) => {
+        const valueA = getValueToSortBy(a);
+        const valueB = getValueToSortBy(b);
+
+        if (orderDirection === 'asc') {
+            return valueA.localeCompare(valueB);
+        } else {
+            return valueB.localeCompare(valueA);
+        }
+    })
+    : [];
+
     return (
         <Fragment>
             {games && armies && armyLists ? (
                 <div>
-                    {armyLists && armyLists.map((nestedArray, index) => (
-                        <button key={index} onClick={() => handleClick(onClick(nestedArray))}>
-                            {nestedArray[3]} - {nestedArray[4]} - 
-                            {linkedGameSystem(nestedArray[1])[1]} - {linkedGameSystem(nestedArray[1])[2]} -
-                            {displayLinkedArmy(nestedArray[5])}
-                        </button>
-                        
-                        // add in delete button for each
-                    ))}
+                    <div className="search-sort-section">
+                        <div>
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            <select value={searchBy} onChange={(e) => setSearchBy(e.target.value)}>
+                                <option value="name">Name</option>
+                                <option value="point">Point Cost</option>
+                                <option value="army">Army</option>
+                                <option value="game">Game</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select value={orderBy} onChange={(e) => setOrderBy(e.target.value)}>
+                                <option value="name">Order by Name</option>
+                                <option value="point">Order by Point Cost</option>
+                                <option value="army">Order by Army</option>
+                                <option value="game">Order by Game</option>
+                            </select>
+                            <select value={orderDirection} onChange={(e) => setOrderDirection(e.target.value)}>
+                                <option value="asc">Ascending</option>
+                                <option value="desc">Descending</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="button-container">
+                        {filteredArmyLists.length > 0 ? (
+                            filteredArmyLists.map((nestedArray, index) => (
+                                <div className="button-box" key={index}>
+                                    <button onClick={() => handleClick(onClick(nestedArray))}>
+                                        <div className="button-name">{nestedArray[3]}</div>
+                                        <div className="button-point">{nestedArray[4]}</div>
+                                        <div className="button-game">
+                                            <span>Game System: </span>{linkedGameSystem(nestedArray[1])[1]}
+                                            <span> Version: </span>{linkedGameSystem(nestedArray[1])[2]}
+                                        </div>
+                                        <div className="button-army">
+                                            <span>Armies: </span>{displayLinkedArmy(nestedArray[5])}
+                                        </div>
+                                    </button>
+                                </div>
+                            ))
+                        ) : (
+                            <div>No results found.</div>
+                        )}
+                    </div>
                 </div>
             ) : (
                 <div>Loading...</div>

@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect} from 'react';
 import Upgrade from './upgrade';
-// import { GetArmyList } from "../getRequests";
+import { GetArmyList, GetArmy} from "../getRequests";
 
 
 function UpgradeSupertype({ armyList, gameSystem, armies, forceId, supertype, alUnitId, handleCreate }) { // some kind of error were displayed when not the right force

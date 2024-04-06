@@ -1,13 +1,117 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+}
+
+:root {
+    --text-color-light: #333;
+    --link-color-light: #333; 
+    --heading-color-light: #333; 
+    --background-color-light: #f5f5f5;
+    --box-color-light:  #e0e0e0;
+
+    --text-color-dark: #ccc;
+    --link-color-dark: #ccc; 
+    --heading-color-dark: #ccc; 
+    --background-color-dark: #333;
+    --box-color-dark: #444;
+}
+
+.light-mode {
+    --text-color: var(--text-color-light);
+    --link-color: var(--link-color-light);
+    --heading-color: var(--heading-color-light);
+    --background-color: var(--background-color-light);
+    --box-color: var(--box-color-light);
+}
+
+.dark-mode {
+    --text-color: var(--text-color-dark);
+    --link-color: var(--link-color-dark);
+    --heading-color: var(--heading-color-dark);
+    --background-color: var(--background-color-dark);
+    --box-color: var(--box-color-dark);
+}
+
+body {
+    background-color: var(--background-color);
+}
+
+span, p {
+    color: var(--text-color);
+}
+
+/* Dropdown button */
+.dropbtn {
+    background-color: var(--box-color);
+    color: var(--link-color);
+    padding: 16px;
+    font-size: calc(1/18 * 100vw); /* Responsive font size */
+    border: none;
+    width: calc(1/7 * 100vw); /* Adjust width based on 1/7th of viewport width */
+    height: calc(1/7 * 100vw); /* Make the button a square */
+    display: flex;
+    justify-content: center; /* Center-align horizontally */
+    align-items: center; /* Center-align vertically */
+}
+
+/* Dropdown container (position it relative to the container and hide it) */
+.dropdown {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--box-color);
+    z-index: 1;
+    right: 0;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: var(--link-color);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: calc(1/18* 100vw); /* Responsive font size */
+    width: calc(2/7 * 100vw); /* Adjust width based on 2/7th of viewport width */
+    text-align: center; /* Center-align horizontally */
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+    background-color: var(--background-color); /* Change this to the desired color */
+    border-left: 4px solid var(--link-color); /* Add border to the left side */
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Media Query for smaller screens */
+@media (min-width: 768px) {
+    .dropbtn {
+        font-size: 8px; /* Adjust font size for smaller screens */
+        width: calc(1/14 * 100vw); /* Adjust width based on 1/14th of viewport width */
+        height: calc(1/14 * 100vw); /* Make the button a square */
+    }
+    
+    .dropdown-content a {
+        font-size: calc(100vw / 14 / 16); /* Adjust font size for smaller screens */
+        width: calc(1/7 * 100vw); /* Adjust width based on 1/7th of viewport width */
+    }
 }
