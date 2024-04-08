@@ -90,11 +90,11 @@ function AllUnitsMain({ armyList, gameSystem, armies, handleCreate }) {
     };
 
     return (
-        <div>
+        <div className="scrollable-content">
             {forces ? (
                 <div>
                     <form>
-                        <select onChangeCapture={decideSubmit} required>
+                        <select className='all-units-force-select' onChangeCapture={decideSubmit} required>
                             {forces.map(([id, _, name], index) => (
                                 <option key={id} value={id}>
                                     {name} {getForceNumber(index)}
@@ -109,7 +109,7 @@ function AllUnitsMain({ armyList, gameSystem, armies, handleCreate }) {
             )}
 
             {army ? (
-                <div>
+                <div className="scrollable-content">
                         {[...Array(units.length)].map((_, index) => (// temp
                             <AllUnitsSupertype 
                                 key={index} 

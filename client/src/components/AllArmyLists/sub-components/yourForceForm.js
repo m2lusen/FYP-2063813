@@ -238,21 +238,19 @@ const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleClick, handleC
     };
 
     return (
-        <div>
+        <div className="scrollable-content">
             {forces ? (
-                <div>
-                    <form>
-                        <select onChangeCapture={decideSubmit} required>
-                            {forces.map(([id, _, name], index) => (
-                                <option key={id} value={id}>
-                                    {name} {getForceNumber(index)}
-                                </option>
-                            ))}
-                            <option value="new">Add new Force</option>
-                        </select>
-                    </form>
+                <div className="your-force-select-container">
+                    <select className="your-force-select" onChangeCapture={decideSubmit} required>
+                        {forces.map(([id, _, name], index) => (
+                            <option key={id} value={id}>
+                                {name} {getForceNumber(index)}
+                            </option>
+                        ))}
+                        <option value="new">Add new Force</option>
+                    </select>
                     {forceId && forceId !== 'new' && (
-                        <button onClick={onDeleteForceClick}>X</button>
+                        <button className="your-force-select-delete" onClick={onDeleteForceClick}>X</button>
                     )}
                 </div>
             ) : (

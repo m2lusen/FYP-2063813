@@ -66,17 +66,17 @@ span, p {
 
 /* Dropdown container (position it relative to the container and hide it) */
 .dropdown {
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
 }
 
 /* Dropdown content (hidden by default) */
 .dropdown-content {
+    position: fixed;
     display: none;
-    position: absolute;
     background-color: var(--box-color);
-    z-index: 1;
+    z-index: 999;
     right: 0;
 }
 

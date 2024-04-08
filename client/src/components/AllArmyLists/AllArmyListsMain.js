@@ -49,15 +49,15 @@ function AllArmyListsMain() {
             case 'new':
                 return (
                     <div>
-                        <CreateNewListSelection handleClick={handleNew} />
                         <button className="BackButton" onClick={handleBack}>{'<'}</button>
+                        <CreateNewListSelection handleClick={handleNew} />
                     </div>
                 );
             case 'prompt':
                 return (
                     <div>
-                        <CreateNewListPrompt gameSystem={game} handleClick={handleSelection} />
                         <button className="BackButton" onClick={handleBack}>{'<'}</button>
+                        <CreateNewListPrompt gameSystem={game} handleClick={handleSelection} />
                     </div>
                 );
             case 'armyListMain':

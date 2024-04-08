@@ -8,13 +8,14 @@ import ArmyList from './components/ArmyList/ArmyMain';
 import FormArmy from './components/FormArmy/FormArmyMain';
 import FormGame from './components/FormGameSystem/FormGameMain';
 import Menu from './components/menu/menu';
+import './components/setting/settings.css'; 
 
 function App() {
     const location = useLocation();
 
     return (
         <Router>
-            <div className="app-container">
+            {/* <div className="app-container">
                 <div className="dropdown">
                     <button className="dropbtn">Menu</button> 
                     <div className="dropdown-content">
@@ -24,7 +25,7 @@ function App() {
                         <Link to="/Settings">Settings</Link>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             <Switch>
                 <Route path="/Settings">
@@ -52,6 +53,18 @@ function App() {
                     <PdfViewer />
                 </Route>
             </Switch>
+
+            <div className="app-container">
+                <div className="dropdown">
+                    <button className="dropbtn">Menu</button> 
+                    <div className="dropdown-content">
+                    <Link to="/">Menu</Link>
+                        <Link to="/AllArmyLists">Army Lists</Link>
+                        <Link to="/Game">Game</Link>
+                        <Link to="/Settings">Settings</Link>
+                    </div>
+                </div>
+            </div>
         </Router>
     );
 }
