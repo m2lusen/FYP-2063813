@@ -158,7 +158,7 @@ function YourUnitsMain({ armyList, gameSystem, armies, handleCreate }) {
             case 'specific unit':
                 return (
                     <div>
-                        <button onClick={handleYourUnitsClick}>Back</button>
+                        <button className='BackButton' onClick={handleYourUnitsClick}>{'<'}</button>
                         <UnitMain 
                             gameSystem={gameSystem} 
                             armyList={armyList} 

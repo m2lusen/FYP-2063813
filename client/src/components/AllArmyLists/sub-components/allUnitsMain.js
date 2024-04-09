@@ -107,7 +107,6 @@ function AllUnitsMain({ armyList, gameSystem, armies, handleCreate }) {
             ) : (
                 <div>Loading...</div>
             )}
-
             {army ? (
                 <div className="scrollable-content">
                         {[...Array(units.length)].map((_, index) => (// temp
@@ -122,7 +121,6 @@ function AllUnitsMain({ armyList, gameSystem, armies, handleCreate }) {
                             /> 
                         ))}
                 </div>
-
             ) : (
                 <div>Loading...</div>
             )}

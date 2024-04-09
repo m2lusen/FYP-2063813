@@ -75,11 +75,30 @@ const YourUnitsForceForm = ({ gameSystem, armyList, armies, handleClick, handleC
         // Create JSX for each supertype
         const supertypeSections = Object.entries(groupedUnits).map(([supertype, units]) => (
             <section key={supertype}>
-                <h2>{supertype}</h2>
+                <h3 className="all-units-supertype-heading">{supertype}</h3>
                 <div>
                     {units.map(unit => (
-                        <button key={unit[3]}  onClick={() => checkUnitClick(unit, forceId)}>
-                            {unit[3]} - {unit[6]} - {unit[7]} pts
+                        <button className="your-units-unit-button" key={unit[3]}  onClick={() => checkUnitClick(unit, forceId)}>
+                            {/* <div className="your-units-unit-color-square" style={{
+                                    backgroundColor: unit[4],
+                                    width: 'calc(3/28 * 90vw)',
+                                    height: 'calc(3/28 * 90vw)',
+                                }}>
+                            </div>
+                            {unit[3]} - {unit[5]} - {unit[6]} pts */}
+                                                        <div className="your-units-unit-color-container">
+                                <div
+                                    className="your-units-unit-color-square"
+                                    style={{
+                                        backgroundColor: unit[4],
+                                        width: 'calc(3/28 * 90vw)',
+                                        height: 'calc(3/28 * 90vw)',
+                                    }}
+                                ></div>
+                                <div className="your-units-unit-text">
+                                    {unit[3]} - {unit[5]} - {unit[6]} pts
+                                </div>
+                            </div>
                         </button>
                     ))}
                 </div>

@@ -50,11 +50,9 @@ function AllUnitsSupertype({ armyList, gameSystem, armies, forceId, content, han
                             </Fragment>
                         ))}
                 </div>
-
             ) : (
                 <div>Loading...</div>
             )}
-
         </div>
     );
 };

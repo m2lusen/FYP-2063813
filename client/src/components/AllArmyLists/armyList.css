@@ -281,28 +281,31 @@
     height: calc(3/28 * 100vw);
     background-color: var(--box-color-2);
     color: var(--text-color);
-    border: 1em;
-    border-color: black;
-}
-
-.all-units-supertype-heading h3 {
-    justify-content: center;
+    border-top: 2px solid black; 
+    border-bottom: 2px solid black  ;
 }
 
 .army-form {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    /* justify-content: space-between; */
+    background-color: var(--box-color);
+    border-top: 1px solid var(--text-color); 
+    border-bottom: 1px solid var(--text-color); 
+}
+
+.left-column, .right-column {
+    display: flex; 
+    align-items: center;
+    padding: 10px; 
 }
 
 .left-column {
     flex: 0 0 calc(25/28 * 95%);
-    align-items: center;
 }
 
 .right-column {
     flex: 0 0 calc(3/28 * 95%);
-    align-items: center;
 }
 
 .unit-name {
@@ -313,7 +316,31 @@
     font-style: italic;
 }
 
-.right-column, [type="number"] {
+.right-column input[type="number"] {
     box-sizing: border-box;
-    width: 3em;
+    width: 100%; /* Take full width of the right column */
+    border: none; /* Remove border from input */
+    background-color: transparent; /* Make background transparent */
+}
+
+.your-units-unit-button {
+    width: 100%;
+    height: calc(3/28 * 100vw);
+    background-color: var(--box-color);
+    border-top: 1px solid var(--text-color); 
+    border-bottom: 1px solid var(--text-color); 
+}
+
+.your-units-unit-color-container {
+    display: flex;
+    align-items: center;
+}
+
+.your-units-unit-color-square {
+    width: calc(3/28 * 90vw);
+    height: calc(3/28 * 90vw);
+}
+
+.your-units-unit-text {
+    margin-left: 10px; /* Adjust spacing as needed */
 }
