@@ -20,6 +20,39 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
 
     const [supertypes, setSupertypes] = useState([]);
 
+    const [rules, setRules] = useState([]);
+    const [upgradeRules, setUpgradeRules] = useState([]);
+
+    const [activeRulesIndex, setActiveRulesIndex] = useState(null);
+    const [activeUpgradeRulesIndex, setActiveUpgradeRulesIndex] = useState(null);
+
+    useEffect(() => {
+        const armyLocation = armyList[5].find(item => item[0] == forceId);
+        if (armies !== null){
+            const army = armies.find(item => item[0] == armyLocation[1]);
+            const armyUnit = army[4].find(item => item[0] == unit[12]);
+            setRules(gameSystem[7].filter(item1 => {
+                return armyUnit[5].some(item2 => item1[0] === item2[0]);
+            }));
+            
+            if (supertypes.length !== 0){
+                const upgrades = [];
+                for (let i = 0; i < supertypes.length; i++) {
+                    const supertype = supertypes[i][5];
+                    if (Array.isArray(supertype)) {
+                        for (let j = 0; j < supertype.length; j++) {
+                            upgrades.push(supertype[j]);
+                        }
+                    }
+                } 
+                const upgradeIds = upgrades.flatMap(innerArray => innerArray[3]);
+                setUpgradeRules(gameSystem[7].filter(item1 => {
+                    return upgradeIds.some(item2 => item1[0] === item2[0]);
+                }));
+            }
+        }
+    }, [armyList, armies, forceId]);
+
     const filterUpgrades = (idsArr, upgradesArr) => {
         const ids = idsArr.flatMap(id => id);
 
@@ -215,7 +248,13 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
         );
     };
 
+    const handleRulesToggle = (index) => {
+        setActiveRulesIndex(activeRulesIndex === index ? null : index);
+    };
     
+    const handleUpgradeRulesToggle = (index) => {
+        setActiveUpgradeRulesIndex(activeUpgradeRulesIndex === index ? null : index);
+    };
 
     return (
         <div>
@@ -266,7 +305,17 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
             </div>
 
             <div>
-                {/* add to list all rules for unit (not from upgrades) */}
+                <Fragment>
+                    <h3>Rules</h3>
+                    {rules.map((rule, i) => (
+                        <div key={i}>
+                            <button onClick={() => handleRulesToggle(i)}>i</button>
+                            <p>
+                                {rule[1]} - {activeRulesIndex === i ? rule[2] : ''}
+                            </p>
+                        </div>
+                    ))}
+                </Fragment>
             </div>
 
             <div>
@@ -291,7 +340,17 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
             </div>
 
             <div>
-                {/* all rules from upgrades */}
+                <Fragment>
+                    <h3>Upgrade Rules</h3>
+                    {upgradeRules.map((rule, i) => (
+                        <div key={i}>
+                            <button onClick={() => handleUpgradeRulesToggle(i)}>i</button>
+                            <p>
+                                {rule[1]} - {activeUpgradeRulesIndex === i ? rule[2] : ''}
+                            </p>
+                        </div>
+                    ))}
+                </Fragment>
             </div>
         </div>
     );
