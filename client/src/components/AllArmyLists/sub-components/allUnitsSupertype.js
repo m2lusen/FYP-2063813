@@ -28,14 +28,12 @@ function AllUnitsSupertype({ armyList, gameSystem, armies, forceId, content, han
 
     return (
         <div>
-            <h3>{content[0][1]}</h3>
+            <h3 className='all-units-supertype-heading'>{content[0][1]}</h3>
 
             {content && content[0][0] !== null ? (
                 <div>
                         {[...Array(content.length)].map((_, index) => (
                             <Fragment>
-                                {/* <p>{content[index]}</p> */}
-                                {/* <p>{content[index][9]}</p> */}
                                 <AllUnitsUnit
                                     key={index} 
                                     armyList={armyList}
@@ -50,14 +48,6 @@ function AllUnitsSupertype({ armyList, gameSystem, armies, forceId, content, han
                                     handleCreate={handleCreate}
                                 />
                             </Fragment>
-                            // <AllUnitsSupertype 
-                            //     key={index} 
-                            //     armyList={armyList}
-                            //     gameSystem={gameSystem}
-                            //     armies={armies}
-                            //     content={units[index]}
-                            //     handleCreate={handleCreate}
-                            // /> 
                         ))}
                 </div>
 

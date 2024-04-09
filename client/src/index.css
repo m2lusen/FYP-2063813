@@ -18,12 +18,14 @@ code {
     --heading-color-light: #333; 
     --background-color-light: #f5f5f5;
     --box-color-light:  #e0e0e0;
+    --box-color-light-2: #d0d0d0;
 
     --text-color-dark: #ccc;
     --link-color-dark: #ccc; 
     --heading-color-dark: #ccc; 
     --background-color-dark: #333;
     --box-color-dark: #444;
+    --box-color-dark-2: #555;
 }
 
 .light-mode {
@@ -32,6 +34,7 @@ code {
     --heading-color: var(--heading-color-light);
     --background-color: var(--background-color-light);
     --box-color: var(--box-color-light);
+    --box-color-2: var(--box-color-light-2);
 }
 
 .dark-mode {
@@ -40,6 +43,7 @@ code {
     --heading-color: var(--heading-color-dark);
     --background-color: var(--background-color-dark);
     --box-color: var(--box-color-dark);
+    --box-color-2: var(--box-color-dark-2);
 }
 
 body {

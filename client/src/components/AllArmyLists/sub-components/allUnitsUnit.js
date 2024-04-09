@@ -284,13 +284,17 @@ const AllUnitsUnit = ({ armyList, gameSystem, armies, forceId, content, supertyp
     return (
         <div> 
             <p>{error}</p>
-            <form onSubmit={onSubmitArmyForm}>
-                <label>
-                    {alUnitName} - {content[5]} pts
-                    {statlines.length !== 0 ? (<StatlineTable data={statlines}/>) : (<div>Loading...</div>)}
-                    {/* rules */}
-                </label>
-                <input min={0} type="number" value={alUnitNumber} onChange={(e) => handleChange(e.target.value)} required />
+            <form onSubmit={onSubmitArmyForm} class="army-form">
+                <div class="left-column">
+                    <label>
+                        <span class="unit-name">{alUnitName}</span> - <span class="points">{content[5]} pts</span>
+                        {statlines.length !== 0 ? (<StatlineTable data={statlines}/>) : (<div>Loading...</div>)}
+                        {/* rules */}
+                    </label>
+                </div>
+                <div class="right-column">
+                    <input min={0} type="number" value={alUnitNumber} onChange={(e) => handleChange(e.target.value)} required />
+                </div>
             </form>
         </div>
     );
