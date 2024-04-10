@@ -17,10 +17,12 @@ const Upgrade = ({ armyList, gameSystem, armies, forceId, upgrade, typeMinimum, 
             const army = armyList[5].find(item => item[0] == forceId);
             const unit = army[6].find(item => item[10] == alUnitId);
             if (unit !== undefined){
-                const upgrades = (unit[9].filter(item => item[0][0] !== null))
-                const revelevantUpgrade = (upgrades.find(item => item[1] == upgrade[0]))
-                if (revelevantUpgrade !== undefined){
-                    setAlUpgradeId(revelevantUpgrade[0]);
+                if (unit[9].filter(item => item[0] !== null).length !== 0){
+                    const upgrades = (unit[9].filter(item => item[0][0] !== null))
+                    const revelevantUpgrade = (upgrades.find(item => item[1] == upgrade[0]))
+                    if (revelevantUpgrade !== undefined){
+                        setAlUpgradeId(revelevantUpgrade[0]);
+                    }
                 }
             }
 

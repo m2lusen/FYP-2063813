@@ -342,5 +342,98 @@
 }
 
 .your-units-unit-text {
-    margin-left: 10px; /* Adjust spacing as needed */
+    margin-left: 10px; 
+}
+
+.unit-main-basic-info {
+    width: 100vw;
+    background-color: var(--box-color);
+    border-top: 1px solid var(--text-color); 
+    border-bottom: 1px solid var(--text-color); 
+}
+
+.unit-main-basic-info input {
+    background-color: var(--box-color);
+    border-bottom: 1px solid var(--text-color); 
+    color: var(--text-color);
+    font-size: large;
+}
+
+.unit-main-delete-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    background-color: var(--box-color);
+    border: 1px solid var(--text-color); 
+    font-size: 1.2em;
+    color: red;
+}
+
+.unit-main-statlines {
+    width: 100vw;
+    background-color: var(--box-color);
+    border-top: 1px solid var(--text-color); 
+    border-bottom: 1px solid var(--text-color); 
+}
+
+.unit-main-statlines-content {
+    display: flex;
+    align-items: flex-start;
+}
+
+.unit-main-statline-container {
+    display: flex;
+    align-items: flex-start; 
+    flex-direction: column;
+    width: 4em;
+    margin-top: 2.5em;
+}
+
+.unit-main-statline-quantity {
+    width: 3em;
+    margin-right: 1em; 
+}
+
+.unit-main-statline-table {
+    flex-grow: 1; /* Allow the table to grow and take up available space */
+}
+
+.unit-main-statline-quantity-input {
+    width: 2em;
+}
+
+.unit-main-rules {
+    width: 100vw;
+    background-color: var(--box-color);
+    border-top: 1px solid var(--text-color); 
+    border-bottom: 1px solid var(--text-color); 
+}
+
+.unit-main-rules-content {
+    display: flex;
+    align-items: flex-start;
+}
+
+.info-button {
+    display: block;
+    width: calc(1/14 * 100vw); 
+    height: calc(1/14 * 100vw);
+    border-radius: 50%;
+    background-color: var(--box-color-2);
+    color: blue;
+    text-align: center;
+    line-height: 20px;
+}
+
+.unit-main-rules-text {
+    flex-grow: 1;
+    margin-left: 1em; 
+}
+
+.unit-main-upgrades {
+    width: 100vw;
+    background-color: var(--box-color);
+    border-top: 1px solid var(--text-color); 
+    border-bottom: 1px solid var(--text-color); 
 }

@@ -21,10 +21,16 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
     const [supertypes, setSupertypes] = useState([]);
 
     const [rules, setRules] = useState([]);
-    const [upgradeRules, setUpgradeRules] = useState([]);
+    const [upgradeRules, setUpgradeRules] = useState([]); // issue with
 
     const [activeRulesIndex, setActiveRulesIndex] = useState(null);
     const [activeUpgradeRulesIndex, setActiveUpgradeRulesIndex] = useState(null);
+
+    const [error, setError] = useState('');
+
+    const handleStatlineError = (errorMessage) => {
+        setError(errorMessage);
+    };
 
     useEffect(() => {
         const armyLocation = armyList[5].find(item => item[0] == forceId);
@@ -227,7 +233,7 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
 
     const UnitStatlineTable = ({ data }) => {
         return (
-            <table>
+            <table className="unit-main-statline-table">
                 <thead>
                 <tr>
                     {data[0].map((header, index) => (
@@ -258,59 +264,68 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
 
     return (
         <div>
-            {/* <form onSubmit={e => { e.preventDefault(); updateUnit(); }}>
-                <button type="button" onClick={onDeleteClick}>Delete</button> */}
-                {unit !== undefined ? (
-                    <form onSubmit={e => { e.preventDefault(); updateUnit(); }}>
-                        <button type="button" onClick={onDeleteClick}>Delete</button>
-                            <div ref={colorPickerRef}>
+            <div className="unit-main-basic-info">
+            {unit !== undefined ? (
+                <form onSubmit={e => { e.preventDefault(); updateUnit(); }}>
+                    <div className="left-column">
+                        <div ref={colorPickerRef}>
                             <div 
                                 onClick={() => setColorPickerVisible(!colorPickerVisible)} 
-                                style={{ backgroundColor: alUnitColor || '#ffffff', width: '30px', height: '30px', cursor: 'pointer', border: '1px solid #000' }} 
+                                style={{ backgroundColor: alUnitColor, width: '30px', height: '30px', cursor: 'pointer', border: '1px solid #000' }} 
                             />
                             {colorPickerVisible &&
-                                <CompactPicker color={alUnitColor || '#ffffff'} onChange={handleColorChange} />
+                                <CompactPicker color={alUnitColor} onChange={handleColorChange} />
                             }
                         </div>
                         <input value={alUnitName} onChange={handleNameChange} />
-                        <h4>{unit[9]} - pts</h4> {/** not updating */}
+                        <h4>{unit[9]} - pts</h4>
+                    </div>
+                    <div className="right-column">
                         <h4>{unit[5]}</h4>
-                    </form>
-                ) : (
-                    <p>loading...</p>
-                )}
-            {/* </form> */}
+                    </div>
+                    <button className="unit-main-delete-button" type="button" onClick={onDeleteClick}>X</button>
+                </form>
+            ) : (
+                <p>loading...</p>
+            )}
+        </div>
 
-            <div>
-                {statlines.length !== 0 ? (<UnitStatlineTable data={statlines}/>) : (<div>Loading...</div>)}
-                {armies && unit !== undefined ? (
-                    <Fragment>
-                        {[...Array(unitStatlines.length)].map((_, index) => (
-                        <UnitStatline
-                            gameSystem={gameSystem}
-                            armyList={armyList}
-                            armies={armies}
-                            forceId={forceId}
-                            statlineRow={unitStatlines[index]}
-                            unit={unit}
-                            alUnitId={alUnitId}
-                            aUnitId={aUnitId}
-                            handleCreate={handleCreate}
-                        /> 
-                        ))}
-                    </Fragment>
-                ) : (
-                    <p>loading</p>
-                ) }
+            <div className="unit-main-statlines">
+                {error && <div>{error}</div>}
+                <div className="unit-main-statlines-content">
+                    {statlines.length !== 0 ? (<UnitStatlineTable data={statlines}/>) : (<div>Loading...</div>)}
+                    {armies && unit !== undefined ? (
+                        <Fragment>
+                            <div className="unit-main-statline-container">
+                                {[...Array(unitStatlines.length)].map((_, index) => (
+                                <UnitStatline
+                                    gameSystem={gameSystem}
+                                    armyList={armyList}
+                                    armies={armies}
+                                    forceId={forceId}
+                                    statlineRow={unitStatlines[index]}
+                                    unit={unit}
+                                    alUnitId={alUnitId}
+                                    aUnitId={aUnitId}
+                                    handleCreate={handleCreate}
+                                    handleStatlineError={handleStatlineError}
+                                /> 
+                                ))}
+                            </div>
+                        </Fragment>
+                    ) : (
+                        <p>loading</p>
+                    ) }
+                </div>
             </div>
 
-            <div>
+            <div className="unit-main-rules">
                 <Fragment>
                     <h3>Rules</h3>
                     {rules.map((rule, i) => (
-                        <div key={i}>
-                            <button onClick={() => handleRulesToggle(i)}>i</button>
-                            <p>
+                        <div className="unit-main-rules-content" key={i}>
+                            <button className="info-button" onClick={() => handleRulesToggle(i)}>i</button>
+                            <p  className="unit-main-rules-text">
                                 {rule[1]} - {activeRulesIndex === i ? rule[2] : ''}
                             </p>
                         </div>
@@ -318,7 +333,8 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
                 </Fragment>
             </div>
 
-            <div>
+
+            <div className="unit-main-upgrades">
                 {armies !== undefined ? (
                     <Fragment>
                         {[...Array(supertypes.length)].map((_, index) => (
@@ -339,19 +355,20 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
                 ) }
             </div>
 
-            <div>
+            <div className="unit-main-rules">
                 <Fragment>
                     <h3>Upgrade Rules</h3>
                     {upgradeRules.map((rule, i) => (
-                        <div key={i}>
-                            <button onClick={() => handleUpgradeRulesToggle(i)}>i</button>
-                            <p>
-                                {rule[1]} - {activeUpgradeRulesIndex === i ? rule[2] : ''}
+                        <div className="unit-main-rules-content" key={i}>
+                            <button className="info-button" onClick={() => handleUpgradeRulesToggle(i)}>i</button>
+                            <p  className="unit-main-rules-text">
+                            {rule[1]} - {activeUpgradeRulesIndex === i ? rule[2] : ''}
                             </p>
                         </div>
                     ))}
                 </Fragment>
             </div>
+
         </div>
     );
 };

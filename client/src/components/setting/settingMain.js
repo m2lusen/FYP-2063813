@@ -53,7 +53,7 @@ const Settings = () => {
                     type="range"
                     id="font-size"
                     min="14"
-                    max="18"
+                    max="22"
                     value={fontSize}
                     onChange={handleFontSizeChange}
                 />
