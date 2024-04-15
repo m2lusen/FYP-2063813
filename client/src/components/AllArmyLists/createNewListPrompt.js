@@ -82,20 +82,41 @@ function CreateNewListPrompt({gameSystem, handleClick}) {
         }
     };
 
+    // return (
+    //     <div>
+    //         <h1>Create New Army List</h1>
+    //         <form onSubmit={onSubmitArmyListForm}>
+    //             <label>Army List Name:</label>
+    //             <input type="text" value={armyListName} onChange={(e) => setArmyListName(e.target.value)} required />
+    //             <label>Game Mode:</label>
+    //             <select value={gameModeId} onChange={(e) => setGameModeId(e.target.value)} required>
+    //                 <option value="">Select Game Mode</option>
+    //                 {gameModes.map(([id, name]) => (
+    //                     <option key={id} value={id}>{name}</option>
+    //                 ))}
+    //             </select>
+    //             <button type="submit">Create Army List</button>
+    //         </form>
+    //     </div>
+    // );
     return (
-        <div>
-            <h1>Create New Army List</h1>
-            <form onSubmit={onSubmitArmyListForm}>
-                <label>Army List Name:</label>
-                <input type="text" value={armyListName} onChange={(e) => setArmyListName(e.target.value)} required />
-                <label>Game Mode:</label>
-                <select value={gameModeId} onChange={(e) => setGameModeId(e.target.value)} required>
-                    <option value="">Select Game Mode</option>
-                    {gameModes.map(([id, name]) => (
-                        <option key={id} value={id}>{name}</option>
-                    ))}
-                </select>
-                <button type="submit">Create Army List</button>
+        <div className="create-new-list-container">
+            <h1 className='new-list-title'>New List</h1>
+            <form onSubmit={onSubmitArmyListForm} className="new-list-form">
+                <div className="new-list-input-group">
+                    <label className="label">Army List Name:</label>
+                    <input type="text" value={armyListName} onChange={(e) => setArmyListName(e.target.value)} required className="new-list-input" />
+                </div>
+                <div className="new-list-input-group">
+                    <label className="new-list-label">Game Mode:</label>
+                    <select value={gameModeId} onChange={(e) => setGameModeId(e.target.value)} required className="new-list-input">
+                        <option value="">Select Game Mode</option>
+                        {gameModes.map(([id, name]) => (
+                            <option key={id} value={id}>{name}</option>
+                        ))}
+                    </select>
+                </div>
+                <button type="submit" className="new-list-create-button">Create Army List</button>
             </form>
         </div>
     );

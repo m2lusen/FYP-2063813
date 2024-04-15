@@ -11,7 +11,7 @@ function Menu() {
 
             <Link to="/AllArmyLists" className="link-box">
                 <ArmyListIcon className="menu-icon" /> 
-                <h2>All Army Lists</h2>
+                <h2>Army Lists</h2>
             </Link>
 
             <Link to="/Game" className="link-box">

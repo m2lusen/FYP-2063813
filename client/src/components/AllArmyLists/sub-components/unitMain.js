@@ -33,6 +33,10 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
     };
 
     useEffect(() => {
+        console.log(unit)
+    }, [armyList, armies, forceId]);
+
+    useEffect(() => {
         const armyLocation = armyList[5].find(item => item[0] == forceId);
         if (armies !== null){
             const army = armies.find(item => item[0] == armyLocation[1]);

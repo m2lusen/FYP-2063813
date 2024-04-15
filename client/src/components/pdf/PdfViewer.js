@@ -13,9 +13,9 @@ const PdfViewer = () => {
     const [body, setBody] = useState({});
 
     useEffect(() => {
-        console.log(armyList)
-        console.log(gameSystem)
-        console.log(armies)
+        // console.log(armyList)
+        // console.log(gameSystem)
+        // console.log(armies)
         if (armyList && gameSystem && armies){
             const forces = armyList[5].map(forceSubArray => {
                 const units = forceSubArray[6].map(unitSubArray => {
@@ -61,7 +61,7 @@ const PdfViewer = () => {
                     ForceUnits: units // change add supertype
                 };
             });
-
+            console.log(forces)
             setBody(prevState => ({
                 ...prevState,
                 ListName: armyList[3],
@@ -96,3 +96,4 @@ const PdfViewer = () => {
 };
 
 export default PdfViewer;
+

@@ -129,6 +129,7 @@ function CreateNewListSelection({handleClick}) {
 
     return (
         <Fragment>
+            <h1 className='new-list-title'>New List</h1>
             <div className="search-bar">
                 <input 
                     type="text" 

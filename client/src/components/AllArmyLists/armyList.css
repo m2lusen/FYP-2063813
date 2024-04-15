@@ -437,3 +437,55 @@
     border-top: 1px solid var(--text-color); 
     border-bottom: 1px solid var(--text-color); 
 }
+
+.search-bar {
+    position: absolute;
+    top: calc(1/7 *100vw);
+}
+
+.search-bar input {
+    width: 100vw
+}
+
+.new-list-title {
+    position: fixed;
+    top: 0;
+    left: calc(1/7 * 100vw);
+    background-color: var(--box-color);
+    color: var(--text-color);
+    padding: 16px;
+    font-size: calc(1/16 * 100vw); 
+    border: none;
+    width: calc(5/7 * 100vw);
+    height: calc(1/7 * 100vw); 
+    display: flex;
+}
+
+.create-new-list-container {
+    position: absolute;
+    top: calc(1/7*100vw);
+}
+
+.new-list-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.new-list-input-group {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.new-list-label {
+    flex: 1;
+    text-align: right;
+    margin-right: 10px;
+}
+
+.new-list-input {
+    flex: 2;
+}
+
+.new-list-create-button {
+    align-self: flex-end;
+}

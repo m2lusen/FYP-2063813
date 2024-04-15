@@ -145,10 +145,10 @@ function DisplayAllArmyLists({ handleClick }) {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                             <select value={searchBy} onChange={(e) => setSearchBy(e.target.value)}>
-                                <option value="name">Name</option>
-                                <option value="point">Point Cost</option>
-                                <option value="army">Army</option>
-                                <option value="game">Game</option>
+                                <option value="name">Search by Name</option>
+                                <option value="point">Search by Point Cost</option>
+                                <option value="army">Search by Army</option>
+                                <option value="game">Search by Game</option>
                             </select>
                         </div>
                         <div>
