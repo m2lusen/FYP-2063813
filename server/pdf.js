@@ -159,14 +159,14 @@ async function createPdf(body) {
         const unitMap = new Map();
 
         for (const unit of force.ForceUnits) {
-            if (!unitMap.has(unit.superTypeId)) {
-                unitMap.set(unit.superTypeId, []);
+            if (!unitMap.has(unit.supertypeName)) {
+                unitMap.set(unit.supertypeName, []);
             }
-            unitMap.get(unit.superTypeId).push(unit);
+            unitMap.get(unit.supertypeName).push(unit);
         }
 
-        for (const [superTypeId, units] of unitMap) {
-            currentPage.drawText(`Super Type ID: ${superTypeId}`, { x: 70, y, size: 16 });
+        for (const [supertypeName, units] of unitMap) {
+            currentPage.drawText(`Super Type: ${supertypeName}`, { x: 70, y, size: 16 });
             checkNewPage(); // Check if a new page is needed after drawing each super type ID
             y -= 20;
 
