@@ -15,6 +15,11 @@ function checkIfStatUsed(statblock, acronyme) {
     return false;
 }
 
+/**
+ * Organizes game system data into nested arrays based on unique identifiers.
+ * @param {Array<any>} data - The game system data to organize.
+ * @returns {Array<Array<any>>} Nested arrays representing organized game system data.
+ */
 function organizeGameSystem(data) { // there is a issue with the following function, or possibly with the query
     if (!Array.isArray(data)) {
         console.error('Input data is not an array');
@@ -78,6 +83,10 @@ function organizeGameSystem(data) { // there is a issue with the following funct
     return nestedArrays;
 }
 
+/**
+ * Fetches game system data from the server.
+ * @returns {Promise<Array<Array<any>>>} A promise that resolves to organized game system data.
+ */
 export async function GetGameSystems() {
     try {        
         const response = await fetch(`http://localhost:4000/game_system`, {
@@ -93,6 +102,11 @@ export async function GetGameSystems() {
     }
 }
 
+/**
+ * Organizes army data into nested arrays based on unique identifiers.
+ * @param {Array<any>} data - The army data to organize.
+ * @returns {Array<Array<any>>} Nested arrays representing organized army data.
+ */
 function organizeArmy(data) {
     if (!Array.isArray(data)) {
         console.error('Input data is not an array');
@@ -230,6 +244,10 @@ function organizeArmy(data) {
     return nestedArrays;
 }
 
+/**
+ * Fetches army data from the server.
+ * @returns {Promise<Array<Array<any>>>} A promise that resolves to organized army data.
+ */
 export async function GetArmy() {
     try {        
         const response = await fetch(`http://localhost:4000/army`, {
@@ -244,7 +262,11 @@ export async function GetArmy() {
     }
 }
 
-
+/**
+ * Organizes army list data into nested arrays based on unique identifiers.
+ * @param {Array<any>} data - The army list data to organize.
+ * @returns {Array<Array<any>>} Nested arrays representing organized army list data.
+ */
 function organizeAL(data) { // issue  with incerting nulls // missing supertype
     
     if (!Array.isArray(data)) {
@@ -346,7 +368,10 @@ function organizeAL(data) { // issue  with incerting nulls // missing supertype
 };
 
 
-
+/**
+ * Fetches army list data from the server.
+ * @returns {Promise<Array<Array<any>>>} A promise that resolves to organized army list data.
+ */
 export async function GetArmyList() { // may have to update army_list get request
     try {        
         const response = await fetch(`http://localhost:4000/army_list`, {

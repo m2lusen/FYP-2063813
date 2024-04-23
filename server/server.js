@@ -138,7 +138,7 @@ app.post("/keyword_rule", async (req, res) => {
         )
         res.json(dbQuery.rows);
     } catch (err) {
-        console.log(err);
+        // console.log(err);
         res.status(500).json({ error: err.message });
     }
 });
@@ -474,7 +474,7 @@ app.get("/army_list/:id", async (req, res) => {
     try {
         const {id} = req.params;
 
-        const dbQuery = await pool.query(
+        const dbQuery = await pool.query( // top two weren
             `SELECT
             *
             FROM army_list
@@ -557,14 +557,14 @@ app.get("/army", async (req, res) => {
 });
 
 // Get a single army // to be tested syntax error at or near "army"
-app.get("/army/:id", async (req, res) => {
+app.get("/army/:id", async (req, res) => { // recent changes check everyhing running (should be no errors encountered)
     try {
         const {id} = req.params;
 
         const dbQuery = await pool.query(
             `
             SELECT 
-                army.army_id, army_name, army_edition, army_version,
+                army.army_id, army_name, army_edition, army_version, army.game_system_id,
                 a_unit.a_unit_id, gs_supertype_id, a_unit_name, a_unit_pc, a_unit_limit_per_army,
                 rule_a_unit.rule_id AS a_unit_rule_id,
                 keyword_a_unit.keyword_id AS a_unit_keyword_id,
@@ -595,12 +595,13 @@ app.get("/army/:id", async (req, res) => {
                 LEFT JOIN keyword_a_upgrade ON a_upgrade.a_upgrade_id = keyword_a_upgrade.a_upgrade_id
 
                 WHERE
-                game_system_id = ${id}
-            ;`
+                army.game_system_id = '${id}';
+            `
         )
 
         res.json(dbQuery.rows);
     } catch (err) {
+        // console.log("ERROR TESTING:", err.message)
         res.status(500).json({ error: err.message });
     }
 });
@@ -816,7 +817,7 @@ app.get("/game_system/:id", async (req, res) => {
 
         res.json(dbQuery.rows);
     } catch (err) {
-        console.error(err)
+        // console.error(err)
         res.status(500).json({ error: err.message });
     }
 });
@@ -919,6 +920,7 @@ app.put("/gs_stat/:id", async (req, res) => {
             res.json(dbQuery.rows)
         }
     } catch (err) {
+        console.log("ERROR TEST 404", err)
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -963,7 +965,7 @@ app.put("/army/:id", async (req, res) => {
             [id]
         );
 
-        if (dbQuery.rowCount === 0) {
+        if (dbQuery.rowCount === 0) { // may cause issues (not expected to)
             res.status(404).json({ error: 'army not found' });
         } else {
             res.json(dbQuery.rows)
@@ -1066,7 +1068,7 @@ app.put("/a_unit/:id", async (req, res) => {
             [id]
         );
 
-        console.log(dbQuery)
+        // console.log(dbQuery)
         
         if (dbQuery.rowCount === 0) {
             res.status(404).json({ error: 'a_unit not found' });
@@ -2133,6 +2135,7 @@ app.post("/rawSQL", async (req, res) => {
 app.post('/pdf', async (req, res) => {
     try {
         const body = req.body;
+        
 
         const pdfStream = await createPdf(body);
         res.setHeader('Content-Type', 'application/pdf');

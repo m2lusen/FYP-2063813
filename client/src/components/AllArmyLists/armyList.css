@@ -58,8 +58,10 @@
 }
 
 .button-box {
+    position: relative; /* Change position to relative */
     border: 1px solid #ccc; /* Border color */
-    margin-bottom: 1em; /* Adjust margin as needed */
+    margin-bottom: 1em; 
+    width: 90vw;
 }
 
 .button-content {

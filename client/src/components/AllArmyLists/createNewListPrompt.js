@@ -1,6 +1,11 @@
 import React, { useState, useEffect} from "react";
 import {GetArmyList} from './getRequests';
-
+/**
+ * Component for creating a new army list.
+ * @param {Array} gameSystem - The selected game system.
+ * @param {function} handleClick - Function to handle click event when a new army list is created.
+ * @returns {JSX.Element} JSX for the CreateNewListPrompt component.
+ */
 function CreateNewListPrompt({gameSystem, handleClick}) {
     
     const [armyListId, setArmyListId] = useState(null);
@@ -9,7 +14,9 @@ function CreateNewListPrompt({gameSystem, handleClick}) {
     const [armyListName, setArmyListName] = useState('');
 
     const [gameModes, setGameModes] = useState([]);
-
+    /**
+     * Fetches game modes related to the selected game system.
+     */
     useEffect(() => { 
         if (gameSystem) {
             setGameSystemId(gameSystem[0]);
@@ -24,6 +31,9 @@ function CreateNewListPrompt({gameSystem, handleClick}) {
         }
     }, [gameSystem]);
 
+    /**
+     * Fetches the army list based on the selected army list ID.
+     */
     useEffect(() => {
         if (armyListId) {
             const fetchData = async () => {
@@ -44,8 +54,11 @@ function CreateNewListPrompt({gameSystem, handleClick}) {
         }
     }, [armyListId]);
 
+    /**
+     * Submits the new army list to the server.
+     * @param {Array} NewArmyList - The new army list data.
+     */
     const submit = (NewArmyList) => {
-
         handleClick ({
             "Army_List": NewArmyList,
             "Linked_Game_System": gameSystem,
@@ -53,6 +66,10 @@ function CreateNewListPrompt({gameSystem, handleClick}) {
         });
     };
 
+    /**
+     * Handles form submission for creating a new army list.
+     * @param {Object} e - Form submission event.
+     */
     const onSubmitArmyListForm = async (e) => {
         e.preventDefault();
         try {

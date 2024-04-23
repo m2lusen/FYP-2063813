@@ -2,6 +2,11 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { GetGameSystems, GetArmy, GetArmyList } from './getRequests';
 import './armyList.css'; // Import CSS file for styles
 
+/**
+ * Displays all army lists with options for searching, sorting, and filtering.
+ * @param {function} handleClick - Function to handle click events on army list buttons.
+ * @returns {JSX.Element} JSX element representing the component.
+ */
 function DisplayAllArmyLists({ handleClick }) {
     const [games, setGames] = useState(null);
     const [armies, setArmies] = useState(null);
@@ -47,6 +52,11 @@ function DisplayAllArmyLists({ handleClick }) {
         }
     }, [games, armies, armyLists]);
 
+    /**
+     * Retrieves the linked game system based on its ID.
+     * @param {string} gameSystemId - ID of the game system.
+     * @returns {Array|null} Linked game system data.
+     */
     const linkedGameSystem = (gameSystemId) => {
         if (!games) return null;
 
@@ -54,6 +64,11 @@ function DisplayAllArmyLists({ handleClick }) {
         return targetGame;
     };
 
+    /**
+     * Retrieves the linked armies based on the provided forces.
+     * @param {Array} forces - Forces data.
+     * @returns {Array} Linked armies data.
+     */
     const linkedArmy = (forces) => {
         const uniqueArmyIds = new Set();
         forces.forEach(force => {
@@ -68,6 +83,11 @@ function DisplayAllArmyLists({ handleClick }) {
         return linkedArmies;
     };
 
+    /**
+     * Displays the names of linked armies.
+     * @param {Array} forces - Forces data.
+     * @returns {string} Display string of linked armies.
+     */
     const displayLinkedArmy = (forces) => {
         const linkedArmies = forces.map(force => {
             const targetArmy = armies.find(item => item[0] === force[1]);
@@ -76,10 +96,14 @@ function DisplayAllArmyLists({ handleClick }) {
 
         const displayString = linkedArmies.join(', ');
         const truncatedString = displayString.length > 50 ? displayString.slice(0, 50) + '...' : displayString;
-
         return truncatedString;
     };
 
+    /**
+     * Retrieves the value of the field to sort by.
+     * @param {Array} nestedArray - Nested array representing army list data.
+     * @returns {string} Value of the field to sort by.
+     */
     const getValueToSortBy = (nestedArray) => {
         switch (orderBy) {
             case 'name':
@@ -95,6 +119,11 @@ function DisplayAllArmyLists({ handleClick }) {
         }
     };
 
+    /**
+     * Handles click event on army list button.
+     * @param {Array} nestedArray - Nested array representing army list data.
+     * @returns {Object} Object containing army list, linked game system, and linked armies data.
+     */
     const onClick = (nestedArray) => {
         const gameSystem = linkedGameSystem(nestedArray[1]);
         const linkedArmies = linkedArmy(nestedArray[5]);
@@ -131,6 +160,10 @@ function DisplayAllArmyLists({ handleClick }) {
         }
     })
     : [];
+    
+    useEffect(() => {
+        console.log("Filtered list of army lists:", filteredArmyLists);
+    }, [searchTerm, searchBy, orderBy, orderDirection, filteredArmyLists]); 
 
     return (
         <Fragment>
@@ -179,6 +212,7 @@ function DisplayAllArmyLists({ handleClick }) {
                                             <span>Armies: </span>{displayLinkedArmy(nestedArray[5])}
                                         </div>
                                     </button>
+                                    <div className="text-location-three">{nestedArray[3]}</div>
                                 </div>
                             ))
                         ) : (

@@ -842,7 +842,7 @@ describe('GET /army_list/:id', () => {
         expect(response.status).toBe(200);
     });
 
-    it('should handle errors gracefully', async () => {
+    it('should handle errors gracefully - overflow', async () => {
 
         const response = await request(server)
             .get(`/army_list/99999`)
@@ -875,6 +875,8 @@ describe('GET /army/:id', () => {
         const response = await request(server)
             .get(`/army/99999`)
         
+        // console.log('TEST: ', response)
+
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error');
     });
@@ -989,7 +991,7 @@ describe('PUT /game_system/:id', () => {
         expect(response.body).toHaveProperty('error');
     }, 20000);
 
-    it('should handle invalid game system ID gracefully', async () => {
+    it('should handle invalid game system ID gracefully -- Overflow', async () => {
         const response = await request(server)
             .put('/game_system/99999')
             .send({
@@ -999,6 +1001,19 @@ describe('PUT /game_system/:id', () => {
             });
 
         expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid game system ID gracefully -- 404', async () => {
+        const response = await request(server)
+            .put('/game_system/999')
+            .send({
+                "game_system_name": "Test Game System",
+                "game_system_edition": "2nd edition",
+                "game_system_version": 2
+            });
+
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
@@ -1039,6 +1054,18 @@ describe('PUT /gs_supertype/:id', () => {
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error');
     }, 20000);
+
+    it('should handle invalid game system ID gracefully -- 404', async () => {
+        const response = await request(server)
+            .put('/gs_supertype/999')
+            .send({
+                "gs_supertype_name": "Updated name",
+                "gs_supertype_lower": 3
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
 });
 
 describe('PUT /gs_unit_structure/:id', () => {
@@ -1074,6 +1101,17 @@ describe('PUT /gs_unit_structure/:id', () => {
             });
 
         expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid game system ID gracefully -- 404', async () => {
+        const response = await request(server)
+            .put('/gs_unit_structure/999')
+            .send({
+                "game_system_id": insertedGameSystemId,
+            });
+
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
@@ -1112,10 +1150,25 @@ describe('PUT /gs_stat/:id', () => {
         const response = await request(server)
             .put('/gs_stat/99999')
             .send({
-                "game_system_id": insertedGameSystemId,
+                "gs_us_id": insertedGsUnitStructureId,
+                "gs_stat_name": 'Updated Statistic',
+                "gs_stat_acronyme" : 'UST'
             });
 
         expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid game system ID gracefully -- 404', async () => {
+        const response = await request(server)
+            .put('/gs_stat/999')
+            .send({
+                "gs_us_id": insertedGsUnitStructureId,
+                "gs_stat_name": 'Updated Statistic',
+                "gs_stat_acronyme" : 'UST'
+            });
+
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
@@ -1157,6 +1210,18 @@ describe('PUT /keyword/:id', () => {
             });
 
         expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid game system ID gracefully -- 404', async () => {
+        const response = await request(server)
+            .put('/keyword/999')
+            .send({
+	        "gs_us_id": insertedGsUnitStructureId,
+            	"keyword_name": 'Updated Keyword'
+            });
+
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
@@ -1206,6 +1271,20 @@ describe('PUT /army/:id', () => {
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error');
     }, 20000);
+
+    it('should handle invalid game system ID gracefully -- 404', async () => {
+        const response = await request(server)
+            .put('/army/999')
+            .send({
+                "game_system_id": insertedGameSystemId,
+                "army_name": 'Updated Army',
+                "army_edition": '2nd edition',
+                "army_version": 2
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
 });
 
 describe('PUT /rule/:id', () => {
@@ -1248,6 +1327,19 @@ describe('PUT /rule/:id', () => {
             });
 
         expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid rule ID gracefully --404', async () => {
+        const response = await request(server)
+            .put('/rule/999')
+            .send({
+                "game_system_id": insertedGameSystemId,
+                "rule_name": 'New Rule',
+                "rule_description": 'An example of a updated rule'
+            });
+
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
@@ -1315,6 +1407,42 @@ describe('PUT /keyword_rule/:keywordId/:ruleId', () => {
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error');
     }, 20000);
+
+    it('should handle invalid keyword ID gracefully --404', async () => {
+        const response = await request(server)
+            .put(`/keyword_rule/999/${insertedRuleId}`)
+            .send({
+                "rule_id": insertedRuleId,
+                "keyword_id": insertedKeywordsId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid rule ID gracefully --404', async () => {
+        const response = await request(server)
+            .put(`/keyword_rule/${insertedKeywordsId}/999`)
+            .send({
+                "rule_id": insertedRuleId,
+                "keyword_id": insertedKeywordsId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid keyword ID and rule ID gracefully --404', async () => {
+        const response = await request(server)
+            .put(`/keyword_rule/999/999`)
+            .send({
+                "rule_id": insertedRuleId,
+                "keyword_id": insertedKeywordsId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
 });
 
 
@@ -1359,6 +1487,20 @@ describe('PUT /gs_game_mode/:id', () => {
             });
 
         expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid rule ID gracefully --404', async () => {
+        const response = await request(server)
+            .put('/gs_game_mode/999')
+            .send({
+                "game_system_id": insertedGameSystemId,
+                "gs_gm_name": 'New Mode',
+                "gs_gm_point_upper": 2,
+                "gs_gm_point_lower": 1
+            });
+
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
@@ -1410,6 +1552,21 @@ describe('PUT /a_unit/:id', () => {
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error');
     }, 20000);
+
+    it('should handle invalid a_unit_ID gracefully --404', async () => {
+        const response = await request(server)
+            .put('/a_unit/999')
+            .send({
+                "army_id": insertedArmyId,
+                "gs_supertype_id": insertedGsSupertypeID,
+                "a_unit_name": "Unit Name",
+                "a_unit_PC": 100,
+                "a_unit_limit_per_army": null
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
 });
 
 describe('PUT /a_upgrade_type/:id', () => {
@@ -1452,6 +1609,19 @@ describe('PUT /a_upgrade_type/:id', () => {
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error');
     }, 20000);
+
+    it('should handle invalid a_ut_ID gracefully --404', async () => {
+        const response = await request(server)
+            .put('/a_upgrade_type/999')
+            .send({
+                "a_ut_name": "Updated Type",
+                "a_ut_min": null,
+                "a_ut_max": 5
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
 });
 
 describe('PUT /a_upgrade/:id', () => {
@@ -1488,12 +1658,25 @@ describe('PUT /a_upgrade/:id', () => {
         const response = await request(server)
             .put('/a_upgrade/99999')
             .send({
-                "a_ut_name": "Updated Type",
-                "a_ut_min": null,
-                "a_ut_max": 5
+                "a_ut_id": insertedAUpgradeTypeId,
+                "a_upgrade_PC": 15,
+                "a_upgrade_name": "Updated Upgrade"
             });
 
         expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid a_upgrade_ID gracefully --404', async () => {
+        const response = await request(server)
+            .put('/a_upgrade/999')
+            .send({
+                "a_ut_id": insertedAUpgradeTypeId,
+                "a_upgrade_PC": 15,
+                "a_upgrade_name": "Updated Upgrade"
+            });
+
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
@@ -1562,6 +1745,42 @@ describe('PUT /a_unit_a_upgrade/:a_unit_id/:a_upgrade_id', () => {
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error');
     }, 20000);
+
+    it('should handle invalid a_unit_id gracefully --404', async () => {
+        const response = await request(server)
+            .put(`/a_unit_a_upgrade/999/${insertedAUpgradeId}`)
+            .send({
+                "a_unit_id": insertedAUnitId,
+                "a_upgrade_id": insertedAUpgradeId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid upgrade ID gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/a_unit_a_upgrade/${insertedAUnitId}/999`)
+            .send({
+                "a_unit_id": insertedAUnitId,
+                "a_upgrade_id": insertedAUpgradeId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid for both IDs gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/a_unit_a_upgrade/999/999`)
+            .send({
+                "a_unit_id": insertedAUnitId,
+                "a_upgrade_id": insertedAUpgradeId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
 });
 
 describe('PUT /a_statline/:id', () => {
@@ -1597,6 +1816,17 @@ describe('PUT /a_statline/:id', () => {
             });
 
         expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid a_statline_ID gracefully 404', async () => {
+        const response = await request(server)
+            .put('/a_statline/999')
+            .send({
+                a_statline_name: 'Updated Statline'
+            });
+
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
@@ -1679,6 +1909,51 @@ describe('PUT /a_unit_a_statline/:a_unit_id/:a_statline_id', () => {
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error');
     }, 20000);
+
+    it('should handle invalid a_unit_id gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/a_unit_a_statline/999/${insertedAStatlineId}`)
+            .send({
+                "a_unit_id": insertedAUnitId,
+                "a_statline_id": insertedAStatlineId,
+                "a_statline_min": 5,
+                "a_statline_max": 10,
+                "a_statline_point_cost": 80
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid statline ID gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/a_unit_a_statline/${insertedAUnitId}/999`)
+            .send({
+                "a_unit_id": insertedAUnitId,
+                "a_statline_id": insertedAStatlineId,
+                "a_statline_min": 5,
+                "a_statline_max": 10,
+                "a_statline_point_cost": 80
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid for both IDs gracefully -- 404', async () => {
+        const response = await request(server)
+            .put(`/a_unit_a_statline/999/999`)
+            .send({
+                "a_unit_id": insertedAUnitId,
+                "a_statline_id": insertedAStatlineId,
+                "a_statline_min": 5,
+                "a_statline_max": 10,
+                "a_statline_point_cost": 80
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
 });
 
 describe('PUT /a_unit_a_upgrade_type/:a_unit_id/:a_ut_id', () => {
@@ -1742,6 +2017,42 @@ describe('PUT /a_unit_a_upgrade_type/:a_unit_id/:a_ut_id', () => {
             });
 
         expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid a_unit_id gracefully  404', async () => {
+        const response = await request(server)
+            .put(`/a_unit_a_upgrade_type/999/${insertedAUpgradeTypeId}`)
+            .send({
+                "a_unit_id": insertedAUnitId,
+                "a_ut_id": insertedAUpgradeTypeId 
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid ut ID gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/a_unit_a_upgrade_type/${insertedAUnitId}/999`)
+            .send({
+                "a_unit_id": insertedAUnitId,
+                "a_ut_id": insertedAUpgradeTypeId 
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid for both IDs gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/a_unit_a_upgrade_type/999/999`)
+            .send({
+                "a_unit_id": insertedAUnitId,
+                "a_ut_id": insertedAUpgradeTypeId 
+            });
+
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
@@ -1809,6 +2120,42 @@ describe('PUT /keyword_a_unit/:keyword_id/:a_unit_id', () => {
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error');
     }, 20000);
+
+    it('should handle invalid keyword id gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/keyword_a_unit/999/${insertedAUnitId}`)
+            .send({
+                "keyword_id": insertedKeywordsId,
+                "a_unit_id": insertedAUnitId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid unit ID gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/keyword_a_unit/${insertedKeywordsId}/999`)
+            .send({
+                "keyword_id": insertedKeywordsId,
+                "a_unit_id": insertedAUnitId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid for both IDs gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/keyword_a_unit/999/999`)
+            .send({
+                "keyword_id": insertedKeywordsId,
+                "a_unit_id": insertedAUnitId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
 });
 
 describe('PUT /rule_a_upgrade/:rule_id/:a_upgrade_id', () => {
@@ -1874,6 +2221,42 @@ describe('PUT /rule_a_upgrade/:rule_id/:a_upgrade_id', () => {
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error');
     }, 20000);
+
+    it('should handle invalid rule id gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/rule_a_upgrade/999/${insertedAUpgradeId}`)
+            .send({
+                "rule_id": insertedRuleId,
+                "a_upgrade_id": insertedAUpgradeId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid a upgrade ID gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/rule_a_upgrade/${insertedRuleId}/999`)
+            .send({
+                "rule_id": insertedRuleId,
+                "a_upgrade_id": insertedAUpgradeId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid for both IDs gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/rule_a_upgrade/999/999`)
+            .send({
+                "rule_id": insertedRuleId,
+                "a_upgrade_id": insertedAUpgradeId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
 });
 
 describe('PUT /rule_a_unit/:rule_id/:a_unit_id', () => {
@@ -1937,6 +2320,42 @@ describe('PUT /rule_a_unit/:rule_id/:a_unit_id', () => {
             });
 
         expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid rule id gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/rule_a_unit/999/${insertedAUnitId}`)
+            .send({
+                "rule_id": insertedRuleId,
+                "a_unit_id": insertedAUnitId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid a unit ID gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/rule_a_unit/${insertedRuleId}/999`)
+            .send({
+                "rule_id": insertedRuleId,
+                "a_unit_id": insertedAUnitId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid for both IDs gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/rule_a_unit/999/999`)
+            .send({
+                "rule_id": insertedRuleId,
+                "a_unit_id": insertedAUnitId
+            });
+
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
@@ -2008,6 +2427,45 @@ describe('PUT /a_statline_gs_stat/:a_statline_id/:gs_stat_id', () => {
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error');
     }, 20000);
+
+    it('should handle invalid a statline id gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/a_statline_gs_stat/999/${insertedGsStatId}`)
+            .send({
+                "a_statline_id": insertedAStatlineId,
+                "gs_stat_id": insertedGsStatId,
+                "stat_value": 5
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid a unit ID gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/a_statline_gs_stat/${insertedAStatlineId}/999`)
+            .send({
+                "a_statline_id": insertedAStatlineId,
+                "gs_stat_id": insertedGsStatId,
+                "stat_value": 5
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid for both IDs gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/a_statline_gs_stat/999/999`)
+            .send({
+                "a_statline_id": insertedAStatlineId,
+                "gs_stat_id": insertedGsStatId,
+                "stat_value": 5
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
 });
 
 describe('PUT /keyword_a_upgrade/:keyword_id/:a_upgrade_id', () => {
@@ -2067,10 +2525,46 @@ describe('PUT /keyword_a_upgrade/:keyword_id/:a_upgrade_id', () => {
             .put(`/keyword_a_upgrade/99999/99999`)
             .send({
                 "keyword_id": insertedKeywordsId,
-                "a_unit_id": insertedAUnitId
+                "a_upgrade_id": insertedAUpgradeId
             });
 
         expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid keyword id gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/keyword_a_upgrade/999/${insertedAUpgradeId}`)
+            .send({
+                "keyword_id": insertedKeywordsId,
+                "a_upgrade_id": insertedAUpgradeId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid upgrade ID gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/keyword_a_upgrade/${insertedKeywordsId}/999`)
+            .send({
+                "keyword_id": insertedKeywordsId,
+                "a_upgrade_id": insertedAUpgradeId
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid for both IDs gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/keyword_a_upgrade/999/999`)
+            .send({
+                "keyword_id": insertedKeywordsId,
+                "a_upgrade_id": insertedAUpgradeId
+            });
+
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
@@ -2116,6 +2610,19 @@ describe('PUT /army_list/:id', () => {
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error');
     }, 20000);
+
+    it('should handle invalid army_list ID gracefully 404', async () => {
+        const response = await request(server)
+            .put('/army_list/999')
+            .send({
+                "game_system_id": insertedGameSystemId,
+                "gs_gm_id": insertedGsGameModeId,
+                "army_list_name": "Updated List"
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
 });
 
 describe('PUT /al_force/:id', () => {
@@ -2154,6 +2661,18 @@ describe('PUT /al_force/:id', () => {
             });
 
         expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid al_force ID gracefully 404', async () => {
+        const response = await request(server)
+            .put('/al_force/999')
+            .send({
+                "army_list_id": insertedArmyListId,
+                "army_id": insertedArmyId
+            });
+
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
@@ -2202,6 +2721,20 @@ describe('PUT /al_unit/:id', () => {
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error');
     }, 20000);
+
+    it('should handle invalid al_unit ID gracefully 404', async () => {
+        const response = await request(server)
+            .put('/al_unit/999')
+            .send({
+                "al_force_id": insertedAlForceId,
+                "a_unit_id": insertedAUnitId,
+                "al_unit_name": "Tim 2",
+                "al_unit_color": "ffffff"
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
 });
 
 describe('PUT /al_upgrade/:id', () => {
@@ -2243,6 +2776,19 @@ describe('PUT /al_upgrade/:id', () => {
             });
 
         expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid al_upgrade ID gracefully 404', async () => {
+        const response = await request(server)
+            .put('/al_upgrade/999')
+            .send({
+                "al_unit_id": insertedAlUnitId,
+                "a_upgrade_id": insertedAUpgradeId,
+                "a_ut_id": insertedAUpgradeTypeId
+            });
+
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
@@ -2333,6 +2879,64 @@ describe('PUT /al_unit_a_unit_a_statline_quantity/:al_unit_id/:a_unit_id/:a_stat
             });
 
         expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+
+
+    it('should handle invalid al unit id gracefully 404', async () => {
+        const response = await request(server)
+        .put(`/al_unit_a_unit_a_statline_quantity/999/${insertedAUnitId}/${insertedAStatlineId}`)
+            .send({
+            "al_unit_id": insertedAlUnitId,
+            "a_unit_id": insertedAUnitId,
+            "a_statline_id": insertedAStatlineId,
+            "quantity": 6
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid unit id gracefully 404', async () => {
+        const response = await request(server)
+        .put(`/al_unit_a_unit_a_statline_quantity/${insertedAlUnitId}/999/${insertedAStatlineId}`)
+            .send({
+            "al_unit_id": insertedAlUnitId,
+            "a_unit_id": insertedAUnitId,
+            "a_statline_id": insertedAStatlineId,
+            "quantity": 6
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid unit id gracefully 404', async () => {
+        const response = await request(server)
+        .put(`/al_unit_a_unit_a_statline_quantity/${insertedAlUnitId}/${insertedAStatlineId}/999`)
+            .send({
+            "al_unit_id": insertedAlUnitId,
+            "a_unit_id": insertedAUnitId,
+            "a_statline_id": insertedAStatlineId,
+            "quantity": 6
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('error');
+    }, 20000);
+
+    it('should handle invalid for all IDs gracefully 404', async () => {
+        const response = await request(server)
+            .put(`/al_unit_a_unit_a_statline_quantity/999/999/999`)
+            .send({
+                "al_unit_id": insertedAlUnitId,
+                "a_unit_id": insertedAUnitId,
+                "a_statline_id": insertedAStatlineId,
+                "quantity": 6
+            });
+
+        expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
@@ -2798,8 +3402,5 @@ describe('DELETE /game_system/:id', () => {
         expect(response.body).toHaveProperty('error');
     }, 20000);
 });
-
-
-
 
 
