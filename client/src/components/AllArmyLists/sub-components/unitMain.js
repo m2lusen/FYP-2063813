@@ -9,7 +9,7 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
     const [alUnitId, setAlUnitId] = useState(null);
     const [aUnitId, setAUnitId] = useState(null);
     const [alUnitName, setAlUnitName] = useState('');
-    const [alUnitColor, setAlUnitColor] = useState(null);
+    const [alUnitColor, setAlUnitColor] = useState('#FFFFFF');
 
     const [updated, setUpdated] = useState(false);
 
@@ -94,7 +94,14 @@ const UnitMain = ({ gameSystem, armyList, armies, forceId, unit, handleClick, ha
         setAlUnitId(unit[2]);
         setAUnitId(unit[12]);
         setAlUnitName(unit[3]);
-        setAlUnitColor(unit[4]);
+
+        if (unit !== undefined && unit[4] === null) {
+            setAlUnitColor('#FFFFFF');
+        } else if (unit !== undefined && unit[4] !== null) {
+            setAlUnitColor(unit[4]);
+        }
+    
+        // setAlUnitColor(unit[4]);
     }, [unit]);
 
     const createStatBlock = (statlineNames, unitNames, statlineRows) => { // if time rewrite

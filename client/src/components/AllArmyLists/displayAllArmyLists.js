@@ -161,9 +161,6 @@ function DisplayAllArmyLists({ handleClick }) {
     })
     : [];
     
-    useEffect(() => {
-        console.log("Filtered list of army lists:", filteredArmyLists);
-    }, [searchTerm, searchBy, orderBy, orderDirection, filteredArmyLists]); 
 
     return (
         <Fragment>
@@ -212,7 +209,6 @@ function DisplayAllArmyLists({ handleClick }) {
                                             <span>Armies: </span>{displayLinkedArmy(nestedArray[5])}
                                         </div>
                                     </button>
-                                    <div className="text-location-three">{nestedArray[3]}</div>
                                 </div>
                             ))
                         ) : (
