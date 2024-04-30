@@ -4,7 +4,6 @@ import PdfViewer from './components/pdf/PdfViewer';
 import AllArmyListsMain from './components/AllArmyLists/AllArmyListsMain';
 import Game from './components/game/gameMain';
 import Settings from './components/setting/settingMain';
-import ArmyList from './components/ArmyList/ArmyMain';
 import FormArmy from './components/FormArmy/FormArmyMain';
 import FormGame from './components/FormGameSystem/FormGameMain';
 import Menu from './components/menu/menu';
@@ -36,9 +35,6 @@ function App() {
                 </Route>
                 <Route path="/AllArmyLists">
                     <AllArmyListsMain />
-                </Route>
-                <Route path="/ArmyList">
-                    <ArmyList />
                 </Route>
                 <Route path="/FormArmy">
                     <FormArmy />
